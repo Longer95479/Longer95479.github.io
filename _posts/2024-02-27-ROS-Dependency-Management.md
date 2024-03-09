@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "ROS Dependency Management"
-date:   2024-02-26 19:05:00 +0800
+date:   2024-02-27 19:05:00 +0800
 categories: slam; ros
 ---
 
@@ -27,3 +27,6 @@ categories: slam; ros
 - `<run_depend>` 有两种作用
     - 声明包中的哪些可执行文件需要运行
     - 定义使用了当前包的其他包的依赖
+  
+### referrence
+[4.Dependency Management](http://wiki.ros.org/catkin/conceptual_overview#Dependency_Management)
