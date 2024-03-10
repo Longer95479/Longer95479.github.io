@@ -18,6 +18,7 @@ categories: slam; ros
 
 - `geometry_msgs/PoseStamped` 是 `Pose` 和 `timestamp` 的结合
 - `nav_msgs/Odometry.msg` 包含 `Pose`、`twist`（速度角速度） 和 各自的协方差矩阵
+---
 
 ```c++
 /**
