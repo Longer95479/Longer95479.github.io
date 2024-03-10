@@ -2,7 +2,9 @@
 layout: post
 title:  "ego planner grid_map"
 date:   2024-02-29 10:54:00 +0800
-categories: slam; ros
+categories: 
+    - slam
+    - ros
 ---
 
 - `FSM` 最顶层 -> 
