@@ -18,7 +18,7 @@ categories:
 
 ---
 - `geometry_msgs/PoseStamped` 是 `Pose` 和 `timestamp` 的结合
-- `nav_msgs/Odometry.msg` 包含 `Pose`、`twist`（速度角速度） 和 各自的协方差矩阵
+- `nav_msgs/Odometry.msg` 包含 `Pose`、`twist`（速度、角速度） 和 各自的协方差矩阵
 ---
 
 一些子函数的功能：
@@ -74,6 +74,9 @@ mp_.unknown_flag_ = 0.01;
 - `void GridMap::raycastProcess()` 计算出了 `local_bound_`，叠加上`local_map_margin_`, 在叠加上局部变量 `vec_margin`，为 `local_bound` 增加裕量
 - 将 `vec_margin` 范围内的体素设置为 `unknown`，意为**清除**
 - 在 `local_bound` 范围内的体素膨胀，并更新占用状态，先清零后使用 `阈值 min_occupancy_log_` 判断占用情况（涉及 `occupancy_buffer_inflate_` 变量）
+
+---
+[`Mat::convertTo`](https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html#mat-convertto)
 
 
 
