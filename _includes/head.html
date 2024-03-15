@@ -20,6 +20,20 @@
       crossorigin="anonymous"></script>
   
   <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+
+  <script>
+    let pseudocodes = document.querySelectorAll(".language-pseudocode");
+    let options = {
+        lineNumber: true
+    };
+    pseudocodes.forEach((pse) => {
+        let code = pse.textContent;
+        let parentEl = pse.parentElement;
+        pseudocode.render(code, parentEl, options);
+        pse.remove();
+        $(parentEl).replaceWith($('<div>' + parentEl.innerHTML + '</div>'));
+    })
+  </script>
   
 
 </head>
