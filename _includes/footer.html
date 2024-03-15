@@ -6,4 +6,19 @@
     {% capture currentyear %}{{ 'now' | date: "%Y" }}{% endcapture %}
     <span>© {{ currentyear }}</span>
   </a>
+
+  <script>
+    let pseudocodes = document.querySelectorAll(".language-pseudocode");
+    let options = {
+        lineNumber: true
+    };
+    pseudocodes.forEach((pse) => {
+        let code = pse.textContent;
+        let parentEl = pse.parentElement;
+        pseudocode.render(code, parentEl, options);
+        pse.remove();
+        $(parentEl).replaceWith($('<div>' + parentEl.innerHTML + '</div>'));
+    })
+  </script>
+  
 </footer>
