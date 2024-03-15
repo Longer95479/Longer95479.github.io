@@ -3,8 +3,10 @@ layout: post
 title:  "ego planner grid_map"
 date:   2024-02-29 10:54:00 +0800
 categories: 
+    - fast-drone
     - slam
     - ros
+    - c++
 ---
 
 - `FSM` 最顶层 -> 
@@ -78,7 +80,43 @@ mp_.unknown_flag_ = 0.01;
 - 在 `local_bound` 范围内的体素膨胀，并更新占用状态，先清零后使用 `阈值 min_occupancy_log_` 判断占用情况（涉及 `occupancy_buffer_inflate_` 变量）
 
 ---
-[`Mat::convertTo`](https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html#mat-convertto)
 
+[`Mat::convertTo`: Converts an array to another data type with optional scaling.](https://docs.opencv.org/2.4/modules/core/doc/basic_structures.html#mat-convertto)
+
+---
+
+在初始化部分，为 `message filter synchronizer` 绑定回调函数，使用了如下代码：
+
+```c++
+/* 初始化 synchronizer */
+sync_image_pose_.reset(new message_filters::Synchronizer<SyncPolicyImagePose>(
+        SyncPolicyImagePose(100), *depth_sub_, *pose_sub_));
+
+/* 绑定回调函数 */
+sync_image_pose_->registerCallback(boost::bind(&GridMap::depthPoseCallback, this, _1, _2));
+```
+
+其中用到了 `boost::bind`，其用于`绑定成员函数`的具体规则如下：
+- 类的成员函数不同于普通的函数，因为成员函数指针不能直接调用operator(),它必须被绑定到一个对象或指针，然后才能得到this指针进而调用成员函数。因此bind需要 “牺牲”一个占位符，要求提供一个类的实例、引用或者指针，通过对象作为第一个参数来调用成员函数，即
+    ```c++
+    bind(&X::func,x,_1,_2,…)
+    ```
+- 这意味着使用成员函数时只能最多绑定8个参数。例如，有一个类demo
+    ```c++
+    struct demo{
+     int f(int a,int b){return a+b;}
+    };
+    ```
+    那么，下面的bind表达式都是成立的：
+    ```c++
+    demo a,&ra = a;    //类的实例对象和引用
+    demo * p = & a;     //指针
+    cout<<bind(&demo::f,a,_1,20)(10)<<endl;
+    cout<<bind(&demo::f,ra,_2,_1)(10,20)<<endl;
+    cout<<bind(&demo::f,p,_1,_2)(10,20)<<endl;
+    ```
+- 注意：我们`必须在成员函数前面加上取地址的操作符&`，表明这是一个成员函数指针，否则会无法编译通过，这是与绑定函数的一个小小的不同。bind同样支持绑定虚拟成员函数，用法与非虚函数相同，虚函数的行为将由实际调用发生时的实例来决定。
+
+参考：[Boost::bind使用详解](https://www.cnblogs.com/blueoverflow/p/4740093.html)
 
 
