@@ -9,9 +9,9 @@ categories:
 
 如何让一架无人机跟随墙壁飞行呢？
 
-6
+7
 
-```pseudocode
+```pseudo
 % This quicksort algorithm is extracted from Chapter 7, Introduction to Algorithms (3rd edition)
 \begin{algorithm}
 \caption{Quicksort}
