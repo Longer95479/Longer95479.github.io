@@ -39,6 +39,14 @@ categories:
     \end{algorithm}
 </pre>
 
+<pre id="c++ test">
+int main(void)
+</pre>
+
+```c++
+int main(void)
+```
+
 - [Project 2: Robot Wall Following by Reinforcement Learning](https://hcr.cs.umass.edu/courses/compsci603/projects/Compsci_603_Project2_WF.pdf)
 - [Chapter 9. Motion Planning in Simple Geometric Spaces](http://motion.cs.illinois.edu/RoboticSystems/GeometricMotionPlanning.html)
 
