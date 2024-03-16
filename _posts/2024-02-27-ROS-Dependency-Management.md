@@ -2,10 +2,11 @@
 layout: post
 title:  "ROS Dependency Management"
 date:   2024-02-27 19:05:00 +0800
-categories: 
+tags: 
   - slam
-  - ros
+  - ROS
   - xml
+categories:
 ---
 
 ## package.xml

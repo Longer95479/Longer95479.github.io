@@ -2,11 +2,13 @@
 layout: post
 title:  "ego planner grid_map"
 date:   2024-02-29 10:54:00 +0800
-categories: 
+tags: 
     - fast-drone
     - slam
-    - ros
+    - ROS
     - c++
+categories:
+    - fast-drone
 ---
 
 - `FSM` 最顶层 -> 

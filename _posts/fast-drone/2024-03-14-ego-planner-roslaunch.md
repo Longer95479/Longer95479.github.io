@@ -2,10 +2,12 @@
 layout: post
 title:  "ego planner roslaunch"
 date:   2024-02-29 10:54:00 +0800
-categories: 
+tags: 
     - fast-drone
-    - ros
+    - ROS
     - xml
+categories:
+  - fast-drone
 ---
 
 以下是 `advanced_param.xml` 的简略版本：

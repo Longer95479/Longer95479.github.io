@@ -13,6 +13,7 @@
   </div>
 
   {% if paginator.total_pages > 1 %}
+  <div>
   <div class="pagination">
     {% if paginator.previous_page == 1 %}
     <a href="{{ '/' | prepend: site.baseurl | replace: '//', '/' }}" class="page-item">&laquo;</a>
@@ -32,6 +33,7 @@
     <span class="page-item">&raquo;</span>
     {% endif %}
   </div>
+  </div>
   {% endif %} {% include footer.html %}
 
   {% if site.google_analytics %}
@@ -39,7 +41,12 @@
   {% endif %}
 
   <script>
-    pseudocode.renderClass("pseudocode");
+    pseudocode.renderClass("pseudocode",
+                          {
+                            scopeLines: true,
+                            lineNumber: true,
+                            noEnd: false
+                          });
   </script>
 
 </body>
