@@ -37,7 +37,7 @@ categories:
   </node>
 </launch>
 ```
-- 对于 `</node>` 标签，`type=` 指明`可执行文件`，`name = ` 用作 node 运行后使用 `rosnode list` 列出的节点的名字
+- 对于 `</node>` 标签，`type=` 指明 `可执行文件`，`name = ` 用作 node 运行后使用 `rosnode list` 列出的节点的名字
 - `remap` 中的 `from` 是 node 自己以为订阅的，`to` 是实际上订阅的
 - `"~grid_map/odom"` 中的波浪线表示节点的私有命名空间，因此等价于 `"drone_$(arg drone_id)_ego_planner_node/grid_map/odom"`
     - 实例：`/drone_0_ego_planner_node/grid_map/depth`
