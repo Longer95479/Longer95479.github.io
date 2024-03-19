@@ -24,9 +24,15 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
     \IF{has\_reached\_waypoint}
     \FOR{all pt\_end$^{body}$ $\in$ pts\_end$^{body}$}
         \STATE pt\_end = pt\_end$^{body}$ $\cdot R_{body}^w$
-        \STATE Occupied\_pts.\CALL{push-back}{\CALL {Ray-casting}{body\_position, pt\_end}}
+        \STATE raycaster.\CALL {Set-input}{body\_position/resolution, pt\_end/resolution}
+        \WHILE {raycaster. \CALL {step}{ray\_pt}}
+            \IF {\CALL {is-known-occupied}{ray\_pt}}
+                \STATE Occupied\_pts.\CALL{push-back}{ray\_pt}
+            \ENDIF
+        \ENDWHILE
     \ENDFOR
     \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
+    \STATE Occupied\_pts.\CALL{clean}{}
     \STATE next\_way\_point = $R_{body}^w \vec{p} + d_w \frac{\vec{v}}{||\vec{v}||}$
     \IF{\CALL {is-known-occupied}{next\_way\_point}}
         \STATE next\_way\_point = \CALL {Ray-casting}{body\_position, next\_way\_point}
@@ -70,6 +76,10 @@ NED (North-East-Down) convenstion is used as that of body frame in PX4, but NWU 
 
 In ego-planner (or fast-drone-250), planner node subscribes `entrinsic` topic and `depthOdom` synchronizer in order to compute the `cam_r` and `cam_pos` using entrinsic and odom (body frame) translation.
 
+
+### Modification in fast-drone source code
+
+`Wall follower` calss should be added in `EGOPlannerManager` class, rather than creating a new nodes, as `GridMap::Ptr grid_map_` can only be observable in `EGOPlannerManager` class and can be reused.
 
 ### Reference
 
