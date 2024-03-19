@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "ego planner grid_map"
+title:  "ego planner grid-map"
 date:   2024-02-29 10:54:00 +0800
 tags: 
     - fast-drone
