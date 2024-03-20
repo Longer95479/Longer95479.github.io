@@ -145,6 +145,9 @@ dt {
 // ul li {
 //   list-style-image:url('../assets/bullet.png');
 // }
+ul.index li.index {
+  list-style-image:url('../assets/bullet.png');
+}
 
 blockquote {
   color: $blockquote-color;
