@@ -10,7 +10,7 @@ categories:
 
 The way to write and render pseudocode in personal site  will be introduced in this blog.
 
-### I. Using MathJax 3.x to render formula
+## I. Using MathJax 3.x to render formula
 
 Include the following in the `<head>` of your page:
 
@@ -31,7 +31,7 @@ Include the following in the `<head>` of your page:
 </script>
 ```
 
-### II. Grab pseudocode.js
+## II. Grab pseudocode.js
 
 Include the following in the `<head>` of your page:
 
@@ -41,7 +41,7 @@ Include the following in the `<head>` of your page:
 </script>
 ```
 
-### III. Write your pseudocode inside a `<pre>`
+## III. Write your pseudocode inside a `<pre>`
 
 We assume the pseudocode to be rendered is in a `<pre>` DOM element. Here is an example that illustrates a quicksort algorithm:
 
@@ -75,7 +75,7 @@ We assume the pseudocode to be rendered is in a `<pre>` DOM element. Here is an 
 </pre>
 ```
 
-### IV. Render the element or class using pseudocode.js
+## IV. Render the element or class using pseudocode.js
 
 Insert the following Javascript snippet at the end of your document:
 
@@ -92,7 +92,7 @@ Insert the following Javascript snippet at the end of your document:
     </script>
     ```
 
-### Example
+## Example
 <pre id="quicksort" class="pseudocode">
     % This quicksort algorithm is extracted from Chapter 7, Introduction to Algorithms (3rd edition)
     \begin{algorithm}
@@ -164,7 +164,7 @@ Insert the following Javascript snippet at the end of your document:
 </pre>
 
 
-### Reference
+## Reference
 - [`pseudocode.js` Quick Start](https://github.com/SaswatPadhi/pseudocode.js/blob/master/README.md)
 - [Beautiful pseudocode for the Web](https://saswat.padhi.me/pseudocode.js/)
 - [如何在博客中插入算法伪代码](https://zjuguoshuai.gitlab.io/2019/04/26/blog-pseudocode.html)

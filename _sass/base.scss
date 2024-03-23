@@ -18,9 +18,9 @@ body {
   background: $body-background url("../assets/bkg.png") 0 0;
   // background: $body-background url("https://www.bay12games.com/dwarves/imgs/bgstone.jpg") 0 0;
   color: $body-foreground;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
-  font-family: monospace, Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: "Courier New", monospace, Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
 /* General & 'Reset' Stuff */

@@ -23,7 +23,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 \FUNCTION{Find-next-waypoint-for-wall-following}{pts\_end $^{body}$}
     \IF{has\_reached\_waypoint}
     \FOR{all pt\_end$^{body}$ $\in$ pts\_end$^{body}$}
-        \STATE pt\_end = pt\_end$^{body}$ $\cdot R_{body}^w$
+        \STATE pt\_end = pt\_end$^{body}$ $\cdot R_{body}^w + t_{body}^w$
         \STATE raycaster.\CALL {Set-input}{body\_position/resolution, pt\_end/resolution}
         \WHILE {raycaster. \CALL {step}{ray\_pt}}
             \IF {\CALL {is-known-occupied}{ray\_pt}}
@@ -55,7 +55,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 </pre>
 
 
-### FOV points initialization
+## FOV points initialization
 
 <pre class="pseudocode">
 \begin{algorithm}
@@ -77,11 +77,93 @@ NED (North-East-Down) convenstion is used as that of body frame in PX4, but NWU 
 In ego-planner (or fast-drone-250), planner node subscribes `entrinsic` topic and `depthOdom` synchronizer in order to compute the `cam_r` and `cam_pos` using entrinsic and odom (body frame) translation.
 
 
-### Modification in fast-drone source code
+## Modification in fast-drone source code
 
-`Wall follower` calss should be added in `EGOPlannerManager` class, rather than creating a new nodes, as `GridMap::Ptr grid_map_` can only be observable in `EGOPlannerManager` class and can be reused.
+`Wall follower` calss should be added in `EGOPlannerManager` class, rather than creating a new nodes, as `GridMap::Ptr grid_map_` can only be observable in `EGOPlannerManager` class to be reused.
 
-### Reference
+### Three steps need to be done while adding a new package in the catkin workspace to develop a project
+
+1. create a new package, including writing `package.xml, Cmakelists.txt, *.cpp, *.h` files.
+2.  Modify .cpp .h of the package which depend on the new one.
+    - add `#include` into `.h` of the package using the new one
+    - add initialization function of new package into `.cpp` of the package using the new one
+3. Modify `package.xml Cmakelists.txt` of the package using the new one
+
+More details is shown as follow.
+
+### wall_follower.h and wall_follower.h under wall_follower dir
+
+wall_follower.cpp: 
+
+- Move `ptsEndFovGeneration()` from class `WallFollower` to `WallFollower::PtsEndFov`, and modify corsponding varias name (e.g. `X_` to `X = pts_end_fov_ptr->X_;`)
+- add some param print
+- Move `pts_end_fov_pub_` from `WallFollower::WallFollower(ros::NodeHandle& nh, GridMap::Ptr& grid_map_ptr)` to `WallFollower::PtsEndFov::PtsEndFov(ros::NodeHandle& nh)`
+- **fix a bug** in the function `void WallFollower::PtsEndFov::publicPtsEndFov()`
+    ```c++
+    327      for (auto& pt_end_world: pts_end_world) {
+    328          pt.x = pt_end_world(0);
+    329          pt.y = pt_end_world(1);
+    330          pt.z = pt_end_world(2);
+    331 +        cloud.push_back(pt);
+    332      }
+
+    ```
+- **fix the logic** of projecting `pts_end_body_` to `pts_end_world_` by varify odom before using it.
+    ```c++
+    199 +    if (grid_map_ptr_->md_.has_odom_) {
+    ...
+    214 +        for (auto& pt_end: pts_end) {
+    215 +            pt_end = camera_r_m * pt_end + camera_pos;
+    216 +        }
+    ...
+    221 +        pts_end_fov_ptr_->pts_end_world_ = pts_end;
+    222 +    }
+    ```
+
+wall_follower.h: 
+
+
+
+
+### grid_map.h and grid_map.cpp under plan_env fir
+
+All modification in this file is to make `camera_pos_` and `camera_r_m_` update and observable for projecting `pts_end_body_` to `pts_end_world_` in `wall_follwer.cpp`
+
+grid_map.h: 
+
+- make `mp_` and `md_` public
+    ```c++
+    9 -private:
+    10    MappingParameters mp_;
+    11   MappingData md_;
+    12  
+    13 +  private:
+    14 +
+    ```
+
+grid_map.cpp: 
+
+- add oritation update in `void GridMap::odomCallback(const nav_msgs::OdometryConstPtr &odom)`
+    ```c++
+    22 @@ -735,6 +735,11 @@ void GridMap::odomCallback(const nav_msgs::OdometryConstPtr &odom)
+    23    md_.camera_pos_(1) = odom->pose.pose.position.y;
+    24    md_.camera_pos_(2) = odom->pose.pose.position.z;
+    25  
+    26 +  md_.camera_r_m_ = Eigen::Quaterniond(odom->pose.pose.orientation.w,
+    27 +                                       odom->pose.pose.orientation.x,
+    28 +                                       odom->pose.pose.orientation.y,
+    29 +                                       odom->pose.pose.orientation.z).toRotationMatrix();
+    30 +
+    31    md_.has_odom_ = true;
+    32  }
+    ```
+
+### ego_replan_fsm.h and ego_replan_fsm.cpp under plan_manage dir
+
+### package.xml and CmakeLists.txt under plan_manage dir
+
+
+## Reference
 
 - [Project 2: Robot Wall Following by Reinforcement Learning](https://hcr.cs.umass.edu/courses/compsci603/projects/Compsci_603_Project2_WF.pdf)
 - [Chapter 9. Motion Planning in Simple Geometric Spaces](http://motion.cs.illinois.edu/RoboticSystems/GeometricMotionPlanning.html)
@@ -89,9 +171,9 @@ In ego-planner (or fast-drone-250), planner node subscribes `entrinsic` topic an
 
 ---
 
-### Debug log
+## Debug log
 
-#### - Invalid use of non-static data member
+### Invalid use of non-static data member
 
 Nested classes are not connected to any instance of the outer class.
 
@@ -112,7 +194,7 @@ class WallFollower {
 
 [stackoverflow: invalid use of non-static data member](https://stackoverflow.com/questions/9590265/invalid-use-of-non-static-data-member)
 
-#### - No matching function for call to ‘ros::NodeHandle::param’
+### No matching function for call to ‘ros::NodeHandle::param’
 
 ```c++
 nh.param("wall_follower/f", f_, 100);
@@ -129,7 +211,7 @@ The correction is shown as below:
 nh.param("wall_follower/f", f_, 100.0);
 ```
 
-#### - Why catkin_make make nothing change after I edited the source code
+### Why catkin_make make nothing change after I edited the source code
 
 Answer in [ROS Answers](https://answers.ros.org/question/331239/why-does-not-catkin_make-work/): 
 > I understand it as both your src folder contains files with the same names and same CMakeList but only some lines of code differs between the two. That being said when you run catkin_make after swapping your folders catkin doesn't notice any change in your files (I don't really know how, probably CMake related, but if someone can enlighten me on this part) so if nothing has changed catkin won't rebuild everything as usual.
@@ -142,7 +224,7 @@ My problem has been solved following "Delete the build and devel folder each tim
 
 
 
-#### - `WallFollower::~WallFollower()' is defined multiple times
+### `WallFollower::~WallFollower()' is defined multiple times
 
 I wrote deconstruct function outside the class in .h file, 
 which should be enclosed by class that it belong to.
