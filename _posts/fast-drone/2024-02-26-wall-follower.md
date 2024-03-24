@@ -22,7 +22,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 \OUTPUT next\_way\_point
 \FUNCTION{Find-next-waypoint-for-wall-following}{pts\_end $^{body}$}
     \IF{has\_reached\_waypoint}
-    \FOR{all pt\_end$^{body}$ $\in$ pts\_end$^{body}$}
+    \FOR{$\mathbf{each}$ pt\_end$^{body}$ $\in$ pts\_end$^{body}$}
         \STATE pt\_end = pt\_end$^{body}$ $\cdot R_{body}^w + t_{body}^w$
         \STATE raycaster.\CALL {Set-input}{body\_position/resolution, pt\_end/resolution}
         \WHILE {raycaster. \CALL {step}{ray\_pt}}
@@ -33,7 +33,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
     \ENDFOR
     \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
     \STATE Occupied\_pts.\CALL{clean}{}
-    \STATE next\_way\_point = $R_{body}^w \vec{p} + d_w \frac{\vec{v}}{||\vec{v}||}$
+    \STATE next\_way\_point = $R_{body}^w \vec{p} +$ \CALL {Sign}{(body\_position - $\vec{p}$) $\cdot \vec{v}$} $\cdot d_w  \frac{\vec{v}}{||\vec{v}||}$
     \IF{\CALL {is-known-occupied}{next\_way\_point}}
         \STATE next\_way\_point = \CALL {Ray-casting}{body\_position, next\_way\_point}
         \STATE next\_way\_point = body\_position + k $\cdot$ (next\_way\_point - body\_position)
@@ -119,6 +119,7 @@ wall_follower.cpp:
     221 +        pts_end_fov_ptr_->pts_end_world_ = pts_end;
     222 +    }
     ```
+- add `odom_sub_`
 
 wall_follower.h: 
 
@@ -143,9 +144,10 @@ grid_map.h:
 
 grid_map.cpp: 
 
-- add oritation update in `void GridMap::odomCallback(const nav_msgs::OdometryConstPtr &odom)`
+- ~~add oritation update in `void GridMap::odomCallback(const nav_msgs::OdometryConstPtr &odom)`~~ The reason why this change was reversed is that extrinsic of exp and sim are different. subscribing `grid_map/odom` in wall_follower.cpp directly instead of using `grid_map_ptr_->md.camera_pos_` and `grid_map_ptr_->md.camera_r_m_`
     ```c++
     22 @@ -735,6 +735,11 @@ void GridMap::odomCallback(const nav_msgs::OdometryConstPtr &odom)
+    {
     23    md_.camera_pos_(1) = odom->pose.pose.position.y;
     24    md_.camera_pos_(2) = odom->pose.pose.position.z;
     25  
