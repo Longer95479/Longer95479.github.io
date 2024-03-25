@@ -28,10 +28,10 @@ body {
 /* General & 'Reset' Stuff */
 
 .container {
-  width: 90%;
+  width: 80%;
   max-width: 800px;
   margin: auto;
-  padding: 1.5em 2.5em;
+  padding: 1.5em 1.8em;
   // border: 1px dashed #63f56d;
   background: $body-background  url("/assets/bkg.png") 0 0;
 }
@@ -280,6 +280,14 @@ a:active, a:focus {
   height: 50px;
   line-height: 50px;
   text-align: center;
+}
+
+.pagination {
+  background: $body-background  url("/assets/bkg.png") 0 0;
+  margin: -1px auto;
+  padding: 0.1em 0;
+  width: 93%;
+  max-width: 850px;
 }
 
 #wrapper {
