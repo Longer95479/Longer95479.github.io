@@ -5,6 +5,7 @@ date:   2024-03-16 21:05:00 +0800
 tags: 
     - motion planning
 categories:
+    - fast-drone
 ---
 
 How to make a drone follow a wall while flying?
@@ -97,15 +98,18 @@ wall_follower.cpp:
 
 - Move `ptsEndFovGeneration()` from class `WallFollower` to `WallFollower::PtsEndFov`, and modify corsponding varias name (e.g. `X_` to `X = pts_end_fov_ptr->X_;`)
 - add some param print
-- Move `pts_end_fov_pub_` from `WallFollower::WallFollower(ros::NodeHandle& nh, GridMap::Ptr& grid_map_ptr)` to `WallFollower::PtsEndFov::PtsEndFov(ros::NodeHandle& nh)`
-- **fix a bug** in the function `void WallFollower::PtsEndFov::publicPtsEndFov()`
+- Move `pts_end_fov_pub_` from constructor of `WallFollower` to that of `WallFollower::PtsEndFov`
+- **fix a bug** in the function `publicPtsEndFov()`
     ```c++
+        void WallFollower::PtsEndFov::publicPtsEndFov()
+    ... {
     327      for (auto& pt_end_world: pts_end_world) {
     328          pt.x = pt_end_world(0);
     329          pt.y = pt_end_world(1);
     330          pt.z = pt_end_world(2);
     331 +        cloud.push_back(pt);
     332      }
+    ... }
 
     ```
 - **fix the logic** of projecting `pts_end_body_` to `pts_end_world_` by varify odom before using it.

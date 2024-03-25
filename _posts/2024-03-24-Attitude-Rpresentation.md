@@ -10,6 +10,8 @@ categories:
 Coordinate transformation: map a vector expressed in the coordinate frames $\mathcal{I}$ to the same vector expressed in $\mathcal{B}$, i.e. map $_I\vec{r}$ to $_B\vec{r}$
 
 $$
+\begin{align}
+&
 \begin{pmatrix}
 \vec{e}^B_x & \vec{e}^B_x & \vec{e}^B_x
 \end{pmatrix}
@@ -17,7 +19,9 @@ $$
 c_1\\
 c_2\\
 c_3
-\end{pmatrix} = 
+\end{pmatrix} \\
+=
+&
 \begin{pmatrix}
 \vec{e}^I_x & \vec{e}^I_x & \vec{e}^I_x
 \end{pmatrix}
@@ -29,11 +33,14 @@ c_1\\
 c_2\\
 c_3
 \end{pmatrix}
+\end{align}
 $$
 
 linear transformation: map a vector to another vector which both expressed in the same coordinate frame (i.e. $\mathcal{I}$)
 
 $$
+\begin{align}
+&
 \begin{pmatrix}
 \vec{e}^I_x & \vec{e}^I_x & \vec{e}^I_x
 \end{pmatrix}
@@ -41,7 +48,9 @@ $$
 c_1\\
 c_2\\
 c_3
-\end{pmatrix} \rightarrow
+\end{pmatrix} \\
+\rightarrow
+&
 \begin{pmatrix}
 \vec{e}^I_x & \vec{e}^I_x & \vec{e}^I_x
 \end{pmatrix}
@@ -53,4 +62,5 @@ c_1\\
 c_2\\
 c_3
 \end{pmatrix}
+\end{align}
 $$
