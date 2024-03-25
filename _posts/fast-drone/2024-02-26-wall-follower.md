@@ -79,7 +79,7 @@ In ego-planner (or fast-drone-250), planner node subscribes `entrinsic` topic an
 
 ## Modification in fast-drone source code
 
-`Wall follower` calss should be added in `EGOPlannerManager` class, rather than creating a new nodes, as `GridMap::Ptr grid_map_` can only be observable in `EGOPlannerManager` class to be reused.
+`Wall follower` class should be added in `EGOPlannerManager` class, rather than creating a new nodes, as `GridMap::Ptr grid_map_` can only be observable in `EGOPlannerManager` class to be reused.
 
 ### Three steps need to be done while adding a new package in the catkin workspace to develop a project
 
