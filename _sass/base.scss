@@ -15,8 +15,10 @@ $blockquote-border: $dove-grey !default;
 body {
   margin: 0;
   padding: 0;
-  background: $body-background url("../assets/bkg.png") 0 0;
+  // background: $body-background url("../assets/bkg.png") 0 0;
   // background: $body-background url("https://www.bay12games.com/dwarves/imgs/bgstone.jpg") 0 0;
+  background: $body-background url("/assets/dfmap-back.png") 0 0;
+  // background: $body-background url("https://immortalqx.github.io/medias/featureimages/20.jpg") 0 0;
   color: $body-foreground;
   font-size: 14px;
   line-height: 1.45;
@@ -28,7 +30,10 @@ body {
 .container {
   width: 90%;
   max-width: 800px;
-  margin: 0 auto;
+  margin: auto;
+  padding: 2%;
+  // border: 1px dashed #63f56d;
+  background: $body-background  url("/assets/bkg.png") 0 0;
 }
 
 
@@ -55,7 +60,11 @@ header {
   background: rgba(0, 0, 0, 0.1);
   border-bottom: 1px dashed $conifer; //header;
   padding: 20px;
-  margin: 0 0 40px 0;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 900px;
+  // background: no-repeat center/65% url("/assets/bkg.png");
+  background: url("/assets/bkg.png");
 }
 
 .header-links {
