@@ -6,8 +6,8 @@
 @import "default_colors";
 
 $body-background: $cod-grey !default;
-// $body-foreground: $gallery !default;
-$body-foreground: #d2d2d2 !default;
+$body-foreground: $gallery !default;
+// $body-foreground: #d2d2d2 !default;
 $header: $conifer !default;
 $blockquote-color: $silver-chalice !default;
 $blockquote-border: $dove-grey !default;
@@ -18,7 +18,7 @@ body {
   background: $body-background url("../assets/bkg.png") 0 0;
   // background: $body-background url("https://www.bay12games.com/dwarves/imgs/bgstone.jpg") 0 0;
   color: $body-foreground;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   font-family: "Courier New", monospace, Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
