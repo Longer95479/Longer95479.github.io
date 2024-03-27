@@ -235,3 +235,7 @@ My problem has been solved following "Delete the build and devel folder each tim
 I wrote deconstruct function outside the class in .h file, 
 which should be enclosed by class that it belong to.
 
+### static member function
+
+class members should not be used in static member function, as there is no instance while using a static member function.
+

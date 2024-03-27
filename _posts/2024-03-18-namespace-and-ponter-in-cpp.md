@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Namespace and ponter in cpp"
+title:  "Namespace and pointer in cpp"
 date:   2024-03-18 18:33:00 +0800
 tags: 
   - c++
