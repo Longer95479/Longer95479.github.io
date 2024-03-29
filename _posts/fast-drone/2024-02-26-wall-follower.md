@@ -32,14 +32,16 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
             \ENDIF
         \ENDWHILE
     \ENDFOR
-    \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
-    \STATE Occupied\_pts.\CALL{clean}{}
-    \STATE next\_way\_point = $R_{body}^w \vec{p} +$ \CALL {Sign}{(body\_position - $\vec{p}$) $\cdot \vec{v}$} $\cdot d_w  \frac{\vec{v}}{||\vec{v}||}$
+    \IF {Occupied\_pts.\CALL {Size}{} > certain\_threshold}
+        \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
+        \STATE next\_way\_point = $R_{body}^w \vec{p} +$ \CALL {Sign}{(body\_position - $\vec{p}$) $\cdot \vec{v}$} $\cdot d_w  \frac{\vec{v}}{||\vec{v}||}$
+    \ENDIF
     \IF{\CALL {is-known-occupied}{next\_way\_point}}
         \STATE next\_way\_point = \CALL {Ray-casting}{body\_position, next\_way\_point}
         \STATE next\_way\_point = body\_position + k $\cdot$ (next\_way\_point - body\_position)
         \COMMENT {0 < k < 1}
     \ENDIF
+    \STATE Occupied\_pts.\CALL{clean}{}
     \RETURN next\_way\_point
     \ENDIF
 \ENDFUNCTION
@@ -63,7 +65,9 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 \caption{pts\_end\_body\_initialization}
 \begin{algorithmic}
 
-\FUNCTION {Pts-end-body-initialization}{}
+\FUNCTION {Pts-end-body-initialization}{f,deltaY,deltaZ,X}
+
+width_idx = (int)std::ceil(f_/X_ * deltaY_)
 
 \ENDFUNCTION
 
@@ -238,4 +242,17 @@ which should be enclosed by class that it belong to.
 ### static member function
 
 class members should not be used in static member function, as there is no instance while using a static member function.
+
+### std::vector can't be access the element whose index out of range
+
+if there are not elements pushed back (i.e. vector is clear), any elements can't be accessed using index.
+
+
+### If no occupied points, it shouldn't use planeFitting()
+ 
+ ```c++
+rand()%occupied_pts.size(); //will be rand()%0, wrong! 
+ ```
+
+### Invalid argument passed to canTransform argument source_frame in tf2 frame_ids cannot be empty
 

@@ -36,7 +36,7 @@ c_3
 \end{align}
 $$
 
-linear transformation: map a vector to another vector which both expressed in the same coordinate frame (i.e. $\mathcal{I}$)
+linear transformation: map a vector to another vector which both are expressed in the same coordinate frame (i.e. $\mathcal{I}$)
 
 $$
 \begin{align}

@@ -7,7 +7,7 @@ tags:
 categories:
 ---
 
-Use pointer to creat and acess nested class or struct instance.
+Use pointer to creat and access nested class or struct instance.
 
 ```c++
 #include <iostream>
