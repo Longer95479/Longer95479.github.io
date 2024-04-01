@@ -19,7 +19,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 
 \REQUIRE pts\_end $^{body}$ are initialzed
 \ENSURE some postconditions
-\INPUT pts\_end $^{body}$, $\vec{p} \in$ pts\_end $^{body}$
+\INPUT pts\_end $^{body}$, $\vec{p} \in$ pts\_end $^{body}$, $T_{body}^w$
 \OUTPUT next\_way\_point
 \FUNCTION{Find-next-waypoint-for-wall-following}{pts\_end $^{body}$}
     \IF{has\_reached\_waypoint}
@@ -33,22 +33,45 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
         \ENDWHILE
     \ENDFOR
     \IF {Occupied\_pts.\CALL {Size}{} > certain\_threshold}
+        \COMMENT{Wall existing}
         \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
         \STATE next\_way\_point = $R_{body}^w \vec{p} +$ \CALL {Sign}{(body\_position - $\vec{p}$) $\cdot \vec{v}$} $\cdot d_w  \frac{\vec{v}}{||\vec{v}||}$
-    \ENDIF
-    \IF{\CALL {is-known-occupied}{next\_way\_point}}
+        \IF{\CALL {is-known-occupied}{next\_way\_point}}
         \STATE next\_way\_point = \CALL {Ray-casting}{body\_position, next\_way\_point}
         \STATE next\_way\_point = body\_position + k $\cdot$ (next\_way\_point - body\_position)
         \COMMENT {0 < k < 1}
+        \ENDIF
+    \ELSE
+        \COMMENT {Wall absent}
+        \STATE next\_way\_point = \CALL{Move-right-forward}{$T_{body}^w$}
     \ENDIF
     \STATE Occupied\_pts.\CALL{clean}{}
     \RETURN next\_way\_point
     \ENDIF
 \ENDFUNCTION
 
+\end{algorithmic}
+\end{algorithm}
+</pre>
+
+<pre class="pseudocode">
+\begin{algorithm}
+\caption{Ray-casting}
+\begin{algorithmic}
+
 \FUNCTION{Ray-casting}{pt\_start, pt\_end}
 \STATE to do
 \ENDFUNCTION
+
+\end{algorithmic}
+\end{algorithm}
+</pre>
+
+<pre class="pseudocode">
+\begin{algorithm}
+\caption{Plane-Fitting}
+\begin{algorithmic}
+
 \FUNCTION{Plane-Fitting}{pts}
 \STATE to do
 \ENDFUNCTION
@@ -255,4 +278,9 @@ rand()%occupied_pts.size(); //will be rand()%0, wrong!
  ```
 
 ### Invalid argument passed to canTransform argument source_frame in tf2 frame_ids cannot be empty
+
+### %0 is no define
+Just change the order of a variable
+
+### next_waypoint need to be initialized
 
