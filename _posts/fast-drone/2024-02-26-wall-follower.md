@@ -284,3 +284,19 @@ Just change the order of a variable
 
 ### next_waypoint need to be initialized
 
+```c++
+void WallFollower::findWayPointCallback(const ros::TimerEvent& /*event*/)
+{
+    if (have_odom_) {
+        if (!is_next_waypoint_initialized_) {
+            next_way_point_ = body_pos_;
+            is_next_waypoint_initialized_ = true;
+        }
+        // std::cout << "MY_DEBUG: dist = " << (body_pos_-next_way_point_).norm() << std::endl;
+        if ((body_pos_-next_way_point_).norm() < 0.5) {
+            findNextWayPoint();
+        }
+    }
+}
+```
+
