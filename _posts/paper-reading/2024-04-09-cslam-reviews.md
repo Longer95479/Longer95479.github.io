@@ -1,22 +1,117 @@
 ---
 layout: post
-title:  "a CSLAM and Mutual Localization Review"
+title:  "CSLAM and Mutual Localization"
 date:   2024-04-09 21:00:00 +0800
 tags: slam
 categories:
 ---
 
-CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 和 `全局一致的轨迹`。本篇将介绍 CSLAM 的整体框架，侧重于介绍 CSLAM 的初始化阶段，以及机器人间的相互定位。
+CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 和 `全局一致的轨迹`。本篇将介绍 CSLAM 的整体框架，侧重于 CSLAM 的初始化问题，以及机器人间的相互定位。
+
+[$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 是一个较完整的工作，包括初始化（坐标系统一）、近场状态估计和远场状态估计，且被设计成 *去中心化* 和 *分布式*。
+
+相互定位可以认为是近场状态估计，可分成 *基于地图* 和 *基于相互观测* 的方案。
+
+基于地图的方案仅仅适用于环境特征较为稠密的室内，在室外则有诸多局限性。地图环境定位的另一个问题是需要较大的通信带宽。[$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 即为地图方案。
+
+基于相互观测的方案所用传感器包括
+- 视觉：如捕捉红外灯光，marker，直接对其他无人机进行视觉等，但存在匿名性（歧义性）
+- UWB：以提供十厘米上下精度的测距信息。使用UWB测距信息也可以用于辅助定位，但是单一uwb信息并不可观，也缺乏定向信息。这使得我们需要和其他方法的融合
+
+[Omni Swarm](#omni-swarm-a-decentralized-omnidirectional-visual-inertial-uwb-state-estimation-system-for-aerial-swarms) 既使用了地图方案，也使用了相互观测方案。
+
+Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早期到最近）：
+- [*匿名条件* 下的相互定位（视觉marker）](#certifiably-optimal-mutual-localization-with-anonymous-bearing-measurements)
+- [*部分观测* 下的相对定位（视觉 + tagged LED）](#bearing-based-relative-localization-for-robotic-swarm-with-partially-mutual-observations)
+- [同时相对定位与*时间同步*（）](#simultaneous-time-synchronization-and-mutual-localization-for-multi-robot-system)
+- [匿名+部分观测（视觉检测）+ 主动](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)
+
+可以看到，最新工作同时考虑匿名和部分观测，并且使用视觉检测，以实现传感器的轻量化。
+
+**可做方向**：
+- 提高视觉检测跟踪的鲁棒性，如 [这篇文章](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements) 利用了检测框大小，可以融合一下？
+- 提高相对定位算法对视觉检测不确定的容忍阈值
+- 相对定位时间同步上，D2SLAM 未考虑时间同步，可分析一下其是否有时间同步的必要 
+    - 使用了匀速假设，可否松弛该假设？
+- 视觉检测 和 UWB都比较不稳定，如何更好地结合地图方案和相互测量方案？
+
+## 较完整系统
+
+### D2 SLAM: Decentralized and Distributed Collaborative Visual-inertial SLAM System for Aerial Swarm
+
+> T-RO 2024 已投稿
+<br>
+原文：[arXiv:2211.01538](https://arxiv.org/abs/2211.01538)
+
+以下来自 [从单机到多机的无人机与机器人集群的实时定位与建图技术（SLAM）：综述](https://zhuanlan.zhihu.com/p/608056877)
+
+> 在Racer的研究中，我又得到了不少启发：
+> 1. 自主无人机群仅仅在无人机互相距离较近的时候有相互高精度定位的必要，飞远了自然也没有必要互相避障了，这时候相对定位精度的重要性自然降低。 
+> 2. 当无人机相距较远的时候，互相并不碰面，这时候我们更关注的是全局一致性：也就是地图不能随着飞行轨迹的飞行而飘移，要飞一圈回来，飞机仍然在之前的地方，这样地图才能进行后续的应用。
+> 3. 是uwb和视觉检测用起来有时候很麻烦，容易被复杂环境干扰。我们需要一个更加可靠且通用的方案，UWB也好，视觉检测也好，可以作为“dlc”挂进去，也可以根据环境的不同不去挂载。
+
+> 在这些思考的基础上，我又加入了分布式计算的思想，做出了我博士期间的最后一个工作 $D^2$ SLAM，分布式和去中心化的联合SLAM系统。
+
+> $D^2$ SLAM根据前文做出的反思引入了两个（在我看来比较重要的）观念：
+> 1. 无人机群的“近场“状态估计(near-field state estimation），当无人机集群中的飞机距离较近，通信良好的时候，我们有必要（为了互相避障和紧密协作）也有能力建立高精度的局部定位（自身状态估计）和无人机的互相定位。我把这部分能力称作近场估计
+> 2. “远场“状态估计（far-field state estimation)，当无人机群中的飞机互相距离较远时，为了任务的完整性，我们关注的是地图全局一致性，也就是地图不能乱跑，这种能力被我称作远场估计。
+
+> $D^2$ SLAM的贡献在于良好的解决了上面的两种问题；在延续了我们已有的全向视觉的思想的同时，引入了分布式计算来改善计算效率。
 
 
-- [*匿名条件* 下的相互定位](#certifiably-optimal-mutual-localization-with-anonymous-bearing-measurements)
-- [*部分观测* 下的相对定位](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements)
-- [同时相对定位与*时间同步*](#simultaneous-time-synchronization-and-mutual-localization-for-multi-robot-system)
+针对什么问题？
+
+采用什么方法？
+
+
+达到什么效果？
+
+
+存在什么不足？
+
+- 虽然使用分布式后端，但集群规模受限于 *通信和前端计算* 能力
+- 相比之前的工作 [omni swarm](#omni-swarm-a-decentralized-omnidirectional-visual-inertial-uwb-state-estimation-system-for-aerial-swarms)，该工作更为传统，仅使用了地图方案，而未使用相对测量（视觉检测、UWB）
+
+
+### Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms
+
+> T-RO 2022
+<br>
+原文：[arXiv:2103.04131](https://arxiv.org/abs/2103.04131)
+
+
+针对什么问题？
+
+- 可观性问题
+- 复杂的初始化
+- 定位精度不足
+- 缺乏全局一致性
+
+采用什么方法？
+
+- 针对可观性：双目鱼眼（相当于全向摄像头）+ uwb
+- 针对初始化：multi-drone map-based localization
+- 针对自身与相对定位精度：VIO + visual drone tracking algorithms
+- 针对全局一致性：  multi-drone map-based localization
+
+
+达到什么效果？
+
+
+存在什么不足？
+
+- 对相机内外参标定的依赖
+- 后端算法复杂度 $O(n^2)$，
+
+
+
+## 相互定位（近场）
+
 
 
 ### FACT: Fast and Active Coordinate Initialization for Vision-based Drone Swarms
 
-> IROS 投稿
+> IROS 2024 已投稿
 <br>
 原文：[arXiv:2403.13455](https://arxiv.org/abs/2403.13455)
 <br>
@@ -99,6 +194,7 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 - 使用了 *带标签的LED* 来产生 *非匿名* 的相互观测
 - 在每个机器人内都进行了问题建模和优化求解，计算冗余了
+- 未来作者将把注意力放在，规划合适的编队，以满足相互定位可观性需求
 
 个人疑惑
 
@@ -117,6 +213,40 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 针对什么问题？
 
+- 如何仅使用匿名的相互测量和自定位里程计，实现相互定位。
+    - 相互测量是匿名的：相互观测量与接收到的里程计的对应关系并非已知
+- 局部优化方法对初值敏感
+
+采用什么方法？
+
+- 提出一个可证明的最优算法，仅使用匿名的测角测量，建模成 *混合整数二次约束二次问题（mixed-integer quadratically constrained quadratic problem, MIQCQP）*
+- 原问题松弛成 SDP 问题，以求全局最优解
+
+达到什么效果？
+
+- 可以确定方位姿态的对应关系
+- 在一定条件下能够恢复机器人之间的初始相对姿态
+- 在最优性、运行时间、鲁棒性和可扩展性上，比传统局部优化算法效果好
+- 可用于多机器人单目 SLAM 的 *地图融合（map fusion）*，以及多机任务中的 *坐标系对齐（coordinate alignment）*
+
+存在什么不足？
+
+- 使用 *动捕* 和 VIO 作为里程计估计，使用 *AprilTag* 获取测角测量
+- 作者未来工作：探索本文方法的噪声容忍阈值，为实际应用提供更有力的保证
+
+
+
+### Simultaneous Time Synchronization and Mutual Localization for Multi-robot System
+
+> ICRA 2024
+<br>
+原文：[arXiv:2311.02948](https://arxiv.org/pdf/2311.02948.pdf)
+<br>
+视频：[Simultaneous Time Synchronization and Mutual Localization for Multi-robot System](https://www.bilibili.com/video/BV1ew411r7z8/?vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
+针对什么问题？
+
+- 机器人之间的时间存在偏移
 
 采用什么方法？
 
@@ -125,6 +255,64 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 
 存在什么不足？
+
+- 使用匀速假设
+
+
+
+### A Bearing-Angle Approach for Unknown Target Motion Analysis Based on Visual Measurements
+
+> IJRR <br>
+原文：[arXiv:2401.17117](https://arxiv.org/pdf/2401.17117.pdf)
+<br>
+视频：[【IJRR最新成果】利用被忽视的视觉信息大幅提升目标定位可观性](https://www.bilibili.com/video/BV1EC411z7Lz/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
+针对什么问题？
+
+- 利用移动的单目相机，估计移动目标的运动状态
+- bearing-only 仅利用目标的三维方向信息来估计目标的运动状态，局限性在于，要求观测者具有横向高机动性以满足可观性的需求，*如何去掉横向运动的约束条件，同时保证可观性*
+
+采用什么方法？
+
+- 视觉检测算法检测到目标时，会给出一个检测框（bounding box），包含两个有用信息
+    - 检测框中心（已广泛研究）：给出指向目标的方向向量
+    - 检测框大小（未被充分发掘）：由相对距离、目标物体尺寸和相机姿态共同决定
+- 提出 bearing-angle 方法
+
+达到什么效果？
+
+- 理论分析表明，相比于传统的 bearing-only 算法，该方法显著提高可观性
+- 不需要额外的检测算法或设备，因为该方法额外利用了检测框的大小信息
+
+存在什么不足？
+
+- 该算法存在一个假设：不同视角下的物体大小不变
+    - 因此似乎很难处理目标尺寸/目标投影尺寸剧烈变化的情况
+
+
+
+### CREPES: Cooperative RElative Pose Estimation System
+
+> IROS 2023
+<br>
+原文：[arXiv:2302.01036](https://arxiv.org/abs/2302.01036)
+<br>
+视频：[CREPES: Cooperative RElative Pose EStimation towards Real-World Multi-Robot Systems](https://www.bilibili.com/video/BV1CW4y1Y79q/?spm_id_from=333.999.0.0&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
+针对什么问题？
+
+- 使用视觉进行，例如捕捉红外灯光，marker，直接对其他无人机进行visual detection等；优势是视觉测量精确的相对定位，缺点是歧义性：搞明白哪个飞机是哪个是最大的问题。
+
+采用什么方法？
+
+- 不同的灯光组合
+
+达到什么效果？
+
+
+存在什么不足？
+
+
 
 
 
@@ -139,71 +327,6 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 
 采用什么方法？
-
-
-达到什么效果？
-
-
-存在什么不足？
-
-
-
-### Simultaneous Time Synchronization and Mutual Localization for Multi-robot System
-
-> ICRA 2024
-<br>
-原文：[arXiv:2311.02948](https://arxiv.org/pdf/2311.02948.pdf)
-<br>
-视频：[Simultaneous Time Synchronization and Mutual Localization for Multi-robot System](https://www.bilibili.com/video/BV1ew411r7z8/?vd_source=e371652571b1539bbd501fb7adb6cfc4)
-
-针对什么问题？
-
-
-采用什么方法？
-
-
-达到什么效果？
-
-
-存在什么不足？
-
-
-
-### CREPES: Cooperative RElative Pose Estimation System
-
-> IROS 2023
-<br>
-原文：[arXiv:2302.01036](https://arxiv.org/abs/2302.01036)
-<br>
-视频：[CREPES: Cooperative RElative Pose EStimation towards Real-World Multi-Robot Systems](https://www.bilibili.com/video/BV1CW4y1Y79q/?spm_id_from=333.999.0.0&vd_source=e371652571b1539bbd501fb7adb6cfc4)
-
-针对什么问题？
-
-
-采用什么方法？
-
-
-达到什么效果？
-
-
-存在什么不足？
-
-
-
-
-### A Bearing-Angle Approach for Unknown Target Motion Analysis Based on Visual Measurements
-
-> IJRR <br>
-原文：[arXiv:2401.17117](https://arxiv.org/pdf/2401.17117.pdf)
-<br>
-视频：[【IJRR最新成果】利用被忽视的视觉信息大幅提升目标定位可观性](https://www.bilibili.com/video/BV1EC411z7Lz/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
-
-针对什么问题？
-
-- 估计目标的运动状态
-
-采用什么方法？
-
 
 
 达到什么效果？
