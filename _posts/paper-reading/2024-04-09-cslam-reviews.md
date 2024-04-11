@@ -10,15 +10,19 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 [$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 是一个较完整的工作，包括初始化（坐标系统一）、近场状态估计和远场状态估计，且被设计成 *去中心化* 和 *分布式*。
 
-相互定位可以认为是近场状态估计，可分成 *基于地图* 和 *基于相互观测* 的方案。
+相互定位可以认为是近场状态估计，可分成 *基于地图* 和 *基于相互观测* 的方案。相对定位若发生在最开始，则可认为是各个坐标系的统一或初始化。
 
-基于地图的方案仅仅适用于环境特征较为稠密的室内，在室外则有诸多局限性。地图环境定位的另一个问题是需要较大的通信带宽。[$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 即为地图方案。
+基于地图的方案仅仅适用于环境特征较为稠密的室内，在室外则有诸多局限性。地图环境定位的另一个问题是需要较大的通信带宽。
 
 基于相互观测的方案所用传感器包括
 - 视觉：如捕捉红外灯光，marker，直接对其他无人机进行视觉等，但存在匿名性（歧义性）
 - UWB：以提供十厘米上下精度的测距信息。使用UWB测距信息也可以用于辅助定位，但是单一uwb信息并不可观，也缺乏定向信息。这使得我们需要和其他方法的融合
 
+[$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 即为地图方案。
 [Omni Swarm](#omni-swarm-a-decentralized-omnidirectional-visual-inertial-uwb-state-estimation-system-for-aerial-swarms) 既使用了地图方案，也使用了相互观测方案。
+
+[Kimera-multi 的来龙去脉](https://www.bilibili.com/read/cv24168559/) 和 [Hydra](#foundations-of-spatial-perception-for-robotics-hierarchical-representations-and-real-time-systems)
+
 
 Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早期到最近）：
 - [*匿名条件* 下的相互定位（视觉marker）](#certifiably-optimal-mutual-localization-with-anonymous-bearing-measurements)
@@ -26,14 +30,17 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 - [同时相对定位与*时间同步*（）](#simultaneous-time-synchronization-and-mutual-localization-for-multi-robot-system)
 - [匿名+部分观测（视觉检测）+ 主动](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)
 
-可以看到，最新工作同时考虑匿名和部分观测，并且使用视觉检测，以实现传感器的轻量化。
+可以看到，最新工作同时考虑匿名和部分观测，并且使用视觉检测，以实现传感器的轻量化。这些工作，联合优化所有坐标系的相对旋转，而不是想 D2SLAM 等两两（between each pair of robots）进行坐标系对齐。
 
 **可做方向**：
-- 提高视觉检测跟踪的鲁棒性，如 [这篇文章](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements) 利用了检测框大小，可以融合一下？
-- 提高相对定位算法对视觉检测不确定的容忍阈值
+- 精简传感器，但需要提高鲁棒性
+    - 提高视觉检测跟踪的鲁棒性，如 [这篇文章](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements) 利用了检测框大小，可以融合一下
+    - 提高相对定位算法对视觉检测不确定的容忍阈值
+    - 视觉检测 和 UWB都比较不稳定，地图方案召回率低，如何更好地结合地图方案和相互测量方案？（omni-swarm 算是混合使用，但其作者并不满意）
+    - 对于地图方案，加入机间语义回环检测，提高回环检测鲁棒性，减少数据交换
 - 相对定位时间同步上，D2SLAM 未考虑时间同步，可分析一下其是否有时间同步的必要 
     - 使用了匀速假设，可否松弛该假设？
-- 视觉检测 和 UWB都比较不稳定，如何更好地结合地图方案和相互测量方案？
+- [FACT](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)等一系列基于相互测量的初始化方法并不是分布式的，算法在不同机器人上重复运行，可探索一下能否改进成分布式
 
 ## 较完整系统
 
@@ -105,9 +112,43 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 
 
+### Foundations of Spatial Perception for Robotics: Hierarchical Representations and Real-time Systems
+> IJRR
+<br>
+> [arXiv:2305.07154](https://arxiv.org/abs/2305.07154)
+
+
+针对什么问题？
+
+
+采用什么方法？
+
+
+达到什么效果？
+
+
+存在什么不足？
+
+
+### Multi S-Graphs: An Efficient Distributed Semantic-Relational Collaborative SLAM
+> 原文：[arXiv:2401.05152](https://arxiv.org/abs/2401.05152)
+
+针对什么问题？
+
+- 大多数 CSLAM 技术依赖于原始传感器测量，或诸如关键帧描述符之类的低级特征，可能导致缺乏对环境的深入理解而导致错误的回环检测
+- 交换原始测量值和低级特征占用较多通信带宽，限制了系统的可扩展性
+
+采用什么方法？
+
+
+达到什么效果？
+
+
+存在什么不足？
+
+
+
 ## 相互定位（近场）
-
-
 
 ### FACT: Fast and Active Coordinate Initialization for Vision-based Drone Swarms
 
