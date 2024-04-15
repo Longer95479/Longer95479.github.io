@@ -4,9 +4,28 @@ title:  "CSLAM and Mutual Localization"
 date:   2024-04-09 21:00:00 +0800
 tags: slam
 categories:
+    - paper reading
 ---
 
-CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 和 `全局一致的轨迹`。本篇将介绍 CSLAM 的整体框架，侧重于 CSLAM 的初始化问题，以及机器人间的相互定位。
+## 引言
+
+状态估计是机器人系统执行高级功能（路径规划、稠密地图构建）的基础，状态包括位置和姿态。单机的状态估计已经被较好地解决了，而多机则比单机更为复杂，需要自身和相互定位。
+
+CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 和 `全局一致的轨迹`，可用于自然灾害多机器人搜救、未知环境多机探索、多机器人工业巡检、农业植保等。本篇将介绍 CSLAM 的整体框架，侧重于 CSLAM 的初始化问题，以及机器人间的相互定位。
+
+先前的集群状态估计一般使用 GPS、UWB、RTK-GPS和动捕系统等外部设备，且包括中心节点集中处理数据。众多的外部设备影响实际应用的部署效率，系统对中心节点失效敏感。
+
+去中心化的集群架构（不局限于状态估计）愈发受欢迎，因为其有以下优点：
+- 无需保证所有机器人都与中心节点有稳定的通信连接，在通信受限的环境中有更强的适应性
+-  每个机器人都可以独立于团队的其余部分行动，从而使整个系统更能容忍单点故障。如果希望集群架构是去中心化的，那么其基础——状态估计，也应该是去中心化的
+
+根据上层任务和应用场景（自组装、编队飞行、未知环境探索），得出 CSLAM 的技术要求（technical requirements）：
+- 只需要机载传感器
+- 架构是去中心化的
+- 任务分配是分布式的，即计算不要冗余
+- 机器人距离较近时，需要高精度的相互定位
+- 机器人距离较远时，高精度相互定位难以获得，更重要的是保证状态估计的全局一致性
+- 高精度的自身定位，保证飞行控制的稳定性
 
 [$D^2$ SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 是一个较完整的工作，包括初始化（坐标系统一）、近场状态估计和远场状态估计，且被设计成 *去中心化* 和 *分布式*。
 
@@ -28,21 +47,28 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 - [*匿名条件* 下的相互定位（视觉marker）](#certifiably-optimal-mutual-localization-with-anonymous-bearing-measurements)
 - [*部分观测* 下的相对定位（视觉 + tagged LED）](#bearing-based-relative-localization-for-robotic-swarm-with-partially-mutual-observations)
 - [同时相对定位与*时间同步*（）](#simultaneous-time-synchronization-and-mutual-localization-for-multi-robot-system)
-- [匿名+部分观测（视觉检测）+ 主动](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)
+- [相对位姿初始化：匿名+部分观测（视觉检测）+ 主动](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)
 
-可以看到，最新工作同时考虑匿名和部分观测，并且使用视觉检测，以实现传感器的轻量化。这些工作，联合优化所有坐标系的相对旋转，而不是想 D2SLAM 等两两（between each pair of robots）进行坐标系对齐。
+可以看到，最新工作同时考虑匿名和部分观测，并且使用视觉检测，以实现传感器的轻量化。这些工作，联合优化所有坐标系的相对旋转，而不是像 D2SLAM 等框架两两（between each pair of robots）进行坐标系对齐。
 
-**可做方向**：
-- 精简传感器，但需要提高鲁棒性
-    - 提高视觉检测跟踪的鲁棒性，如 [这篇文章](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements) 利用了检测框大小，可以融合一下
-    - 提高相对定位算法对视觉检测不确定的容忍阈值
+### 可做方向
+
+- [FACT](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms) 等一系列基于相互测量的初始化方法，是将所有相对位姿作为优化变量联合优化，但并不是分布式的（是去中心化的吗？在每个节点上均运行，以我目前掌握的信息应该是去中心化的），算法在不同机器人上重复运行
+- [D2SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 是去中心化和分布式的，但未使用相互测量，且其在初始化阶段是两两进行坐标系统一的
+
+因此可探索一下能否实现 *基于相互观测量的去中心化和分布式的初始相对位姿联合优化*
+
+- 针对集群相互定位的初始化阶段，精简传感器后，防止鲁棒性下降的问题
+    - 提高视觉检测跟踪的鲁棒性，如 [bearing-angle 方法](#a-bearing-angle-approach-for-unknown-target-motion-analysis-based-on-visual-measurements) 利用了检测框大小，可以融合一下
+    - 提高相对定位算法对视觉检测不确定的容忍阈值（太笼统）
+        - 针对虚警还是漏警？
     - 视觉检测 和 UWB都比较不稳定，地图方案召回率低，如何更好地结合地图方案和相互测量方案？（omni-swarm 算是混合使用，但其作者并不满意）
-    - 对于地图方案，加入机间语义回环检测，提高回环检测鲁棒性，减少数据交换
+    - 对于地图方案，加入 *机间语义回环检测*，提高回环检测鲁棒性，减少数据交换
 - 相对定位时间同步上，D2SLAM 未考虑时间同步，可分析一下其是否有时间同步的必要 
     - 使用了匀速假设，可否松弛该假设？
-- [FACT](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms)等一系列基于相互测量的初始化方法并不是分布式的，算法在不同机器人上重复运行，可探索一下能否改进成分布式
 
-## 较完整系统
+
+## 较完整的系统
 
 ### D2 SLAM: Decentralized and Distributed Collaborative Visual-inertial SLAM System for Aerial Swarm
 
@@ -109,6 +135,12 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 - 对相机内外参标定的依赖
 - 后端算法复杂度 $O(n^2)$，
+
+
+### Decentralized Visual-Inertial-UWB Fusion for Relative State Estimation of Aerial Swarm
+
+> ICRA 2020
+> [arXiv:2003.05138](https://arxiv.org/abs/2003.05138)
 
 
 
