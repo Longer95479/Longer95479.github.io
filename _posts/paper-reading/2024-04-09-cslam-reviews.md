@@ -53,7 +53,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 ### 可做方向
 
-- [FACT](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms) 等一系列基于相互测量的初始化方法，是将所有相对位姿作为优化变量联合优化，但并不是分布式的（是去中心化的吗？在每个节点上均运行，以我目前掌握的信息应该是去中心化的），算法在不同机器人上重复运行
+- [FACT](#fact-fast-and-active-coordinate-initialization-for-vision-based-drone-swarms) 等一系列基于相互测量的初始化方法，是将所有相对位姿作为优化变量联合优化，但并不是分布式的（是去中心化的吗？在每个节点上均运行，以我目前掌握的信息应该是去中心化的），算法在不同机器人上重复运行；且不能临时扩展集群数目？
 - [D2SLAM](#d2-slam-decentralized-and-distributed-collaborative-visual-inertial-slam-system-for-aerial-swarm) 是去中心化和分布式的，但未使用相互测量，且其在初始化阶段是两两进行坐标系统一的
 
 因此可探索一下能否实现 *基于相互观测量的去中心化和分布式的初始相对位姿联合优化*
@@ -329,7 +329,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 存在什么不足？
 
-- 使用匀速假设
+- 使用匀速假设 -> 可否扩展至匀加速？
 
 
 

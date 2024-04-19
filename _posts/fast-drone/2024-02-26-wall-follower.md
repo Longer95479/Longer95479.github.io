@@ -300,3 +300,20 @@ void WallFollower::findWayPointCallback(const ros::TimerEvent& /*event*/)
 }
 ```
 
+### fix most forward point in plane
+```c++
+    /* get the point of most front in the best plane */
+    double max_temp = 0;
+    for (auto &pt: occupied_pts) {
+        double d = plane_fitter_ptr_->solveDistance(pt, last_best_plane);
+        if (d < plane_fitter_ptr_->sigma_) {
+            // double temp = body_pos_.normalization().transpose() * pt;
+            double x_local = (body_r_m_.transpose() * (pt - body_pos_))(0);
+            if (x_local > max_temp) {
+                max_temp = x_local;
+                last_best_plane.p_ = pt;
+            }
+        }
+    }
+```
+
