@@ -17,7 +17,7 @@ CSLAM 全称为 collaborative SLAM，用于估计机器人间的 `相对位姿` 
 
 去中心化的集群架构（不局限于状态估计）愈发受欢迎，因为其有以下优点：
 - 无需保证所有机器人都与中心节点有稳定的通信连接，在通信受限的环境中有更强的适应性
--  每个机器人都可以独立于团队的其余部分行动，从而使整个系统更能容忍单点故障。如果希望集群架构是去中心化的，那么其基础——状态估计，也应该是去中心化的
+-  每个机器人都可以独立于团队的其余部分行动，从而使整个系统更能容忍 *单点故障 (failures of individual robots)*。如果希望集群架构是去中心化的，那么其基础——状态估计，也应该是去中心化的
 
 根据上层任务和应用场景（自组装、编队飞行、未知环境探索），得出 CSLAM 的技术要求（technical requirements）：
 - 只需要机载传感器
@@ -104,6 +104,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 - 虽然使用分布式后端，但集群规模受限于 *通信和前端计算* 能力
 - 相比之前的工作 [omni swarm](#omni-swarm-a-decentralized-omnidirectional-visual-inertial-uwb-state-estimation-system-for-aerial-swarms)，该工作更为传统，仅使用了地图方案，而未使用相对测量（视觉检测、UWB）
+- 为了分布式优化的收敛性，未进行在线时间戳估计和外参矫正
 
 
 ### Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms
@@ -142,6 +143,14 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 > ICRA 2020
 > [arXiv:2003.05138](https://arxiv.org/abs/2003.05138)
 
+
+### Kimera-Multi: Robust, Distributed, Dense Metric-Semantic SLAM for Multi-Robot Systems
+
+> T-RO 2022
+<br>
+[arXiv:2106.14386](https://arxiv.org/abs/2106.14386)
+
+Kimera-Multi是一个分布式多机器人协同SLAM系统，对于每个单独的机器人，它们通过视觉惯性传感器使用Kimera的Kimera-VIO和 Kimera-Semantics两个模块分别估计各自的局部位姿和局部mesh，当两个机器人可以互相通讯时，*初始化*基于分布式渐进式非凸性算法（distributed graduated nonconvexity algorithm）的分布式位置识别检测和位姿图优化功能，通过机器人之间的闭环检测实现对outliers的鲁棒，最后提高位姿估计的准确性和mesh重建的精度。
 
 
 ### Foundations of Spatial Perception for Robotics: Hierarchical Representations and Real-time Systems
@@ -225,6 +234,8 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 存在什么不足？
 - 无人机数目 N 需要事先给定
 - 相对观测的误差对系统的影响未被探索和分析，作者的未来工作是提高观测噪声的阈值，以更鲁棒地处理视觉识别中的不确定性
+- 未进行机间的时间偏移估计
+- 
 
 个人疑惑
 - 建模部分公式似乎有些错误
@@ -233,7 +244,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 ### Bearing-based Relative Localization for Robotic Swarm with Partially Mutual Observations
 
-> RA-L
+> RA-L 2023
 <br>
 原文：[arXiv:2210.08265](https://arxiv.org/abs/2210.08265)
 <br>
@@ -265,9 +276,9 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 存在什么不足？
 
+- 未来作者将把注意力放在，规划合适的编队，以满足相互定位可观性需求
 - 使用了 *带标签的LED* 来产生 *非匿名* 的相互观测
 - 在每个机器人内都进行了问题建模和优化求解，计算冗余了
-- 未来作者将把注意力放在，规划合适的编队，以满足相互定位可观性需求
 
 个人疑惑
 
@@ -298,15 +309,18 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 达到什么效果？
 
 - 可以确定方位姿态的对应关系
-- 在一定条件下能够恢复机器人之间的初始相对姿态
+- 在一定条件下能够恢复机器人之间的初始相对姿态，即 $corank(Z^*) = 1$
 - 在最优性、运行时间、鲁棒性和可扩展性上，比传统局部优化算法效果好
 - 可用于多机器人单目 SLAM 的 *地图融合（map fusion）*，以及多机任务中的 *坐标系对齐（coordinate alignment）*
 
 存在什么不足？
 
 - 使用 *动捕* 和 VIO 作为里程计估计，使用 *AprilTag* 获取测角测量
-- 作者未来工作：探索本文方法的噪声容忍阈值，为实际应用提供更有力的保证
+- 作者未来工作：探索本文方法的噪声容忍阈值，为实际应用提供更有力的保证。换句话说，没噪声能够容易证明解的最优性，但如果有噪音，噪声方向不确定，多大的噪声还能保证解的最优呢？
+- 规模扩展性较差，当机器人个数为 5 时，使用 c++ 的计算时间已经达到 11 秒
+- 不是分布式的
 
+>作者在论坛上提到，当提供一些假设的时候，例如无人机之间能够互相观测，那么问题会变得简单很多，即退化成 $tr(QRR^T)$，这个问题在 PGO 方向已被研究，能够达到几千几百架的规模 
 
 
 ### Simultaneous Time Synchronization and Mutual Localization for Multi-robot System
@@ -330,6 +344,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 存在什么不足？
 
 - 使用匀速假设 -> 可否扩展至匀加速？
+- 建模、求解与实验均只针对两架无人机的场景，一架观测另一架
 
 
 
@@ -416,3 +431,30 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 原文：[arXiv:2203.03149](https://arxiv.org/abs/2203.03149)
 <br>
 视频：[DIDO: Deep Inertial Quadrotor Dynamical Odometry](https://www.bilibili.com/video/BV1dU4y1Z773/?spm_id_from=333.999.0.0&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
+
+
+## 分布式与去中心
+
+### Asynchronous Distributed Smoothing and Mapping via On-Manifold Consensus ADMM
+
+> [arXiv:2310.12320
+](https://arxiv.org/abs/2310.12320)
+
+
+### Distributed Simultaneous Localisation and Auto-Calibration using Gaussian Belief Propagation
+
+> [arXiv:2401.15036](https://arxiv.org/pdf/2401.15036.pdf)
+
+文章的 Background 部分提到，Kimera-multi 及其先前的基础工作属于 PGO-based 的工作，需要*完整的机器人之间的相对变换* 和 *只能处理各向同性协方差*
+
+
+### A Survey of Distributed Optimization Methods for Multi-Robot Systems
+
+> [arXiv:2103.12840](https://arxiv.org/abs/2103.12840)
+
+Cited in Distributed Simultaneous Localisation and Auto-Calibration using Gaussian Belief Propagation: 
+> Consensus Alternating Direction Method of Multipliers (C-ADMM) displays superior convergence rates to alternative distributed optimization approaches. 
+
+
+
