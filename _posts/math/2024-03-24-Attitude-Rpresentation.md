@@ -5,6 +5,7 @@ date:   2024-03-24 00:58:00 +0800
 tags: 
   - linear algebra
 categories:
+  - math
 ---
 
 Coordinate transformation: map a vector expressed in the coordinate frames $\mathcal{I}$ to the same vector expressed in $\mathcal{B}$, i.e. map $_I\vec{r}$ to $_B\vec{r}$

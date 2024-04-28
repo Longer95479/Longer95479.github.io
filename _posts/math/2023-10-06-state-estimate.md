@@ -4,6 +4,7 @@ title:  "State Estimate"
 date:   2023-10-06 16:00:00 +0800
 tags: slam
 categories:
+    - math
 ---
 
 ## 状态估计分类
