@@ -79,4 +79,5 @@ All the sentences not aforementioned are not WFFs.
 
 ### referfence
 
-[A Practical Introduction to NP Completeness - ucr](https://www.cs.ucr.edu/~michalis/COURSES/141/handouts/NP.html)
+- [A Practical Introduction to NP Completeness - ucr](https://www.cs.ucr.edu/~michalis/COURSES/141/handouts/NP.html)
+- [FormalLanguageTheory - matilde](https://www.its.caltech.edu/~matilde/FormalLanguageTheory.pdf)
