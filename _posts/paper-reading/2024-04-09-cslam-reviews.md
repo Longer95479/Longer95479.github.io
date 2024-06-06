@@ -135,7 +135,10 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 存在什么不足？
 
 - 对相机内外参标定的依赖
-- 后端算法复杂度 $O(n^2)$，
+    - 可做工作：构建在线错误检测和校准
+- 后端算法复杂度 $O(n^2)$，使得算法难以应用于大规模集群（超过100架 UAV）
+- 通信距离较短，限制了机间的工作距离（22.4m）
+    - 考虑路由（AODV）
 
 
 ### Decentralized Visual-Inertial-UWB Fusion for Relative State Estimation of Aerial Swarm
