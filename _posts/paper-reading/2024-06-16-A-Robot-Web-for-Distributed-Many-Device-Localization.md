@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "[Paper Reading] Online Temporal Calibration for Camera-IMU Systems: Theory and Algorithms [IJRR 2014]"
+title:  "[Paper Reading] A Robot Web for Distributed Many-Device Localisation [TRO 2024]"
 date:   2024-06-16 21:14:00 +0800
 tags: 
     - slam
