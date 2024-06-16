@@ -297,6 +297,8 @@ Kimera-Multi是一个分布式多机器人协同SLAM系统，对于每个单独�
 <br>
 原文：[arXiv:2203.09312](https://arxiv.org/abs/2203.09312)
 
+>[SupplementaryMaterials.pdf](https://github.com/ZJU-FAST-Lab/CertifiableMutualLocalization/blob/main/SupplementaryMaterials.pdf)
+
 
 针对什么问题？
 
