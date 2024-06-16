@@ -9,6 +9,8 @@ categories:
     - paper reading
 ---
 
+> [arXiv:1808.00692](https://arxiv.org/abs/1808.00692)
+
 ## 针对的问题
 
 相机时间戳与IMU时间戳存在初始的时间偏移，线程收到两个时间戳的两帧KeyFrame，在这两个时刻内进行 IMU 预积分，此时需要在 imu buffer 里检索这段时间内的 IMU 数据，若以 IMU 的时间为基准，这两个时刻实际的关键帧并不是一开始收到的那两帧，而是在空间上有所偏移-
