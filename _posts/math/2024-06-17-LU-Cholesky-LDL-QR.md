@@ -10,7 +10,7 @@ categories:
 
 > 除以一个很小的数，是影响数值稳定的一个重要来源
 
-对于满秩的矩阵 $J_{m\times n},m \geq n$,齐次超定方程 $Jx = 0$ 可以用 SVD 分解来求取最小二乘解（[解最小奇异值对应的右奇异向量](/_posts/math/2024-06-13-SVD.md)）。
+对于满秩的矩阵 $J_{m\times n},m \geq n$,齐次超定方程 $Jx = 0$ 可以用 SVD 分解来求取最小二乘解（[解最小奇异值对应的右奇异向量](longer95479.github.io/SVD)）。
 
 而对于非齐次的超定方程 $Jx = b$，则可以转化为求解
 
@@ -98,7 +98,10 @@ $L_n L_{n-1}\cdots L_1$ 等于把各个 $L_i$ 的主元下面的非零元素全�
 最后得到 LU 分解
 
 $$
-A_{m \times n} = L_{m\times m}U_{m\times n}\\
+A_{m \times n} = L_{m\times m}U_{m\times n}
+$$
+
+$$
 L=(L_n L_{n-1}\cdots L_1)^{-1}
 $$
 
@@ -117,7 +120,7 @@ $D$ 是对角矩阵
 $$
 \begin{align}
 \Lambda = LU &= LDU' \\
-& \scriptsize{利用对称的条件} \\
+& \scriptsize{利用 \Lambda 对称的条件} \\
 &= LDL^T \\
 & \scriptsize{D 是对角矩阵} \\
 &= L\sqrt{D} (\sqrt{D})^TL^T \\
@@ -129,7 +132,7 @@ $$
 
 ## LDL Factorization
 
-实对称矩正定阵 $\Lambda$（real Symmetric positive definite matrix，SPD）
+实对称正定矩阵 $\Lambda$（real Symmetric positive definite matrix，SPD）
 
 $$
 \Lambda = LU = LDU' = LDL^T
@@ -143,4 +146,4 @@ $$
 
 ## reference
 
-- [Chapter 3 QR 分解 | 数值分析笔记](https://o-o-sudo.github.io/numerical-methods/qr-.html)
+- [Chapter 3 QR 分解 - 数值分析笔记](https://o-o-sudo.github.io/numerical-methods/qr-.html)
