@@ -142,6 +142,11 @@ $$
 
 ## QR Factorization
 
+任何实方阵都可以做 QR 分解
+
+$$
+A = QR
+$$
 
 
 ## reference
