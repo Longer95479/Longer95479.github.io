@@ -83,3 +83,27 @@ separator and interior vertices
 ### BA
 
 在标准 BA 中，路标作为分割节点，此时所有位姿节点都是孤立的，不再按照是否连接划分子图，而是按位姿节点属于哪个机器人的位姿进行划分。
+
+
+## Literature Review
+
+### CSLAM Front-End
+
+主要是机间的回环检测。
+
+A complementary
+line of work develops efficient methods for distributed geometric verification.
+
+### CSLAM Back-End
+
+> 疑问：黎曼梯度和欧几里得梯度有什么区别
+
+Choudhary et al. [38] develop DGS, a two-stage approach for finding approximate
+solutions to multi-robot PGO in the distributed setting.
+- relaxing non-convex SO(d) constraints and priject result to SO(d)
+- the rotation estimaite results are then used to initialize a single Gauss-Newton interation on full PGO problem.
+
+multi-stage and besed on distributed Riemannian gradient descent
+
+
+
