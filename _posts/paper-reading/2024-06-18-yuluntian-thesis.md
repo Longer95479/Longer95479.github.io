@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "[Thesis Reading] Algorithms and Systems for Scalable Multi-Agent Geometric Estimation"
-date:   2024-06-16 21:08:00 +0800
+date:   2024-06-18 21:08:00 +0800
 tags: 
     - slam
 categories:
