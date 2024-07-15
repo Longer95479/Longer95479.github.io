@@ -9,7 +9,7 @@ categories:
 
 本篇记录 XI35 机体的组装过程，以及飞控、ORIN的配置，最终实现 fast-drone-250 的过程。
 
-所有的配件型号可在 [配件型号采购表](https://docs.qq.com/sheet/DQlVFVXBTYkpobktF?u=4ce3cf3cb1fc4960917789399c899a1a&tab=bliok2) 中找到。
+所有的 `配件型号` 及 `相关资料` 可在 [配件型号采购表](https://docs.qq.com/sheet/DQlVFVXBTYkpobktF?u=4ce3cf3cb1fc4960917789399c899a1a&tab=bliok2) 中找到。
 
 总重 540g -> 775g（安装了相机和orin）
 
@@ -32,22 +32,24 @@ categories:
 
 - 线穿过镂空部分把这几个模块都放到机架顶部
 
-- （略）M2*12固定摄像头座，M2*16固定图传天空端	
+- ~~（略）M2\*12固定摄像头座，M2\*16固定图传天空端~~
 
-- M3*6安装前六个铝柱的上部，第七个在尾部的立柱先不装（b站视频说错了，应该看三维动图）
+- M3*6安装前六个铝柱的上部，<font color="#dd0000">第七个在尾部的立柱先不装</font>（b站视频说错了，应该看三维动图）
 
-- （略）M2*12安装配重打印件
+- ~~（略）M2\*12安装配重打印件~~
 
 - 3d打印天线座安装，大的套在机架尾部，小的套在涵道圈，打印件有弹性，孔偏小，需要M3螺丝旋转	着才能穿过
 
-- 把各个数据线的飞控端都装上（tele2（连接到orin的），gps，接收机）
+- <font color="#dd0000">把各个数据线的飞控端都装上（tele2（连接到orin的），gps，接收机）</font>
 
 - 机架，七个铝柱，涵道圈，菱形底架，从上至下叠起来后从下往上安装M3*14
 
 - 调试完成后安装桨叶，使用M2*10安装
 
 - 打印相机和orin的安装连接件，都是M2，立柱也是M2，配合螺母安装
+    - orin载板安装孔是M3，使用M2立柱，导致只能用M2螺丝，螺帽太小会穿过，因此要在螺丝上加两个螺母
 
+- 
 
 ## 2 飞控配置
 
@@ -114,13 +116,14 @@ after these settings you will have 250Hz /imu/data_raw /imu/data
 - 下载镜像
 
 - 安装镜像
-    - 注意 username不能是大写字母，否则 sdkmanager 无法自动设置orin的用户名等后续的默认设置参数，进一步导致无法通过usb以太网连接orin
-    - 一切安装完成后，忘记拔掉 usb 将导致板子一直无法正常启动，外接屏幕无画面，拔掉后就一切正常
+    - <font color="#dd0000"> 注意 username不能是大写字母，否则 sdkmanager 无法自动设置orin的用户名等后续的默认设置参数，进一步导致无法通过usb以太网连接orin </font>
+
+    - <font color="#dd0000"> 一切安装完成后，忘记拔掉 usb 将导致板子一直无法正常启动，外接屏幕无画面，拔掉后就一切正常 </font>
 
 - 如果 PC 上的 ubuntu 硬盘空间不足，可外接移动硬盘，将 Download Folder 和 Target HW image folder 设置在移动硬盘（FAT）里
-    - 注意：移动硬盘的文件系统不能是 windows 的 FAT，而应该是 EXT4，否则镜像将会安装错误
+    - <font color="#dd0000"> 注意：移动硬盘的文件系统不能是 windows 的 FAT，而应该是 EXT4，否则镜像将会安装错误 </font>
 
-### ROS 安装
+### 3.2 ROS 安装
 
 参考 [从零制作自主空中机器人](https://github.com/ZJU-FAST-Lab/Fast-Drone-250/tree/master):
 
@@ -142,9 +145,94 @@ after these settings you will have 250Hz /imu/data_raw /imu/data
   * `rosrun turtlesim turtlesim_node`
   * `rosrun turtlesim turtle_teleop_key`
 
-### 
+### 3.3 realsense 驱动安装
 
-### 安装 opencv
+* `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key  F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key  F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE`
 
-如果我们在 sdkmanager 中勾选了安装 opencv 的选项，安装的版本将会是 4.5.4，但不支持 cuda 加速，此时我们下载相同版本的 opencv 源码，在 CMAKE 选项上打开支持 cuda 加速的选项，再进行编译。
+* `sudo add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" -u`
+
+* `sudo apt-get install librealsense2-dkms`
+
+* `sudo apt-get install librealsense2-utils`
+
+* `sudo apt-get install librealsense2-dev`
+
+* `sudo apt-get install librealsense2-dbg`
+
+* 测试：`realsense-viewer`
+
+* <font color="#dd0000">注意测试时左上角显示的USB必须是3.x，如果是2.x，可能是USB线是2.0的，或者插在了2.0的USB口上（3.0的线和口都是蓝色的）</font>
+
+### 3.4 安装 mavros
+
+* `sudo apt-get install ros-noetic-mavros`
+* `cd /opt/ros/noetic/lib/mavros`
+* `sudo ./install_geographiclib_datasets.sh`
+
+### 3.5 安装ceres与glog与ddyanmic-reconfigure
+
+* 解压`3rd_party.zip`压缩包
+
+* 进入glog文件夹打开终端
+
+* `sudo chmod 777 autogen.sh && sudo chmod 777 configure`
+
+* `./autogen.sh && ./configure && make && sudo make install`
+
+* `sudo apt-get install liblapack-dev libsuitesparse-dev libcxsparse3.1.2 libgflags-dev libgoogle-glog-dev libgtest-dev`
+
+* 进入ceres文件夹打开终端
+
+* `mkdir build`
+
+* `cd build`
+
+* `cmake ..`
+
+* `sudo make -j4`
+
+* `sudo make install`
+
+* `sudo apt-get install ros-noetic-ddynamic-reconfigure`
+
+<font color="#dd0000"> 注意，安装的版本是 `ceres 2.0.0` 版本，编译需使用 `std=c++14` 及以上，后续需把 vinsfusiongpu 里的所有包都改成 c++14 标准 </font>
+
+### 3.6 OpenCV 安装
+
+如果我们在 sdkmanager 中勾选了安装 opencv 的选项，安装的版本将会是 `OpenCV 4.5.4`，但不支持 cuda 加速，此时我们下载相同版本的 opencv 源码，在 CMAKE 选项上打开支持 cuda 加速的选项，再进行编译。
+
+安装过程参考 [Jetson Orin NX 开发指南（5）: 安装 OpenCV 4.6.0 并配置 CUDA 以支持 GPU 加速](https://blog.csdn.net/qq_44998513/article/details/133778446)，注意版本的不同即可，我们安装的是 4.5.4
+
+<font color="#dd0000">注意，编译支持cuda的 opencv时，cmake选项里 CUDA_ARCH_BIN=8.7，而不是 7.2 </font>
+
+### 3.7 安装 cv_bridge 功能包
+
+为什么需要自己下载 cv_bridge 源码并编译呢？
+
+安装 noetic full版本时已经下载了 cv_bridge 的二进制文件，其编译时使用的是 opencv 4.2 的函数，因此链接时需要链接到opencv 4.2的 so 文件，但 orin 上新安装的支持 cuda 加速的 opencv 是 4.5.4 版本，因此该 cv_bridge 只能链接到 4.5 版本的 opencv 库，vins 在执行到 cv_bridge 相关的函数时就无法正常执行，最后报内存溢出的错。
+
+解决办法：下载 cv_bridge 的源码，然后指定 4.5 版本的opencv进行编译，编译完成后将其路径添加到 ~/.bashrc 文件中，并刷新环境变量，具体参考 [Jetson Orin NX 开发指南（5）: 安装 OpenCV 4.6.0 并配置 CUDA 以支持 GPU 加速](https://blog.csdn.net/qq_44998513/article/details/133778446)
+
+### 3.8 下载并编译 Fast-drone-250
+
+原本需要分成两部：
+
+- clone 浙大官方的 Fast-drone-250 的仓库
+- 将其中的 vins-fusion 替换成 fins-fusion-gpu 版本
+
+为了简化操作： (TODO)
+- [ ] 把替换成 gpu 版本的 fast-drone-250 push 到 [wall-follower-fastdrone-250](https://github.com/Longer95479/wall-follower-fastdrone-250/)，**直接 clone 该仓库即可，之后进行编译**。
+
+其中所作的修改均是针对的 vins-fusion-gpu，包括：
+
+- 由于 ceres 2.0.0 需使用 std=c++14，因此把 vinsfusiongpu 里的所有包的 CMakeLists.txt 都改成 c++14 标准
+
+- 设置 OpenCV 路径为带有 GPU 加速的 opencv 4.5.4，opencv 可以指定到 `编译的文件夹` 或 `安装的文件夹`
+
+- 由于 vins-fusion-gpu 原仓库使用的是 opencv 3，而现在安装的是 opencv 4，OpenCV 4 系列和 OpenCV 3 系列有一些变量的名称发生了改变，因此我们这里只要将相应的变量名称进行修正，就能顺利通过编译
+
+- 具体参考：[Jetson Orin NX 开发指南（6）: VINS-Fusion-gpu 的编译和运行](https://blog.csdn.net/qq_44998513/article/details/133780129)
+
+
+## 3 
 
