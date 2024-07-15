@@ -14,7 +14,7 @@ categories:
 总重 540g -> 775g（安装了相机和orin）
 
 
-## 机体安装步骤
+## 1 机体安装步骤
 
 - 将电机安装到机架上，使用四个M2*6，注意机架的展望反面·上下面，孔位有凹槽的为上面
 
@@ -49,15 +49,15 @@ categories:
 - 打印相机和orin的安装连接件，都是M2，立柱也是M2，配合螺母安装
 
 
-## 飞控配置
+## 2 飞控配置
 
-### 基本配置
+### 2.1 基本配置
 
 - 测试电机转向
 
 - 遥控器和接收机对频，并在地面站校准
 
-- 配置通道功能，用于飞行模式切换、紧急停止等（注意：有三档的前两档一致）详见 https://gitee.com/jerry-ironman/px4ctrl
+- 配置通道功能，用于飞行模式切换、紧急停止等（注意：有三档的前两档一致）详见 [px4ctrl](https://gitee.com/jerry-ironman/px4ctrl)
   - 5通道2档：自稳和offboard 
   - 6通道3档：是否接受命令 
   - 7通道3档：急停 
@@ -69,7 +69,7 @@ categories:
 
 - 校准地平线
 
-### 与 ORIN 通信相关的配置
+### 2.2 与 ORIN 通信相关的配置
 
 主要参考 [Nxt-FC](https://github.com/HKUST-Aerial-Robotics/Nxt-FC?tab=readme-ov-file)，github 上的 readme 进行设置，不要按照商家给的安装教程里的进行设置。主要是配置 MAV_0 的参数
 
@@ -81,11 +81,11 @@ categories:
 - MAV_0_RATE: 92160 B/s
 
 
-### 高分辨率和高频率的 IMU 数据
+### 2.3 获得高分辨率和高频率的 IMU 数据所需的配置
 
 create file in your tf-card /etc/extras.txt
 
-```
+```shell
 mavlink stream -d /dev/ttyS3 -s ATTITUDE -r 200
 
 mavlink stream -d /dev/ttyS3 -s HIGHRES_IMU -r 1000
@@ -100,9 +100,9 @@ then using the following settings:
 
 after these settings you will have 250Hz /imu/data_raw /imu/data
 
-### ORIN NX 配置
+## 3 ORIN NX 配置
 
-#### 安装 jetpack 5.1.3 linux for jetson orin nx modules: 
+### 3.1 安装 jetpack 5.1.3 linux for jetson orin nx modules: 
 
 - 在 PC 上的 ubuntu 里安装 sdkmanager
 
@@ -120,5 +120,31 @@ after these settings you will have 250Hz /imu/data_raw /imu/data
 - 如果 PC 上的 ubuntu 硬盘空间不足，可外接移动硬盘，将 Download Folder 和 Target HW image folder 设置在移动硬盘（FAT）里
     - 注意：移动硬盘的文件系统不能是 windows 的 FAT，而应该是 EXT4，否则镜像将会安装错误
 
-#### 安装
+### ROS 安装
+
+参考 [从零制作自主空中机器人](https://github.com/ZJU-FAST-Lab/Fast-Drone-250/tree/master):
+
+* `sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'`
+
+* `sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654`
+
+* `sudo apt update`
+
+* `sudo apt install ros-noetic-desktop-full`
+
+* `echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc`
+
+* <font color="#dd0000">建议没有ROS基础的同学先去B站学习古月老师的ROS入门教程</font>
+
+测试 ROS:
+* 打开三个终端，分别输入
+  * `roscore`
+  * `rosrun turtlesim turtlesim_node`
+  * `rosrun turtlesim turtle_teleop_key`
+
+### 
+
+### 安装 opencv
+
+如果我们在 sdkmanager 中勾选了安装 opencv 的选项，安装的版本将会是 4.5.4，但不支持 cuda 加速，此时我们下载相同版本的 opencv 源码，在 CMAKE 选项上打开支持 cuda 加速的选项，再进行编译。
 
