@@ -244,7 +244,7 @@ after these settings you will have 250Hz /imu/data_raw /imu/data
 - clone 浙大官方的 Fast-drone-250 的仓库
 - 将其中的 vins-fusion 替换成 fins-fusion-gpu 版本
 
-为了简化操作： (TODO)
+为了简化操作：
 - [x] 把替换成 gpu 版本的 fast-drone-250 push 到 [Fast-Drone-XI35](https://github.com/Longer95479/Fast-Drone-XI35)，**直接 clone 该仓库即可，之后进行编译**。
 
 其中所作的修改均是针对的 vins-fusion-gpu，包括：
