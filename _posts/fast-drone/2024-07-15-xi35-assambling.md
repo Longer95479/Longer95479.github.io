@@ -90,9 +90,11 @@ categories:
 
 - 校准地平线
 
+细节参考 [NxtPX4v2开源飞控装机和配置全流程教程](https://www.bilibili.com/read/cv33197403/)
+
 ### 2.2 与 ORIN 通信相关的配置
 
-主要参考 [Nxt-FC](https://github.com/HKUST-Aerial-Robotics/Nxt-FC?tab=readme-ov-file)，github 上的 readme 进行设置，不要按照商家给的安装教程里的进行设置。主要是配置 MAV_0 的参数
+主要参考 [Nxt-FC](https://github.com/HKUST-Aerial-Robotics/Nxt-FC?tab=readme-ov-file)，github 上的 readme 进行设置，<font color="#dd0000">不要按照商家给的安装教程里的进行设置</font>。主要是配置 MAV_0 的参数
 
 - MAV_0_CONFIG: TELE2 (Serial Configuration for MAVLink (instance 0))
 - MAV_0_FLOW_CTRL: Auto-detected
