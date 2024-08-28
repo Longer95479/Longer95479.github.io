@@ -177,6 +177,10 @@ Kimera-Multi是一个分布式多机器人协同SLAM系统，对于每个单独�
 ### Multi S-Graphs: An Efficient Distributed Semantic-Relational Collaborative SLAM
 > 原文：[arXiv:2401.05152](https://arxiv.org/abs/2401.05152)
 
+- **Distributed** LiDAR-based collaborative SLAM algorithmm
+- Take advantage of the **hierachical semantic information** from situational graph(S-Graph)
+- Works in **multi-robot kidnapped problem**: Each robot does not know where it has started and where the other robots are.
+
 针对什么问题？
 
 - 大多数 CSLAM 技术依赖于原始传感器测量，或诸如关键帧描述符之类的低级特征，可能导致缺乏对环境的深入理解而导致错误的回环检测
@@ -190,6 +194,7 @@ Kimera-Multi是一个分布式多机器人协同SLAM系统，对于每个单独�
 
 存在什么不足？
 
+- What is the Distilled S-Graphs?
 
 
 ## 相互定位（近场）
