@@ -491,6 +491,8 @@ Consensus Simultaneous Localization and Mapping (CSLAM).
 back-end based on Consensus ADMM called MESA (Manifold,
 Edge-based, Separable ADMM
 
+In C-ADMM, local objective function relies on all optimaization parameters, meaning copy all variables to local.
+
 
 ### Distributed Simultaneous Localisation and Auto-Calibration using Gaussian Belief Propagation
 

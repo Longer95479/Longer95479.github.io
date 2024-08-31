@@ -80,3 +80,20 @@ LS& \sum_{j=1}^k(z_j-h(\hat{x}))^2\\
 $$
 
 贝叶斯方法认为 $x$ 是随机变量的实现，体现在公式上便是：度量函数用到了 $p(x \mid Z^k)$。
+
+
+## SLAM 中的最大后验估计
+
+$$
+\begin{align}
+\hat{x} &= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x}| Z^k)\\
+&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x},Z^k)\\
+&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(Z^k|\hat{x})p(\hat{x})\\
+&\scriptsize{各个测量独立} \\
+&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x})\prod_{z_j\in Z^k} p(z_j|\hat{x})\\
+&\scriptsize{测量噪声满足高斯分布} \\
+&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x})\sum_{z_j\in Z^k} ||z_j-h_j(\hat{x}))||_{\Sigma_j}\\
+\end{align}
+$$
+
+$h_j$ 是测量预测函数，根据状态的估计值计算期望的测量值。
