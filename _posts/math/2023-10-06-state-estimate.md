@@ -92,7 +92,7 @@ $$
 &\scriptsize{各个测量独立} \\
 &= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x})\prod_{z_j\in Z^k} p(z_j|\hat{x})\\
 &\scriptsize{测量噪声满足高斯分布} \\
-&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x})\sum_{z_j\in Z^k} ||z_j-h_j(\hat{x}))||_{\Sigma_j}\\
+&= \underset{\hat{x}}{\mathrm{arg\ max}}\ p(\hat{x})\sum_{z_j\in Z^k} ||z_j-h_j(\hat{x}))||^2_{\Sigma_j}\\
 \end{align}
 $$
 
