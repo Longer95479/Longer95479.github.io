@@ -493,6 +493,13 @@ Edge-based, Separable ADMM
 
 In C-ADMM, local objective function relies on all optimaization parameters, meaning copy all variables to local.
 
+Multiple robots may observe the same variable (e.g. two
+robots observe the same landmark). Therefore, while 𝑀𝑖
+are
+disjoint subsets of 𝑀, each Θ𝑖
+is a non-disjoint subset of Θ.
+
+
 
 ### Distributed Simultaneous Localisation and Auto-Calibration using Gaussian Belief Propagation
 
