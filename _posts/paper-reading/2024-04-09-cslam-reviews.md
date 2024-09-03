@@ -106,6 +106,19 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 - 相比之前的工作 [omni swarm](#omni-swarm-a-decentralized-omnidirectional-visual-inertial-uwb-state-estimation-system-for-aerial-swarms)，该工作更为传统，仅使用了地图方案，而未使用相对测量（视觉检测、UWB）
 - 为了分布式优化的收敛性，未进行在线时间戳估计和外参矫正
 
+**D2SLAM使用基于地图的观测来修正相对漂移，当特征稀少的时候，
+就退化为了单机 VIO，而使用线特征和视角则可以解决这个问题** Environments: In open environments with limited environmental features, such as grasslands or rough walls, sparse
+visual SLAM faces challenges in feature matching for relative
+localization and loop closure detection. In response to these
+limitations, our system is designed to downgrade to single-robot
+VIO, ensuring flight safety under such conditions.
+
+In D2SLAM, to conserve communication bandwidth, complete keyframe information, such as SuperPoint features and
+global descriptors for each camera view, is broadcasted to other
+UAVs only in discover or near communication modes. On the
+other hand, the compact keyframes, include only the NetVLAD
+descriptors, are used in far mode to save bandwidth.
+
 
 ### Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms
 
