@@ -72,7 +72,7 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 
 ### D2 SLAM: Decentralized and Distributed Collaborative Visual-inertial SLAM System for Aerial Swarm
 
-> T-RO 2024 已投稿
+> T-RO 2024
 <br>
 原文：[arXiv:2211.01538](https://arxiv.org/abs/2211.01538)
 
