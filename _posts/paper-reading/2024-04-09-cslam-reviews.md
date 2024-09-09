@@ -92,14 +92,6 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 > $D^2$ SLAM的贡献在于良好的解决了上面的两种问题；在延续了我们已有的全向视觉的思想的同时，引入了分布式计算来改善计算效率。
 
 
-针对什么问题？
-
-采用什么方法？
-
-
-达到什么效果？
-
-
 存在什么不足？
 
 - 虽然使用分布式后端，但集群规模受限于 *通信和前端计算* 能力
@@ -107,17 +99,34 @@ Fei Gao组在 *基于相互观测* 的方案上的一系列工作如下（由早
 - 为了分布式优化的收敛性，未进行在线时间戳估计和外参矫正
 
 **D2SLAM使用基于地图的观测来修正相对漂移，当特征稀少的时候，
-就退化为了单机 VIO，而使用线特征和视角则可以解决这个问题** Environments: In open environments with limited environmental features, such as grasslands or rough walls, sparse
+就退化为了单机 VIO，而使用线特征和视角则可以解决这个问题** Environments: In open environments with limited environmental features, such as grasslands or rough walls, sparse
 visual SLAM faces challenges in feature matching for relative
 localization and loop closure detection. In response to these
 limitations, our system is designed to downgrade to single-robot
 VIO, ensuring flight safety under such conditions.
 
-In D2SLAM, to conserve communication bandwidth, complete keyframe information, such as SuperPoint features and
+**IV. SYSTEM OVERVIEW - C. Multirobot Map Merging**: This alignment, triggered by relative measurements, integrates the coordinate systems without exchanging
+landmarks, allowing each UAV to maintain its individual sparse
+map. 
+<br>
+Specifically, the system adopts the reference frame of the
+UAV with the smaller ID, and the larger ID UAV’s states in
+D2VINS and D2PGO are converted to this unified system.
+
+
+**V. FRONT END - A. Visual Data Preprocessing**：In D2SLAM, to conserve communication bandwidth, complete keyframe information, such as SuperPoint features and
 global descriptors for each camera view, is broadcasted to other
 UAVs only in discover or near communication modes. On the
 other hand, the compact keyframes, include only the NetVLAD
 descriptors, are used in far mode to save bandwidth.
+<br>
+Fig. 4(b) illustrates the map-merging process in D2SLAM.
+UAVs continuously transmit heartbeat packets for detection by
+others, facilitating their discovery. 
+
+
+多机地图合并是怎么个流程：
+- 每架无人机广播心跳包，用于被其他无人机发现
 
 
 ### Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms

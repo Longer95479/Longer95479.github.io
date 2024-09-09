@@ -71,3 +71,11 @@ camera pair. Notably, the CCFT method allows features from
 the stereo camera to flow into the monocular camera, speeding
 up the depth initialization process.
 
+
+
+相机间的特征追踪（匹配）可以分成两步：
+- 使用重投影，最小距离的为其匹配者，但如果外参不准，则该方法大概率失效
+- 如果相机间重叠区特征点多，但匹配的数目却很少，则可以意识到是外参的问题，此时可以
+使用描述子的方法进行匹配
+
+此外也可以线用描述子的方法校准好各个相机的外参，从而使第一步尽可能地成功，因为第二步是用来兜底的，计算量比较大
