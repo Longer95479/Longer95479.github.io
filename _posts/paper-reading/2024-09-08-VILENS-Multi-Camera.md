@@ -72,6 +72,9 @@ the stereo camera to flow into the monocular camera, speeding
 up the depth initialization process.
 
 
+---
+
+### 个人想法
 
 相机间的特征追踪（匹配）可以分成两步：
 - 使用重投影，最小距离的为其匹配者，但如果外参不准，则该方法大概率失效
