@@ -9,6 +9,8 @@ categories:
 ---
 
 
+一些重要的变量：
+
 ```c++
 // vins-mono
 class FeatureTracker {
@@ -64,6 +66,74 @@ $$
 
 
 >你会发现上边的逆矩阵与 Harris 角点检测器非常相似，这说明角点很适合被用来做跟踪） 从使用者的角度来看，想法很简单，我们去跟踪一些点，然后我们就会获得这些点的光流向量。但是还有一些问题。直到现在我们处理的都是很小的运动。如果有大的运动怎么办呢？图像金字塔。当我们进入金字塔时，小运动被移除，大运动变成小运动。因此，通过在那里应用Lucas-Kanade，我们就会得到尺度空间上的光流。<br>
-> [6.2. 光流](https://opencv-python-tutorials.readthedocs.io/zh/latest/6.%20%E8%A7%86%E9%A2%91%E5%88%86%E6%9E%90/6.2.%20%E5%85%89%E6%B5%81/)
+> [6.2. 光流](https://opencv-python-tutorials.readthedocs.io/zh/latest/6.%20%E8%A7%86%E9%A2%91%E5%88%86%E6%9E%90/6.2.%20%E5%85%89%E6%B5%81/)<br>
+[zhihu -（三十八）稀疏光流----KLT](https://zhuanlan.zhihu.com/p/88033287)
 
 >金字塔Lucas-Kanade跟踪方法是：在图像金字塔的最高层计算光流，用得到的运动估计结果作为下一层金字塔的起始点，重复这个过程直到到达金字塔的最底层。这样就将不满足运动的假设可能性降到最小从而实现对更快和更长的运动的跟踪。
+
+## FeatureTracker::trackImage() 解读
+
+```c++
+map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> 
+FeatureTracker::trackImage(double _cur_time, const cv::Mat &_img, const cv::Mat &_img1)
+```
+
+输入是当前帧的时间、左目图像帧、右目图像帧
+
+函数开头定义了一些局部变量，并清空用于存储当前帧特征点像素坐标的 vector：
+```c++
+TicToc t_r;
+cur_time = _cur_time;
+cur_img = _img;
+row = cur_img.rows;
+col = cur_img.cols;
+cv::Mat rightImg = _img1;
+
+cur_pts.clear();
+```
+
+
+首先判断上一帧的特征点个数是否大于 0，如果大于 0，则进行特征点的跟踪，否则什么也不做。
+
+若进行特征点的跟踪，首先判断是否使用 gpu 加速，之后无论是否使用 gpu 加速，均判断是否使用预测特征点和是否使用反向光流跟踪
+- 如果使用了预测，则利用预测的先验值来帮助LK光流跟踪，如果没有使用预测，则使用普通的三层金字塔LK光流跟踪。
+- 如果使用了反向光流跟踪，正反向都能跟踪上且反向跟踪的点和原始点的误差小于 0.5 像素的点会被保留
+
+而对于使用 gpu 加速的情况，需要将对应的图像矩阵变量和光流跟踪函数替换成对应的 cuda 版本：
+
+```c++
+cv::cuda::GpuMat prev_gpu_img(prev_img);
+cv::cuda::GpuMat cur_gpu_img(cur_img);
+cv::cuda::GpuMat prev_gpu_pts(prev_pts);
+cv::cuda::GpuMat cur_gpu_pts(cur_pts);
+cv::cuda::GpuMat gpu_status;
+
+// flow forward gpu version
+cv::Ptr<cv::cuda::SparsePyrLKOpticalFlow> d_pyrLK_sparse = cv::cuda::SparsePyrLKOpticalFlow::create(
+cv::Size(21, 21), 3, 30, false);
+d_pyrLK_sparse->calc(prev_gpu_img, cur_gpu_img, prev_gpu_pts, cur_gpu_pts, gpu_status);
+
+vector<cv::Point2f> tmp1_cur_pts(cur_gpu_pts.cols);
+cur_gpu_pts.download(tmp1_cur_pts);
+cur_pts = tmp1_cur_pts;
+
+vector<uchar> tmp1_status(gpu_status.cols);
+gpu_status.download(tmp1_status);
+status = tmp1_status;
+
+```
+
+之后对剩下的点作最后一层筛选，即判断当前帧的特征点是否在边界内，不在的将 state 设为 0：
+
+```c++
+for (int i = 0; i < int(cur_pts.size()); i++)
+    if (status[i] && !inBorder(cur_pts[i]))
+        status[i] = 0;
+reduceVector(prev_pts, status);
+reduceVector(cur_pts, status);
+reduceVector(ids, status);
+reduceVector(track_cnt, status);
+```
+
+
+
