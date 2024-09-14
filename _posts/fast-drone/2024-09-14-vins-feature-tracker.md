@@ -56,7 +56,16 @@ void reduceVector(vector<cv::Point2f> &v, vector<uchar> status) {
 3. 相邻像素具有相似的运动。
 
 ```c++
- cv::calcOpticalFlowPyrLK(prev_img, cur_img, prev_pts, cur_pts, status, err, cv::Size(21, 21), 1, cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 30, 0.01), cv::OPTFLOW_USE_INITIAL_FLOW);
+ cv::calcOpticalFlowPyrLK(prev_img, 
+                          cur_img, 
+                          prev_pts, 
+                          cur_pts, 
+                          status, 
+                          err, 
+                          cv::Size(21, 21), 
+                          1, 
+                          cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 30, 0.01), 
+                          cv::OPTFLOW_USE_INITIAL_FLOW);
 ```
 
 >现在我们要使用第三条假设，邻域内的所有点都有相似的运动。LucasKanade 法就是利用一个 3x3 邻域中的 9 个点具有相同运动的这一点。这样我们就可以找到$$ (f_x, f_y, f_t) $$这 9 个点的光流方程，用它们组成一个具有两个未知数 9 个等式的方程组，这是一个约束条件过多的方程组。一个好的解决方法就是使用最小二乘拟合。下面就是求解结果：
