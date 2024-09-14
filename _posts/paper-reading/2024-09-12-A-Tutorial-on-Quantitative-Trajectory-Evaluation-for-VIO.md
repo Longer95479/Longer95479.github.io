@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "[Paper Reading] A Tutorial on Quantitative Trajectory Evaluation for Visual(-Inertial) Odometry"
-date:   2024-09-012 15:58:00 +0800
+date:   2024-09-12 15:58:00 +0800
 tags: 
     - slam
 categories:
