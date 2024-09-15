@@ -316,6 +316,10 @@ void FeatureTracker::readIntrinsicParameter(const vector<string> &calib_file)
 }
 ```
 
+对剩余的点去畸变，抬升到归一化平面，并计算在该平面上的速度：
+```c++
+cur_un_pts = undistortedPts(cur_pts, m_camera[0]);
+pts_velocity = ptsVelocity(ids, cur_un_pts, cur_un_pts_map, prev_un_pts_map);
+```
 
-
-
+若有右目，则将到此为止的左目特征点跟踪到右目
