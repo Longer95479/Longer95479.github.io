@@ -185,7 +185,9 @@ void FeatureTracker::setMask()
 }
 ```
 
-将跟踪到的点均匀化并设置 mask 后，如果当前特征点个数小于最大跟踪数目，则检测新的 goodfeature，检测也可以分成使用 gpu 加速和不使用 gpu 加速的。检测出新的点后，坐标都只是先存在 `vector<cv::Point2f> n_pts` 里，需要将其添加到 `cur_pts`、`ids`、`track_cnt`里，ids就是总的ids记录上累加 1，track_cnt 均等于 1：
+将跟踪到的点均匀化并设置 mask 后，如果当前特征点个数小于 **最大跟踪数目**，则检测新的 goodfeature，检测也可以分成使用 gpu 加速和不使用 gpu 加速的。检测出新的点后，坐标都只是先存在 `vector<cv::Point2f> n_pts` 里，需要将其添加到 `cur_pts`、`ids`、`track_cnt` 里，ids就是总的ids记录上累加 1，track_cnt 均等于 1：
+
+**NOTE: 若要加协调器，分配的最大检测特征点数目就对应于此**
 
 ```c++
 int n_max_cnt = MAX_CNT - static_cast<int>(cur_pts.size());
@@ -247,6 +249,73 @@ int n_max_cnt = MAX_CNT - static_cast<int>(cur_pts.size());
         // printf("selectFeature costs: %fms\n", t_a.toc());
     }
 ```
+```c++
+void FeatureTracker::addPoints()
+{
+    for (auto &p : n_pts)
+    {
+        cur_pts.push_back(p);
+        ids.push_back(n_id++);
+        track_cnt.push_back(1);
+    }
+}
+```
+
+
+
+
+---
+
+相机的参数传递流：
+
+rosNodeTest.cpp
+```c++
+string config_file = argv[1];
+printf("config_file: %s\n", argv[1]);
+
+readParameters(config_file);
+estimator.setParameter();
+```
+
+parameters.cpp
+```c++
+int pn = config_file.find_last_of('/');
+std::string configPath = config_file.substr(0, pn);
+
+std::string cam0Calib;
+fsSettings["cam0_calib"] >> cam0Calib;
+std::string cam0Path = configPath + "/" + cam0Calib;
+CAM_NAMES.push_back(cam0Path);
+```
+
+estimator.cpp
+
+```c++
+void Estimator::setParameter()
+{
+    ···
+    featureTracker.readIntrinsicParameter(CAM_NAMES);
+    ···
+}
+```
+
+
+feature_tracker.cpp
+
+```c++
+void FeatureTracker::readIntrinsicParameter(const vector<string> &calib_file)
+{
+    for (size_t i = 0; i < calib_file.size(); i++)
+    {
+        ROS_INFO("reading paramerter of camera %s", calib_file[i].c_str());
+        camodocal::CameraPtr camera = CameraFactory::instance()->generateCameraFromYamlFile(calib_file[i]);
+        m_camera.push_back(camera);
+    }
+    if (calib_file.size() == 2)
+        stereo_cam = 1;
+}
+```
+
 
 
 
