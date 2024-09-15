@@ -144,5 +144,109 @@ reduceVector(ids, status);
 reduceVector(track_cnt, status);
 ```
 
+然后将最终跟踪下来的特征点的 cnt 加一：
+```c++
+for (auto &n : track_cnt)
+    n++;
+```
+
+`void FeatureTracker::setMask()` 内将 cnt、pts、ids 合并成 vector，之后按 cnt 的大小进行排序，然后利用 mask 实现均匀化，也就是反复仿佛雨滴首先滴在 cnt 大的点上，其他点如果在这个雨滴内，就不会被放入 vector 里了，从而会删去一些点，这样也能够保证 cnt 大的特征点优先保留下来：
+
+```c++
+void FeatureTracker::setMask()
+{
+    mask = cv::Mat(row, col, CV_8UC1, cv::Scalar(255));
+
+    // prefer to keep features that are tracked for long time
+    vector<pair<int, pair<cv::Point2f, int>>> cnt_pts_id;
+
+    for (unsigned int i = 0; i < cur_pts.size(); i++)
+        cnt_pts_id.push_back(make_pair(track_cnt[i], make_pair(cur_pts[i], ids[i])));
+
+    sort(cnt_pts_id.begin(), cnt_pts_id.end(), [](const pair<int, pair<cv::Point2f, int>> &a, const pair<int, pair<cv::Point2f, int>> &b)
+         {
+            return a.first > b.first;
+         });
+
+    cur_pts.clear();
+    ids.clear();
+    track_cnt.clear();
+
+    for (auto &it : cnt_pts_id)
+    {
+        if (mask.at<uchar>(it.second.first) == 255)
+        {
+            cur_pts.push_back(it.second.first);
+            ids.push_back(it.second.second);
+            track_cnt.push_back(it.first);
+            cv::circle(mask, it.second.first, MIN_DIST, 0, -1);
+        }
+    }
+}
+```
+
+将跟踪到的点均匀化并设置 mask 后，如果当前特征点个数小于最大跟踪数目，则检测新的 goodfeature，检测也可以分成使用 gpu 加速和不使用 gpu 加速的。检测出新的点后，坐标都只是先存在 `vector<cv::Point2f> n_pts` 里，需要将其添加到 `cur_pts`、`ids`、`track_cnt`里，ids就是总的ids记录上累加 1，track_cnt 均等于 1：
+
+```c++
+int n_max_cnt = MAX_CNT - static_cast<int>(cur_pts.size());
+        if(!USE_GPU)
+        {
+            if (n_max_cnt > 0)
+            {
+                TicToc t_t;
+                if(mask.empty())
+                    cout << "mask is empty " << endl;
+                if (mask.type() != CV_8UC1)
+                    cout << "mask type wrong " << endl;
+                cv::goodFeaturesToTrack(cur_img, n_pts, MAX_CNT - cur_pts.size(), 0.01, MIN_DIST, mask);
+                // printf("good feature to track costs: %fms\n", t_t.toc());
+                std::cout << "n_pts size: "<< n_pts.size()<<std::endl;
+            }
+            else
+                n_pts.clear();
+            // sum_n += n_pts.size();
+            // printf("total point from non-gpu: %d\n",sum_n);
+        }
+        
+        // ROS_DEBUG("detect feature costs: %fms", t_t.toc());
+        // printf("good feature to track costs: %fms\n", t_t.toc());
+        else
+        {
+            if (n_max_cnt > 0)
+            {
+                if(mask.empty())
+                    cout << "mask is empty " << endl;
+                if (mask.type() != CV_8UC1)
+                    cout << "mask type wrong " << endl;
+                TicToc t_g;
+                cv::cuda::GpuMat cur_gpu_img(cur_img);
+                cv::cuda::GpuMat d_prevPts;
+                TicToc t_gg;
+                cv::cuda::GpuMat gpu_mask(mask);
+                // printf("gpumat cost: %fms\n",t_gg.toc());
+                cv::Ptr<cv::cuda::CornersDetector> detector = cv::cuda::createGoodFeaturesToTrackDetector(cur_gpu_img.type(), MAX_CNT - cur_pts.size(), 0.01, MIN_DIST);
+                // cout << "new gpu points: "<< MAX_CNT - cur_pts.size()<<endl;
+                detector->detect(cur_gpu_img, d_prevPts, gpu_mask);
+                // std::cout << "d_prevPts size: "<< d_prevPts.size()<<std::endl;
+                if(!d_prevPts.empty())
+                    n_pts = cv::Mat_<cv::Point2f>(cv::Mat(d_prevPts));
+                else
+                    n_pts.clear();
+                // sum_n += n_pts.size();
+                // printf("total point from gpu: %d\n",sum_n);
+                // printf("gpu good feature to track cost: %fms\n", t_g.toc());
+            }
+            else 
+                n_pts.clear();
+        }
+
+        ROS_DEBUG("add feature begins");
+        TicToc t_a;
+        addPoints();
+        // ROS_DEBUG("selectFeature costs: %fms", t_a.toc());
+        // printf("selectFeature costs: %fms\n", t_a.toc());
+    }
+```
+
 
 
