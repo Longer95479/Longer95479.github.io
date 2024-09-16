@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "VINS-Fusion Feature Tracker"
+title:  "[VINS-Fusion] Feature Tracker"
 date:   2024-09-14 00:52:00 +0800
 tags: 
     - slam
@@ -10,7 +10,7 @@ categories:
 
 来自相机的图像被发布，缓存在 `img0_buf` 和 `img1_buf` 队列中，新图像放在 back，抽取 front 的图像进行特征追踪。如果是双目，不同步的会被按时间戳先后丢弃，只有双目图像帧的时间戳完全同步才会被使用。
 
-`InputImage()` 和 `InputIMU()` 是前端
+`InputImage()` 和 `InputIMU()` 是前端。其实只有 `InputImage()` 是真正的前端，IMU的预积分其实是放在 `processIMU()` 里面。
 
 
 一些重要的变量：
@@ -328,3 +328,5 @@ pts_velocity = ptsVelocity(ids, cur_un_pts, cur_un_pts_map, prev_un_pts_map);
 
 若有右目，则将到此为止的左目特征点跟踪到右目，并且 id 和坐标单独记录，不记录跟踪帧数，因为右目的特征点由已均匀化的左目特征点跟踪而来，因此没必要均匀化了。
 
+
+最后则是将筛选后幸存下来的特征点存储在 `featureFrame` 里。
