@@ -46,4 +46,36 @@ while(1)
 }
 ```
 
-如果使用 IMU，则从 `accBuf` 和 `gyrBuf` 里提取前一帧和当前帧之前的 IMU 数据到 `accVector` 和 `gyrVector` 里。
+如果使用 IMU，则从 `accBuf` 和 `gyrBuf` 里提取前一帧和当前帧之前的 IMU 数据到 `accVector` 和 `gyrVector` 里：
+
+```c++
+mBuf.lock();
+if(USE_IMU)
+    getIMUInterval(prevTime, curTime, accVector, gyrVector);
+
+featureBuf.pop();
+mBuf.unlock();
+```
+
+如果使用 IMU，且还未初始化第一帧位姿，则利用加速度计的读数来初始化位姿，并强制 yaw 为 0。
+
+```c++
+if(USE_IMU)
+{
+    if(!initFirstPoseFlag)
+        initFirstIMUPose(accVector);
+    for(size_t i = 0; i < accVector.size(); i++)
+    {
+        double dt;
+        if(i == 0)
+            dt = accVector[i].first - prevTime;
+        else if (i == accVector.size() - 1)
+            dt = curTime - accVector[i - 1].first;
+        else
+            dt = accVector[i].first - accVector[i - 1].first;
+        processIMU(accVector[i].first, dt, accVector[i].second, gyrVector[i].second);
+    }
+}
+```
+
+
