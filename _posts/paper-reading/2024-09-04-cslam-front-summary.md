@@ -8,8 +8,14 @@ categories:
     - paper reading
 ---
 
+## CSLAM Front End
 
-## Multi S-Graphs: An Efficient Distributed Semantic-Relational Collaborative SLAM
+CSLAM 的前端与单机的前端不同在于多了基于地图的测量：
+$$
+z^{t_k \rarr t_l}_{i \rarr j}
+$$
+
+### Multi S-Graphs: An Efficient Distributed Semantic-Relational Collaborative SLAM
 > 原文：[arXiv:2401.05152](https://arxiv.org/abs/2401.05152)
 
 
@@ -63,7 +69,7 @@ Descriptors to remain unique and constant over time for ac-
 curate matches, as identical rooms or changing environments
 can lead to erroneous matches.
 
-## D2 SLAM: Decentralized and Distributed Collaborative Visual-inertial SLAM System for Aerial Swarm
+### D2 SLAM: Decentralized and Distributed Collaborative Visual-inertial SLAM System for Aerial Swarm
 
 > T-RO 2024 已投稿
 <br>
@@ -94,7 +100,7 @@ mode.<br>
 Unlike [1], in D2SLAM, we use 3-D positions of Superpoint
 landmarks, estimated by D2VINS from historical frames, along
 with 2-D observations from the current frame for PnP computation. In addition, with quad fisheye cameras as input, solving a
-multicamera PnP problem becomes necessary for relative pose
+**multicamera PnP problem** becomes necessary for relative pose
 extraction and geometric verification. In practice, we initially
 apply the UPnP RANSAC algorithm [53] for pose estimation
 and outlier rejection. Subsequent inlier results are then used in a
@@ -129,8 +135,8 @@ VI-E. Initialization
 D2VINS initialization involves two phases: 1) local keyframe
 initialization and 2) remote UAV initialization. For local
 keyframes, utilizing stereo or multicamera setups, we employ
-triangulation for landmark position initialization where measurements have a sufficient baseline (typically 0.05 cm) from
-multiple cameras or due to motion. In addition, IMU predictions
+triangulation for landmark position initialization where measurements **have a sufficient baseline (typically 0.05 cm) from
+multiple cameras or due to motion**. In addition, IMU predictions
 initialize poses of subsequent local UAV Keyframes. To enhance stability, priors are added to the unobservable components
 (x, y, z, yaw) of the first keyframe. In multi-UAV scenarios, PnP
 RANSAC (or UPnP) is used to initialize the pose of remote
@@ -157,7 +163,7 @@ Corr 5 dataset, a typical ek value is 1262, resulting in each
 D2PGO update being approximately 81 kB.
 
 
-## Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms
+### Omni-swarm: A Decentralized Omnidirectional Visual-Inertial-UWB State Estimation System for Aerial Swarms
 
 > T-RO 2022
 <br>
@@ -175,3 +181,61 @@ Extracting the map-based measurement for a pair of keyframes
 from Dr is avoided to save computational resources since all the
 extracted map-based measurements are broadcast to the whole
 swarm.
+
+
+## Loop Closure
+
+### VINS-Mono
+
+The relocalization process starts with a
+loop detection module that identifies places that have already
+been visited. Feature-level connections between loop closure
+candidates and the current frame are then established. These
+feature correspondences are tightly integrated into the monocular VIO module, resulting in drift-free state estimates with
+minimum computation overhead. Multiple observations of
+multiple features are directly used for relocalization, resulting
+in higher accuracy and better state estimation smoothness. A
+graphical illustration of the relocalization procedure is shown
+in Fig. 9(a).
+
+DBoW2
+returns loop closure candidates after temporal and geometrical
+consistency check. We keep all BRIEF descriptors for feature
+retrieving, but discard the raw image to reduce memory
+consumption.
+
+The only difference
+is that the pose (qˆ
+w
+v
+, pˆ
+w
+v
+) of the loop closure frame, which is
+taken from the pose graph (Sect. VIII), or directly from past
+odometry output (if this is the first relocalization), **is treated as
+a constant**. 
+
+Note
+that the global optimization of past poses and loop closure
+frames happens **after relocalization**, and will be discussed in
+Sect. VIII.
+
+After relocalization, the local sliding window shifts and
+aligns with past poses. Utilizing the relocalization results, this
+additional pose graph optimization step is developed to ensure
+the set of past poses are registered into a globally consistent
+configuration.
+
+Since our visual-inertial setup renders roll and pitch angles
+fully observable, the accumulated drift only occurs in four
+degrees-of-freedom (x, y, z and yaw angle). To this end, we
+ignore estimating the drift-free roll and pitch states, and only
+perform 4-DOF pose graph optimization.
+
+**Pose graph optimization and relocalization (Sect. VII-C)
+runs asynchronously in two separate threads**. This enables
+immediate use of the most optimized pose graph for relocalization whenever it becomes available. Similarly, even if
+the current pose graph optimization is not completed yet,
+relocalization can still take place using the existing pose graph
+configuration. This process is illustrated in Fig. 9(b).
