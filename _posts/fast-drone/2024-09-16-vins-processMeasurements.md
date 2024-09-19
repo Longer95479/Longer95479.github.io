@@ -77,5 +77,58 @@ if(USE_IMU)
     }
 }
 ```
+接下来进入 `processIMU()` 的内部。首先是判断是否收到过第一帧 IMU 数据，如果没收到，则
+
+```c++
+void Estimator::processIMU(double t, double dt, const Vector3d &linear_acceleration, const Vector3d &angular_velocity)
+{
+    if (!first_imu)
+    {
+        first_imu = true;
+        acc_0 = linear_acceleration;
+        gyr_0 = angular_velocity;
+    }
+```
+
+介绍一下 `IntegrationBase *pre_integrations[(WINDOW_SIZE + 1)]`：
+- IntegrationBase *：表示一个指向 IntegrationBase 类对象的指针。
+-  pre_integrations：是一个数组的名称。
+-  [(WINDOW_SIZE + 1)]：定义了数组的大小，即数组有 WINDOW_SIZE + 1 个元素。
+
+如果  `!pre_integrations[frame_count]` 为空指针，则将 IMU 数据初始化到其中：
+
+```c++
+    if (!pre_integrations[frame_count])
+    {
+        pre_integrations[frame_count] = new IntegrationBase{acc_0, gyr_0, Bas[frame_count], Bgs[frame_count]};
+    }
+```
+
+如果不是滑窗内的第一帧，则可以处理当前帧和上一帧之间的 IMU 数据，具体则是将当前的 imu 数据和上一帧 IMU 数据的时间差、加速度、角速度传入 `pre_integrations` 和 buf 中（将 IMU 数据缓存到这些ector中的作用是什么呢？）。之后**利用 IMU 数据 持续预测当前的姿态，最终将预测出当前特征帧的姿态**。最后保存记录 `acc_0` 和 `gyr_0`。
+
+```c++
+if (frame_count != 0)
+    {
+        pre_integrations[frame_count]->push_back(dt, linear_acceleration, angular_velocity);
+        //if(solver_flag != NON_LINEAR)
+            tmp_pre_integration->push_back(dt, linear_acceleration, angular_velocity);
+
+        dt_buf[frame_count].push_back(dt);
+        linear_acceleration_buf[frame_count].push_back(linear_acceleration);
+        angular_velocity_buf[frame_count].push_back(angular_velocity);
+
+        int j = frame_count;         
+        Vector3d un_acc_0 = Rs[j] * (acc_0 - Bas[j]) - g;
+        Vector3d un_gyr = 0.5 * (gyr_0 + angular_velocity) - Bgs[j];
+        Rs[j] *= Utility::deltaQ(un_gyr * dt).toRotationMatrix();
+        Vector3d un_acc_1 = Rs[j] * (linear_acceleration - Bas[j]) - g;
+        Vector3d un_acc = 0.5 * (un_acc_0 + un_acc_1);
+        Ps[j] += dt * Vs[j] + 0.5 * dt * dt * un_acc;
+        Vs[j] += dt * un_acc;
+    }
+    acc_0 = linear_acceleration;
+    gyr_0 = angular_velocity; 
+}
+```
 
 
