@@ -131,4 +131,193 @@ if (frame_count != 0)
 }
 ```
 
+执行完 `processIMU()` 后便是执行最重要的 `processImage()`。以下是 gpt 的回答：
+
+--- 
+
+这段代码是一个名为 `processImage` 的函数，属于 `Estimator` 类，主要用于处理视觉惯性导航系统（VINS）中的新图像数据。这段代码中，系统接收图像特征数据，并结合惯性测量单元（IMU）的信息，执行关键帧管理、初始化、非线性优化、滑动窗口、故障检测等一系列操作。以下是代码的总结与主要步骤解释：
+
+1. **图像处理和特征点添加**:
+   - 函数接收图像特征数据 `image` 和时间戳 `header`。
+   - 记录图像特征点的数量，并将其添加到特征管理器中进行视差检查，决定是否将当前帧标记为关键帧。
+   - 关键帧管理：基于特征的视差决定是否进行边缘化操作。
+   
+2. **初始化图像帧和预积分**:
+   - 创建 `ImageFrame` 对象并设置其预积分信息。
+   - 将当前帧添加到 `all_image_frame` 映射中。
+   - 初始化或更新预积分对象 `tmp_pre_integration`。
+
+3. **外参估计**:
+   - 如果需要估计外参，系统在足够旋转运动时通过双目视差数据计算外参，并更新外参矩阵 `ric`。
+
+4. **初始化阶段**:
+   - **单目 + IMU 初始化**: 当使用单目相机和IMU时，系统会在时间窗口填满时尝试初始化。如果初始化成功，系统进入非线性优化阶段，并执行滑动窗口操作。
+   - **双目 + IMU 初始化**: 对于双目相机和IMU的初始化，系统会通过PnP方法初始化帧姿态，进行特征点三角化，并解决陀螺仪偏置问题。
+   - **仅双目初始化**: 不使用IMU时，系统通过双目视差完成初始化，并在滑动窗口填满后进入非线性优化。
+
+5. **优化与滑动窗口管理**:
+   - 进行非线性优化，并检查和移除异常特征点。
+   - 对于未使用多线程的情况，特征跟踪器将进一步移除异常点并预测下一个帧中的特征位置。
+   - 检测系统故障，若发生故障，清除系统状态并重新启动。
+
+6. **状态更新**:
+   - 更新系统状态，包括关键帧姿态、最后的位姿和状态参数等。
+
+总的来说，这段代码的主要作用是结合图像和IMU数据进行视觉惯性导航系统的初始化、优化和状态更新，从而提高系统的定位精度和鲁棒性。
+
+---
+
+接下来进行人为总结。
+
+通过检测视差来判断最新到达的图像帧是不是关键帧，如果是，后续的边缘化则将滑窗内最旧的帧边缘化，如果不是，则丢弃第二新的帧。
+
+```c++
+void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> &image, const double header)
+{
+    ROS_DEBUG("new image coming ------------------------------------------");
+    ROS_DEBUG("Adding feature points %lu", image.size());
+    if (f_manager.addFeatureCheckParallax(frame_count, image, td))
+    {
+        marginalization_flag = MARGIN_OLD;
+        //printf("keyframe\n");
+    }
+    else
+    {
+        marginalization_flag = MARGIN_SECOND_NEW;
+        //printf("non-keyframe\n");
+    }
+
+```
+
+之后打印一些 debug 信息，如当前帧是否是关键帧、当前帧属于滑窗内第几帧、特征点数量。
+
+创建 `ImageFrame imageframe(image, header);` 变量，并进行初始化，使其包含了当前帧的特征点、时间戳、是否是关键帧、姿态、位置和其和上一帧之间的 IMU 预积分数据，其定义如下：
+
+```c++
+class ImageFrame
+{
+    public:
+        ImageFrame(){};
+        ImageFrame(const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>>& _points, double _t):t{_t},is_key_frame{false}
+        {
+            points = _points;
+        };
+        map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>> > > points;
+        double t;
+        Matrix3d R;
+        Vector3d T;
+        IntegrationBase *pre_integration;
+        bool is_key_frame;
+};
+```
+
+将创建好的 `imageframe` 放入 `all_image_frame` 的 map 之中，以时间戳为键。然后重新初始化 `tmp_pre_integration`，为下一关键帧的预积分作准备。
+
+```c++
+    ROS_DEBUG("%s", marginalization_flag ? "Non-keyframe" : "Keyframe");
+    ROS_DEBUG("Solving %d", frame_count);
+    ROS_DEBUG("number of feature: %d", f_manager.getFeatureCount());
+    Headers[frame_count] = header;
+
+    ImageFrame imageframe(image, header);
+    imageframe.pre_integration = tmp_pre_integration;
+    all_image_frame.insert(make_pair(header, imageframe));
+    tmp_pre_integration = new IntegrationBase{acc_0, gyr_0, Bas[frame_count], Bgs[frame_count]};
+```
+
+>  Eigen::Matrix3d 使用 `swap()` 方法可能比直接赋值更快，用在 `void Estimator::slide()` 内。
+
+
+相机外参在线校准：
+
+```c++
+ if(ESTIMATE_EXTRINSIC == 2)
+    {
+        ROS_INFO("calibrating extrinsic param, rotation movement is needed");
+        if (frame_count != 0)
+        {
+            vector<pair<Vector3d, Vector3d>> corres = f_manager.getCorresponding(frame_count - 1, frame_count);
+            Matrix3d calib_ric;
+            if (initial_ex_rotation.CalibrationExRotation(corres, pre_integrations[frame_count]->delta_q, calib_ric))
+            {
+                ROS_WARN("initial extrinsic rotation calib success");
+                ROS_WARN_STREAM("initial extrinsic rotation: " << endl << calib_ric);
+                ric[0] = calib_ric;
+                RIC[0] = calib_ric;
+                ESTIMATE_EXTRINSIC = 1;
+            }
+        }
+    }
+```
+
+外参在线校准完成后，则进行初始化阶段，可以分为三类：
+- 单目 + IMU
+- 双目 + IMU
+- 双目
+
+首先讨论单目 + IMU 的情况。如果滑窗已满，则判断 *外参已估计 且 当前帧距离第一帧大于 0.1 s*，则进行 `initialStructure()`，当初始化成功时，将进入**优化与滑窗**的状态，否则只进行滑窗且保持待初始化的状态。
+
+```c++
+   if (solver_flag == INITIAL)
+    {
+        // monocular + IMU initilization
+        if (!STEREO && USE_IMU)
+        {
+            if (frame_count == WINDOW_SIZE)
+            {
+                bool result = false;
+                if(ESTIMATE_EXTRINSIC != 2 && (header - initial_timestamp) > 0.1)
+                {
+                    result = initialStructure();
+                    initial_timestamp = header;   
+                }
+                if(result)
+                {
+                    solver_flag = NON_LINEAR;
+                    optimization();
+                    slideWindow();
+                    ROS_INFO("Initialization finish!");
+                }
+                else
+                    slideWindow();
+            }
+        }
+
+```
+
+如果是双目 + IMU 的初始化，则直接使用 pnp 初始化当前帧的 P、R，然后利用该P、R和其他帧（哪一帧呢）三角化当前帧的特征点。如果滑窗已经满了，则将滑窗内的 P、R 更新给 `all_image_frame`，之后使用这些位姿来求解陀螺仪的偏置初始值。然后利用陀螺仪偏置的最新初值，来更新滑窗内的各个预积分值。
+最后进入优化滑窗的状态。
+
+```c++
+// stereo + IMU initilization
+if(STEREO && USE_IMU)
+{
+    f_manager.initFramePoseByPnP(frame_count, Ps, Rs, tic, ric);
+    f_manager.triangulate(frame_count, Ps, Rs, tic, ric);
+    if (frame_count == WINDOW_SIZE)
+    {
+        map<double, ImageFrame>::iterator frame_it;
+        int i = 0;
+        for (frame_it = all_image_frame.begin(); frame_it != all_image_frame.end(); frame_it++)
+        {
+            frame_it->second.R = Rs[i];
+            frame_it->second.T = Ps[i];
+            i++;
+        }
+        solveGyroscopeBias(all_image_frame, Bgs);
+        for (int i = 0; i <= WINDOW_SIZE; i++)
+        {
+            pre_integrations[i]->repropagate(Vector3d::Zero(), Bgs[i]);
+        }
+        solver_flag = NON_LINEAR;
+        optimization();
+        slideWindow();
+        ROS_INFO("Initialization finish!");
+    }
+}
+```
+
+
+在初始化阶段，无论是否为关键帧，均放入滑窗内。如果窗口还没满，则
+
 
