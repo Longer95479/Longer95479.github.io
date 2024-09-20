@@ -317,7 +317,38 @@ if(STEREO && USE_IMU)
 }
 ```
 
+如果是只使用双目，不使用 IMU的情况，到来一帧，无论窗口满或未满，使用 pnp 求解当前帧的初始位姿，**然后就直接优化，与前二者窗口满了才优化不同**，如果窗口满了，才进行滑窗，并进入优化滑窗状态。
 
-在初始化阶段，无论是否为关键帧，均放入滑窗内。如果窗口还没满，则
+```c++
+if(STEREO && !USE_IMU)
+{
+    f_manager.initFramePoseByPnP(frame_count, Ps, Rs, tic, ric);
+    f_manager.triangulate(frame_count, Ps, Rs, tic, ric);
+    optimization();
+
+    if(frame_count == WINDOW_SIZE)
+    {
+        solver_flag = NON_LINEAR;
+        slideWindow();
+        ROS_INFO("Initialization finish!");
+    }
+}
+```
+
+在初始化阶段，无论是否为关键帧，均放入滑窗内。如果窗口还没满，则将当前的 P、V、R、B 传给下一帧作为初值，之后会在 `processIMU()` 累加。
+
+```c++
+if(frame_count < WINDOW_SIZE)
+{
+    frame_count++;
+    int prev_frame = frame_count - 1;
+    Ps[frame_count] = Ps[prev_frame];
+    Vs[frame_count] = Vs[prev_frame];
+    Rs[frame_count] = Rs[prev_frame];
+    Bas[frame_count] = Bas[prev_frame];
+    Bgs[frame_count] = Bgs[prev_frame];
+}
+```
+
 
 
