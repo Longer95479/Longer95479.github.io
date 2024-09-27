@@ -352,4 +352,31 @@ for (size_t i = 0; i < ids.size(); i++)
     xyz_uv_velocity << x, y, z, p_u, p_v, velocity_x, velocity_y;
     featureFrame[feature_id].emplace_back(camera_id,  xyz_uv_velocity);
 }
+
+if (!_img1.empty() && stereo_cam)
+{
+    for (size_t i = 0; i < ids_right.size(); i++)
+    {
+        int feature_id = ids_right[i];
+        double x, y ,z;
+        x = cur_un_right_pts[i].x;
+        y = cur_un_right_pts[i].y;
+        z = 1;
+        double p_u, p_v;
+        p_u = cur_right_pts[i].x;
+        p_v = cur_right_pts[i].y;
+        int camera_id = 1;
+        double velocity_x, velocity_y;
+        velocity_x = right_pts_velocity[i].x;
+        velocity_y = right_pts_velocity[i].y;
+
+        Eigen::Matrix<double, 7, 1> xyz_uv_velocity;
+        xyz_uv_velocity << x, y, z, p_u, p_v, velocity_x, velocity_y;
+        featureFrame[feature_id].emplace_back(camera_id,  xyz_uv_velocity);
+    }
+}
 ```
+
+## 思考
+
+如果使用不同的特征提取和匹配方法，也可依照上述操作，每个相机的不同帧（我们希望对这些帧的特征点进行提取和匹配）均分配多个 vector，分别记录 id、图像坐标、归一化坐标、归一化坐标速度等信息，最终利用匹配结果去合并（修改）某些id，最后存入 map 中，用于后续的管理。
