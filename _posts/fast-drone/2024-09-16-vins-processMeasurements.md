@@ -8,6 +8,7 @@ categories:
     - fast-drone
 ---
 
+## void Estimator::processMeasurements()
 
 提取出各帧的特征点并收到了一系列的 IMU 数据后，就该开始处理这些数据了。
 
@@ -77,6 +78,8 @@ if(USE_IMU)
     }
 }
 ```
+##  void Estimator::processIMU()
+
 接下来进入 `processIMU()` 的内部。首先是判断是否收到过第一帧 IMU 数据，如果没收到，则
 
 ```c++
@@ -130,6 +133,8 @@ if (frame_count != 0)
     gyr_0 = angular_velocity; 
 }
 ```
+
+## void Estimator::processImage()
 
 执行完 `processIMU()` 后便是执行最重要的 `processImage()`。以下是 gpt 的回答：
 
@@ -250,6 +255,8 @@ class ImageFrame
     }
 ```
 
+### 初始化
+
 外参在线校准完成后，则进行初始化阶段，可以分为三类：
 - 单目 + IMU
 - 双目 + IMU
@@ -350,5 +357,9 @@ if(frame_count < WINDOW_SIZE)
 }
 ```
 
+### 滑窗优化
 
+如果初始化完成，后续该函数将重复执行优化滑窗。
+
+首先，如果不使用 IMU，
 
