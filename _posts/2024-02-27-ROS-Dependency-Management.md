@@ -19,7 +19,7 @@ categories:
   <build_depend>cpp_common</build_depend>
   <build_depend>log4cxx</build_depend>
   <test_depend>gtest</test_depend>
-...
+  ...
   <run_depend>cpp_common</run_depend>
   <run_depend>log4cxx</run_depend>
 </package>
