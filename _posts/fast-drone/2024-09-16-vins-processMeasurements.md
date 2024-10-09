@@ -10,6 +10,8 @@ categories:
 
 ## void Estimator::processMeasurements()
 
+这个函数单独在一个线程内运行，无限循环，间隔2ms。
+
 提取出各帧的特征点并收到了一系列的 IMU 数据后，就该开始处理这些数据了。
 
 首先判断 `featureBuf` 队列是否为空，如果是空的，就什么也不做。若不空，则从 `featureBuf` 里提取出最早的特征点数据帧：
