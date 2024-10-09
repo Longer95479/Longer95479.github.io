@@ -111,3 +111,71 @@ for (auto &id_pts : image)
 
 遍历特征点。若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*；若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化，*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
 
+### void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1, Eigen::Vector2d &point0, Eigen::Vector2d &point1, Eigen::Vector3d &point_3d)
+
+齐次坐标表示，等号本质上表示等价，成比例，并不是数值上的相等，因此一个点提供两个约束
+$p_i$ 是 $P$ 的行，$P_{3\times 4}$ 是世界系到相机系的投影矩阵，到此函数已经把 2D 特征点表示在 **归一化平面** 了，因此 $P = K[R|t] = [R|t]$。列出投影的齐次方程：
+$$
+x = PX, x'=P'X
+$$
+
+$$
+\begin{bmatrix}
+x\\
+y\\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+p_1\\
+p_2\\
+p_3\\
+\end{bmatrix}
+X
+,
+\begin{bmatrix}
+x'\\
+y'\\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+p'_1\\
+p'_2\\
+p'_3\\
+\end{bmatrix}
+X
+$$
+得到真正的约束
+$$
+x = \frac{p_1X}{p_3X},
+y = \frac{p_2X}{p_3X}
+$$
+$$
+x' = \frac{p'_1X}{p'_3X},
+y' = \frac{p'_2X}{p'_3X}
+$$
+
+分母乘过去，合并同类项
+
+$$
+(xp_3-p_1)X = 0\\
+(yp_3-p_2)X = 0\\
+(x'p'_3-p'_1)X = 0\\
+(y'p'_3-p'_2)X = 0\\
+$$
+
+写成矩阵形式
+
+$$
+\begin{bmatrix}
+(xp_3-p_1)\\
+(yp_3-p_2)\\
+(x'p'_3-p'_1)\\
+(y'p'_3-p'_2)\\
+\end{bmatrix}
+X = 0
+$$
+
+之后使用 SVD 方法求解最小二乘解，即最小奇异值对应的右奇异向量。
+
