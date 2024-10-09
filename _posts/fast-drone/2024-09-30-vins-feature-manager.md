@@ -22,7 +22,7 @@ class FeatureManager
 
 ## 主体函数解释
 
-### bool FeatureManager::addFeatureCheckParallax(int , const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> &, double)
+### bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> &image, double td)
 
 输入包括：
 - frame_count ：指明当前帧将会是滑窗内的哪一帧
@@ -106,4 +106,8 @@ for (auto &id_pts : image)
 ```
 
 
+
+### void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
+
+遍历特征点。若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*；若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化，*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
 
