@@ -179,3 +179,30 @@ $$
 
 之后使用 SVD 方法求解最小二乘解，即最小奇异值对应的右奇异向量。
 
+对应的代码如下：
+
+```c++
+void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1,
+                        Eigen::Vector2d &point0, Eigen::Vector2d &point1, Eigen::Vector3d &point_3d)
+{
+    Eigen::Matrix4d design_matrix = Eigen::Matrix4d::Zero();
+    design_matrix.row(0) = point0[0] * Pose0.row(2) - Pose0.row(0);
+    design_matrix.row(1) = point0[1] * Pose0.row(2) - Pose0.row(1);
+    design_matrix.row(2) = point1[0] * Pose1.row(2) - Pose1.row(0);
+    design_matrix.row(3) = point1[1] * Pose1.row(2) - Pose1.row(1);
+    Eigen::Vector4d triangulated_point;
+    triangulated_point =
+              design_matrix.jacobiSvd(Eigen::ComputeFullV).matrixV().rightCols<1>();
+    point_3d(0) = triangulated_point(0) / triangulated_point(3);
+    point_3d(1) = triangulated_point(1) / triangulated_point(3);
+    point_3d(2) = triangulated_point(2) / triangulated_point(3);
+}
+```
+
+## void FeatureManager::initFramePoseByPnP(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
+
+首先确保当前帧不是滑窗内的第一帧，因为单目的话，第一帧无法三角化点，也就无法 pnp 了。之后遍历所有特征点 id，选取有深度的点（已被三角化），并判断这个点的被观测帧是否包含当前帧，如果包含，则将其 3D 坐标由世界系转化到相机系，并分别将 2D 坐标和 3D 坐标放入 vector 容器内。之后将这些 2D-3D 点对传入函数 `if(solvePoseByPnP(RCam, PCam, pts2D, pts3D))`，点对数不够则 pnp 失败，返回 false，成功则放回 true，`Rcam` 和 `PCam` 会被赋值，表示世界系到相机系的变换，需要再作处理，得到机体系到世界系的变换矩阵。
+
+
+
+
