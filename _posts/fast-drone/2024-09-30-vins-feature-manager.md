@@ -107,10 +107,16 @@ for (auto &id_pts : image)
 
 
 
-### void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
+## void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 
-遍历特征点。若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*；若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化（此时这两帧的 $P$ 也都已知了
+遍历特征点，若已有深度则不需要再进行三角，跳过该点。若无深度，则需要进行三角化，且无论双目还是单目，都使用了点被观测的第一帧坐标。
+
+若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*。
+
+若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化（此时这两帧的 $P$ 也都已知了
 ），*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
+
+代码的核心语句是 `triangulatePoint(leftPose, rightPose, point0, point1, point3d);`，其前后都是由 `imu_T_w` 构造出 `cam_T_w` 作为该函数的输入。
 
 ### void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1, Eigen::Vector2d &point0, Eigen::Vector2d &point1, Eigen::Vector3d &point_3d)
 
