@@ -109,7 +109,8 @@ for (auto &id_pts : image)
 
 ### void FeatureManager::triangulate(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 
-遍历特征点。若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*；若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化，*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
+遍历特征点。若是双目观测，则直接使用双目特征点三角化，*不考虑追踪的时间长短*；若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化（此时这两帧的 $P$ 也都已知了
+），*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
 
 ### void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1, Eigen::Vector2d &point0, Eigen::Vector2d &point1, Eigen::Vector3d &point_3d)
 
@@ -201,7 +202,59 @@ void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen:
 
 ## void FeatureManager::initFramePoseByPnP(int frameCnt, Vector3d Ps[], Matrix3d Rs[], Vector3d tic[], Matrix3d ric[])
 
-首先确保当前帧不是滑窗内的第一帧，因为单目的话，第一帧无法三角化点，也就无法 pnp 了。之后遍历所有特征点 id，选取有深度的点（已被三角化），并判断这个点的被观测帧是否包含当前帧，如果包含，则将其 3D 坐标由世界系转化到相机系，并分别将 2D 坐标和 3D 坐标放入 vector 容器内。之后将这些 2D-3D 点对传入函数 `if(solvePoseByPnP(RCam, PCam, pts2D, pts3D))`，点对数不够则 pnp 失败，返回 false，成功则放回 true，`Rcam` 和 `PCam` 会被赋值，表示世界系到相机系的变换，需要再作处理，得到机体系到世界系的变换矩阵。
+首先确保当前帧不是滑窗内的第一帧，因为单目的话，第一帧无法三角化点，也就无法 pnp 了。之后遍历所有特征点 id，选取有深度的点（已被三角化），并判断这个点的被观测帧是否包含当前帧，如果包含，则将其 3D 坐标由世界系转化到相机系，并分别将点在当前帧的 2D 坐标和 3D 坐标放入 vector 容器内。
+
+之后将这些 2D-3D 点对传入函数 `if(solvePoseByPnP(RCam, PCam, pts2D, pts3D))`，点对数不够则 pnp 失败，返回 false，成功则放回 true，`Rcam` 和 `PCam` 会被赋值，表示世界系到相机系的变换，需要再作处理，得到机体系到世界系的变换矩阵。并且 pnp 求解过程会用到 R、t 的初始值，由 imu 提供。
+
+### bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P,  vector<cv::Point2f> &pts2D, vector<cv::Point3f> &pts3D)
+
+核心语句是 `pnp_succ = cv::solvePnP(pts3D, pts2D, K, D, rvec, t, 1);`，其前后都是做一些合法判断、矩阵的变换。需要做一些矩阵变换的原因是，最外部输入和最终的输出，均是 w_T_cam（机体坐标相对于世界坐标，cam2w），而 opencv 的 pnp 函数需要的位姿代表的是 cam_T_w。
+
+```c++
+bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P, 
+                                      vector<cv::Point2f> &pts2D, vector<cv::Point3f> &pts3D)
+{
+    Eigen::Matrix3d R_initial;
+    Eigen::Vector3d P_initial;
+
+    // w_T_cam ---> cam_T_w 
+    R_initial = R.inverse();
+    P_initial = -(R_initial * P);
+
+    //printf("pnp size %d \n",(int)pts2D.size() );
+    if (int(pts2D.size()) < 4)
+    {
+        printf("feature tracking not enough, please slowly move you device! \n");
+        return false;
+    }
+    cv::Mat r, rvec, t, D, tmp_r;
+    cv::eigen2cv(R_initial, tmp_r);
+    cv::Rodrigues(tmp_r, rvec);
+    cv::eigen2cv(P_initial, t);
+    cv::Mat K = (cv::Mat_<double>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);  
+    bool pnp_succ;
+    pnp_succ = cv::solvePnP(pts3D, pts2D, K, D, rvec, t, 1);
+    //pnp_succ = solvePnPRansac(pts3D, pts2D, K, D, rvec, t, true, 100, 8.0 / focalLength, 0.99, inliers);
+
+    if(!pnp_succ)
+    {
+        printf("pnp failed ! \n");
+        return false;
+    }
+    cv::Rodrigues(rvec, r);
+    //cout << "r " << endl << r << endl;
+    Eigen::MatrixXd R_pnp;
+    cv::cv2eigen(r, R_pnp);
+    Eigen::MatrixXd T_pnp;
+    cv::cv2eigen(t, T_pnp);
+
+    // cam_T_w ---> w_T_cam
+    R = R_pnp.transpose();
+    P = R * (-T_pnp);
+
+    return true;
+}
+```
 
 
 
