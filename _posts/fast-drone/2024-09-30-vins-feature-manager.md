@@ -266,7 +266,12 @@ bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P,
 
 滑窗进行边缘化后，特别是边缘化最旧的一帧时， 在内存上的体现是，依次将后序的内容移动到相邻的前一块，这意味着帧的序号发生了变化，此时也要对 feature_manager 里的 start_frame 进行更新。
 
-因此以 id 索引遍历特征点，如果 start_frame 不是第一帧，则减 1；如果 start_frame 是第一帧，则丢弃该 2D 观测，并检查剩余的观测数量是否小于2，若小于则把该点抹去，否则为新的 start_frame 计算深度。-
+因此以 id 索引遍历特征点，如果 start_frame 不是第一帧，则减 1；如果 start_frame 是第一帧，则丢弃该 2D 观测，并检查剩余的观测数量是否小于2，若小于则把该点抹去，否则为新的 start_frame 计算深度，方法为重投影：
+
+$$
+X=P^{-1}x \\
+x'=P'X
+$$
 
 ```c++
 void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P)
