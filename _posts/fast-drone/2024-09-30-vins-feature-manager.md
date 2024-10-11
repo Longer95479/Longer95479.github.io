@@ -116,7 +116,7 @@ for (auto &id_pts : image)
 若是单目观测，且至少被观测两次，则用 start_frame 和 start_frame+1 这两帧的点作三角化（此时这两帧的 $P$ 也都已知了
 ），*也不考虑追踪的时间长短（追踪连续四帧及以上谓长）*。
 
-代码的核心语句是 `triangulatePoint(leftPose, rightPose, point0, point1, point3d);`，其前后都是由 `imu_T_w` 构造出 `cam_T_w` 作为该函数的输入。
+代码的核心语句是 `triangulatePoint(leftPose, rightPose, point0, point1, point3d);`。而前后的代码都是由 `imu_T_w` 构造出 `cam_T_w` 作为该函数的输入。
 
 ### void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1, Eigen::Vector2d &point0, Eigen::Vector2d &point1, Eigen::Vector3d &point_3d)
 
@@ -211,7 +211,7 @@ void FeatureManager::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen:
 首先确保当前帧不是滑窗内的第一帧，因为单目的话，第一帧无法三角化点，也就无法 pnp 了。之后遍历所有特征点 id，选取有深度的点（已被三角化），并判断这个点的被观测帧是否包含当前帧，如果包含，则将其 3D 坐标由世界系转化到相机系，并分别将点在当前帧的 2D 坐标和 3D 坐标放入 vector 容器内。
 
 之后将这些 2D-3D 点对传入函数 `if(solvePoseByPnP(RCam, PCam, pts2D, pts3D))`，点对数不够则 pnp 失败，返回 false，成功则放回 true，`Rcam` 和 `PCam` 会被赋值，表示世界系到相机系的变换，需要再作处理，得到机体系到世界系的变换矩阵。并且 pnp 求解过程会用到 R、t 的初始值，由 imu 提供。
-
+-
 ### bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P,  vector<cv::Point2f> &pts2D, vector<cv::Point3f> &pts3D)
 
 核心语句是 `pnp_succ = cv::solvePnP(pts3D, pts2D, K, D, rvec, t, 1);`，其前后都是做一些合法判断、矩阵的变换。需要做一些矩阵变换的原因是，最外部输入和最终的输出，均是 w_T_cam（机体坐标相对于世界坐标，cam2w），而 opencv 的 pnp 函数需要的位姿代表的是 cam_T_w。
@@ -262,6 +262,45 @@ bool FeatureManager::solvePoseByPnP(Eigen::Matrix3d &R, Eigen::Vector3d &P,
 }
 ```
 
+## void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P)
 
+滑窗进行边缘化后，特别是边缘化最旧的一帧时， 在内存上的体现是，依次将后序的内容移动到相邻的前一块，这意味着帧的序号发生了变化，此时也要对 feature_manager 里的 start_frame 进行更新。
+
+因此以 id 索引遍历特征点，如果 start_frame 不是第一帧，则减 1；如果 start_frame 是第一帧，则丢弃该 2D 观测，并检查剩余的观测数量是否小于2，若小于则把该点抹去，否则为新的 start_frame 计算深度。-
+
+```c++
+void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P)
+{
+    for (auto it = feature.begin(), it_next = feature.begin();
+         it != feature.end(); it = it_next)
+    {
+        it_next++;
+
+        if (it->start_frame != 0)
+            it->start_frame--;
+        else
+        {
+            Eigen::Vector3d uv_i = it->feature_per_frame[0].point;  
+            it->feature_per_frame.erase(it->feature_per_frame.begin());
+            if (it->feature_per_frame.size() < 2)
+            {
+                feature.erase(it);
+                continue;
+            }
+            else
+            {
+                Eigen::Vector3d pts_i = uv_i * it->estimated_depth;
+                Eigen::Vector3d w_pts_i = marg_R * pts_i + marg_P;
+                Eigen::Vector3d pts_j = new_R.transpose() * (w_pts_i - new_P);
+                double dep_j = pts_j(2);
+                if (dep_j > 0)
+                    it->estimated_depth = dep_j;
+                else
+                    it->estimated_depth = INIT_DEPTH;
+            }
+        }
+    }
+}
+```
 
 

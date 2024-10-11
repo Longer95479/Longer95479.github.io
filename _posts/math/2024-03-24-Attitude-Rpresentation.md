@@ -65,3 +65,7 @@ c_3
 \end{pmatrix}
 \end{align}
 $$
+
+If $q$ or $R$ represent coordinate transformation from IMU to WORLD, 
+- then their correponding rodregues is meaning that find a axis and angle to rotate IMU frame align to WORLD frame
+- their corresponding Euler angle (xyz-rpy) is meaning that rotate IMU frame's x axis (roll) and so on, finally aligning to WORLD frame.
