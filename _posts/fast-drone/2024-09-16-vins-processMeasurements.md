@@ -374,7 +374,31 @@ if(frame_count < WINDOW_SIZE)
 
 ### 滑窗与优化
 
-如果初始化完成，后续该函数将重复执行优化滑窗。
+如果初始化完成，后续该函数将重复执行滑窗与优化。此时 `frame_count` 将不会再改变，始终等于 `WINDOW_SIZE`，代码中的窗口大小实际为 `WINDOW_SIZE + 1`。
 
-首先，如果不使用 IMU，
+ 1. 首先，如果不使用 IMU，则需要 pnp 求解出新到达帧的初始位姿，否则无需此步骤，因为 IMU 预积分会给出新到达帧的位姿预测。
+
+2.  使用窗口里的历史位姿和刚得到的初始位姿，对还没有深度的点三角化。
+
+3. `optimization();`，进行优化，细节见下文
+
+4. 外点去除。先是得到需要去除外点的 id 集合，之后在已有的 fearture_manage 和 feature_tracker 的点集里删去这些点
+    ```c++
+    set<int> removeIndex;
+    f_manager.removeOutlier(removeIndex);
+    if (! MULTIPLE_THREAD)
+    {
+        featureTracker.removeOutliers(removeIndex);
+        predictPtsInNextFrame();
+    }
+    ```
+
+5. 失效检测，如果满足一些指标，则判定为里程计失效，重置变量，重启系统
+
+6. `slideWindow();` 滑窗，对表示窗口内状态的几个数组操作，边缘化最早的帧或次新帧
+
+7. 删除优化失败的路标点，即以 id 遍历路标点，如果其 `solve_flag==2` 则删去
+
+8. 最后对一些用于输出的接口变量（latest state）更新
+
 
