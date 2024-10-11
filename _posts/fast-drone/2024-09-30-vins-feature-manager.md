@@ -310,7 +310,13 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
 
 ## double FeatureManager::compensatedParallax2(const FeaturePerId &it_per_id, int frame_count)
 
-在 gpu 版本里冗余了，没有实际计算补偿的归一化坐标，因此代码后半段是重复冗余计算的，**可改进**。
+在 gpu 版本里冗余了，并没有实际计算补偿的归一化坐标，因此代码后半段是重复冗余计算的，**可改进**。
+
+补充说明一下补偿的思路：有 i, j 两帧，由于仅有旋转运动不利于对极几何求相对位姿，因此补偿的具体操作是把 j 的相机姿态对齐到 i，然后计算出此时的特征点坐标如何，再与上一帧的特征点坐标做差。
+
+有了补偿，考虑两个极端情况：
+- 只有旋转，此时补偿后，特征点在两帧里基本没有移动
+- 只有平移，此时补偿后与补偿前的结果一致
 
 ```c++
 double FeatureManager::compensatedParallax2(const FeaturePerId &it_per_id, int frame_count)
