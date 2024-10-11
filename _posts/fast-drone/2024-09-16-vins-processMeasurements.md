@@ -402,3 +402,9 @@ if(frame_count < WINDOW_SIZE)
 8. 最后对一些用于输出的接口变量（latest state）更新
 
 
+## void Estimator::optimization()
+
+该函数被 `processImage()` 调用，是后端的核心函数。
+
+
+
