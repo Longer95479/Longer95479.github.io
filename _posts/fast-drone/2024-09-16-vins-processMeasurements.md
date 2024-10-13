@@ -436,7 +436,25 @@ if (last_marginalization_info && last_marginalization_info->valid)
 }
 ```
 
+如果使用 imu，则添加预积分因子：
+```c++
+if(USE_IMU)
+{
+    for (int i = 0; i < frame_count; i++)
+    {
+        int j = i + 1;
+        if (pre_integrations[j]->sum_dt > 10.0)
+            continue;
+        IMUFactor* imu_factor = new IMUFactor(pre_integrations[j]);
+        problem.AddResidualBlock(imu_factor, NULL, para_Pose[i], para_SpeedBias[i], para_Pose[j], para_SpeedBias[j]);
+    }
+}
+```
 
+接下来便是添加相机观测相关的因子。遍历 feature_manager 内的路标点，如果路标点被跟踪帧数小于 4 帧，则不参与优化。对于优化的路标点观测，用到了三种组合：
 
+- `ProjectionTwoFrameOneCamFactor`：pts_i, pts_j
+- `ProjectionTwoFrameTwoCamFactor`：pts_i, pts_j_right（i != j）
+- `ProjectionOneFrameTwoCamFactor`：pts_i, pts_j_right（i = j）
 
 
