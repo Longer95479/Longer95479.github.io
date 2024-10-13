@@ -406,5 +406,37 @@ if(frame_count < WINDOW_SIZE)
 
 该函数被 `processImage()` 调用，是后端的核心函数。
 
+首先将用 `Eigen` 表示的状态转换成 `double` 类型的数组，用于后续的 ceres 优化。
+
+实例化 `问题` 和 `损失函数`，即 `ceres::Problem problem;` 和 `ceres::LossFunction *loss_function;`。初始化鲁棒优化核函数 Huber 函数。
+
+添加参数块（ParammeterBlock），包括位姿、速度、偏置、外参、时间偏移。步骤如下：
+
+1. 实例化局部参数化变量：`ceres::LocalParameterization *local_parameterization = new PoseLocalParameterization();`
+
+2. 向问题添加参数块：`problem.AddParameterBlock(para_Ex_Pose[i], SIZE_POSE, local_parameterization);`
+
+对参数可以有一些额外的操作，如`冻结某些参数`：
+```c++
+// 若未使用 imu，则不对第一帧的位姿作优化
+if(!USE_IMU)
+    problem.SetParameterBlockConstant(para_Pose[0]);
+```
+
+接下来构建或更新因子图。
+
+如果存在上次边缘化的信息，则构造新的边缘化因子。
+```c++
+if (last_marginalization_info && last_marginalization_info->valid)
+{
+    // construct new marginlization_factor
+    MarginalizationFactor *marginalization_factor = new MarginalizationFactor(last_marginalization_info);
+    problem.AddResidualBlock(marginalization_factor, NULL,
+                                last_marginalization_parameter_blocks);
+}
+```
+
+
+
 
 
