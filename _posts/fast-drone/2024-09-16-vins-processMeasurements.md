@@ -457,4 +457,39 @@ if(USE_IMU)
 - `ProjectionTwoFrameTwoCamFactor`：pts_i, pts_j_right（i != j）
 - `ProjectionOneFrameTwoCamFactor`：pts_i, pts_j_right（i = j）
 
+可视化便是星型网，中心是左目的 start_frame，连接所有其他在 `vector<FeaturePerFrame>` 的元素。
 
+> 星型意味着对中心敏感，可改进的点？
+
+此时已经将涉及的不同类别的因子添加到因子图中，开始对 ceres 求解器作一些设置：
+
+```c++
+options.linear_solver_type = ceres::DENSE_SCHUR;
+//options.num_threads = 2;
+options.trust_region_strategy_type = ceres::DOGLEG;
+options.max_num_iterations = NUM_ITERATIONS;
+//options.use_explicit_schur_complement = true;
+//options.minimizer_progress_to_stdout = true;
+//options.use_nonmonotonic_steps = true;
+if (marginalization_flag == MARGIN_OLD)
+    options.max_solver_time_in_seconds = SOLVER_TIME * 4.0 / 5.0;
+else
+    options.max_solver_time_in_seconds = SOLVER_TIME;
+TicToc t_solver;
+ceres::Solver::Summary summary;
+ceres::Solve(options, &problem, &summary);
+```
+
+`double2vector();` 将求解的结果转变为 Eigen 数据结构。
+
+至此，优化计算的部分已经完成。如果此时窗口内的关键帧还未满，则已经可以退出函数了；但若窗口已满，则需要为下一帧的到来预留位置，因此需要执行边缘化。
+
+```c++
+if(frame_count < WINDOW_SIZE)
+    return;
+
+TicToc t_whole_marginalization;
+if (marginalization_flag == MARGIN_OLD)
+{
+```
+    
