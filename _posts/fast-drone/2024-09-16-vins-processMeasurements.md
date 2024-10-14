@@ -406,6 +406,8 @@ if(frame_count < WINDOW_SIZE)
 
 该函数被 `processImage()` 调用，是后端的核心函数。
 
+### 参数预处理
+
 首先将用 `Eigen` 表示的状态转换成 `double` 类型的数组，用于后续的 ceres 优化。
 
 实例化 `问题` 和 `损失函数`，即 `ceres::Problem problem;` 和 `ceres::LossFunction *loss_function;`。初始化鲁棒优化核函数 Huber 函数。
@@ -423,9 +425,11 @@ if(!USE_IMU)
     problem.SetParameterBlockConstant(para_Pose[0]);
 ```
 
-接下来构建或更新因子图。
+### 构建因子图
 
-如果存在上次边缘化的信息，则构造新的边缘化因子。
+接下来构建、扩充和更新因子图。
+
+如果存在上次边缘化的信息，则构造并添加新的边缘化因子。
 ```c++
 if (last_marginalization_info && last_marginalization_info->valid)
 {
@@ -451,7 +455,7 @@ if(USE_IMU)
 }
 ```
 
-接下来便是添加相机观测相关的因子。遍历 feature_manager 内的路标点，如果路标点被跟踪帧数小于 4 帧，则不参与优化。对于优化的路标点观测，用到了三种组合：
+之后便是添加相机观测相关的因子。遍历 feature_manager 内的路标点，如果路标点被跟踪帧数小于 4 帧，则不参与优化。对于优化的路标点观测，用到了三种组合：
 
 - `ProjectionTwoFrameOneCamFactor`：pts_i, pts_j
 - `ProjectionTwoFrameTwoCamFactor`：pts_i, pts_j_right（i != j）
@@ -460,6 +464,8 @@ if(USE_IMU)
 可视化便是星型网，中心是左目的 start_frame，连接所有其他在 `vector<FeaturePerFrame>` 的元素。
 
 > 星型意味着对中心敏感，可改进的点？
+
+### 设置求解器选项并执行优化
 
 此时已经将涉及的不同类别的因子添加到因子图中，开始对 ceres 求解器作一些设置：
 
@@ -491,5 +497,9 @@ if(frame_count < WINDOW_SIZE)
 TicToc t_whole_marginalization;
 if (marginalization_flag == MARGIN_OLD)
 {
+    ...
 ```
-    
+
+### 边缘化
+
+

@@ -47,3 +47,5 @@ Environment="HTTPS_PROXY=127.0.0.1:8889"
 >Please remove the https:// and http://
 
 [stackoverflow - docker: Error response from daemon: Get https://registry-1.docker.io/v2/: proxyconnect tcp: EOF](https://stackoverflow.com/questions/64137423/docker-error-response-from-daemon-get-https-registry-1-docker-io-v2-proxyc)
+
+[docker 设置代理，以及国内加速镜像设置](https://neucrack.com/p/286)
