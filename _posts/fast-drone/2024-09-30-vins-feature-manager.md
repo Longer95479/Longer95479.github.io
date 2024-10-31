@@ -317,7 +317,7 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
 有了补偿，考虑两个极端情况：
 - 只有旋转，此时补偿后，特征点在两帧里基本没有移动
 - 只有平移，此时补偿后与补偿前的结果一致
-
+<!--  -->
 ```c++
 double FeatureManager::compensatedParallax2(const FeaturePerId &it_per_id, int frame_count)
 {
