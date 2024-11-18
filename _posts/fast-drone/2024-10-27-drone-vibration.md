@@ -30,12 +30,14 @@ A few of simple steps that may reduce vibrations are:
 |-|-|-|-|-|-|
 |振动幅值[m s^-2]|0.75|15.0|3.0|2.75|2.5|
 
+结论为桨叶弯折会带来巨大的振动，负载晃动会带来一定的振动，桨叶轻微磨损则问题不大。
+
 具体实验配置和测试结果如下：
 
 1.  08 号：桨叶全新 + 无任何额外负载
 ![orin08_noload](/assets/2024-10-27-drone-vibration/orin08_noload.png)
 
-2. 01 号：桨叶磨损 + 负载松动
+2. 01 号：桨叶磨损弯折 + 负载松动
 ![orin01_bladebroken_loadloose](/assets/2024-10-27-drone-vibration/orin01_bladebroken_loadloose.png)
 
 3. 01 号：桨叶换新 + 负载松动
