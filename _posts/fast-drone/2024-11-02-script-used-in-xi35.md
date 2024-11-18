@@ -80,4 +80,4 @@ python 文件见 [config_scipt/set_global_config.py](https://github.com/Longer95
 > 
 > 你也可以通过使用鼠标拉伸来扩大整个窗口。再说一次，如果要保留更改，请从菜单中选择“首选项”，“布局”，接着选择“保存”和“关闭”。
 
-针对 XI35，[hh900](https://github.com/hh900) 写了一个 terminator 的脚本，能够自动让每个终端进入容器，并预先打印出将要执行的命令。笔者在此基础上增加了非容器的版本。脚本见 [terminator/config-orin01-nodocker](https://github.com/Longer95479/Fast-Drone-XI35/blob/board/terminator/config-orin01-nodocker)。
+针对 XI35，[hh900](https://github.com/hh900) 写了一个 terminator 的脚本，能够自动让每个终端进入容器，并预先打印出将要执行的命令。笔者在此基础上增加了非容器的版本。脚本见 [terminator/config-orin01-nodocker](https://github.com/Longer95479/Fast-Drone-XI35/blob/board/terminator/config-orin01-nodocker)，若要阅读，倒序阅读方便查看有意义的命令。
