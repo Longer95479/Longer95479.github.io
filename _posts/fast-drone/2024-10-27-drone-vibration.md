@@ -17,4 +17,29 @@ odom的速度微分后，得到加速度，频率较低，但没有高频噪声
 ![alt text](/assets/2024-10-27-drone-vibration/image.png)
 
 
-为了验证不同因素对加速度计测量值震动，进行了一下几个实验
+为了验证不同因素对加速度计测量值震动，进行了一下几个实验：
+
+1.  08 号：桨叶全新 + 无任何额外负载
+![orin08_noload](/assets/2024-10-27-drone-vibration/orin08_noload.png)
+
+2. 01 号：桨叶磨损 + 负载松动
+![orin01_bladebroken_loadloose](/assets/2024-10-27-drone-vibration/orin01_bladebroken_loadloose.png)
+
+3. 01 号：桨叶换新 + 负载松动
+![orin01_newblade_loadloose](/assets/2024-10-27-drone-vibration/orin01_newblade_loadloose.png)
+
+4. 01 号：桨叶换新 + 上紧用于固定 RS 相机的 3D 打印件
+![orin01_newblade_tightRS](/assets/2024-10-27-drone-vibration/orin01_newblade_tightRS.png)
+
+5. 01 号：桨叶换新 + 上紧rs相机打印件 + 垫nx板打印件中间
+![orin01_newblade_tightRS_padNX](/assets/2024-10-27-drone-vibration/orin01_newblade_tightRS_padNX.png)
+
+
+第一个实验为震动最小的配置，作为一个参考基准，震动最小的原因是其桨叶全新，同时上部未安装相机、NX机载电脑等额外的负载，因此振动的来源最少。
+
+第二至四个实验，随着改进措施的实施，震动逐渐减小。
+
+
+|实验编号|1|2|3|4|5|
+|-|-|-|-|-|-|
+|振动幅值[m s^-2]|0.75|15.0|3.0|2.75|2.5|
