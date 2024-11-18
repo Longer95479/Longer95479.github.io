@@ -122,3 +122,11 @@ sync_image_pose_->registerCallback(boost::bind(&GridMap::depthPoseCallback, this
 参考：[Boost::bind使用详解](https://www.cnblogs.com/blueoverflow/p/4740093.html)
 
 
+
+### map_origin 的含义
+
+map_origin_是地图立方体右下角顶点的坐标，栅格地图的坐标系可以由其坐标反推。
+
+地图的坐标系，x朝前，y朝左，z 朝上
+
+
