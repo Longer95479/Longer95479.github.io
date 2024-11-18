@@ -88,6 +88,6 @@ $$
 
 ### 参考
 
-![航模基础知识--------螺旋桨的静平衡 ](https://www.douban.com/group/topic/86585459/?_i=9946276ISFgcZ_,1901979ISFgcZ_)
+[航模基础知识--------螺旋桨的静平衡 ](https://www.douban.com/group/topic/86585459/?_i=9946276ISFgcZ_,1901979ISFgcZ_)
 
-![Vibration Isolation - px4](https://docs.px4.io/main/en/assembly/vibration_isolation.html)
+[Vibration Isolation - px4](https://docs.px4.io/main/en/assembly/vibration_isolation.html)
