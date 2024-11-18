@@ -8,6 +8,8 @@ categories:
     - fast-drone
 ---
 
+利用自动化脚本，执行重复、确定的操作。
+
 ## 统一配置参数
 
 算法以代码为实体部署后，会存在许多可调节的参数，当参数未被合理地给定，即使逻辑正确，算法的效果也可能并不如意。因此能够快速简便地调整参数便十分重要。
@@ -81,3 +83,8 @@ python 文件见 [config_scipt/set_global_config.py](https://github.com/Longer95
 > 你也可以通过使用鼠标拉伸来扩大整个窗口。再说一次，如果要保留更改，请从菜单中选择“首选项”，“布局”，接着选择“保存”和“关闭”。
 
 针对 XI35，[hh900](https://github.com/hh900) 写了一个 terminator 的脚本，能够自动让每个终端进入容器，并预先打印出将要执行的命令。笔者在此基础上增加了非容器的版本。脚本见 [terminator/config-orin01-nodocker](https://github.com/Longer95479/Fast-Drone-XI35/blob/board/terminator/config-orin01-nodocker)，若要阅读，倒序阅读方便查看有意义的命令。
+
+
+## PX4 配置文件导出与加载
+
+为了简化其他无人机的飞控配置过程，应该使用地面站将已配好的无人机的飞控参数导出成文件，之后仍是使用地面站将该文件导入到其他无人机当中。
