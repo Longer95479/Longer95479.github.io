@@ -14,15 +14,15 @@ $$
 \begin{align}
 P(X|Z) &\propto P(X|Z)P(Z) \\
 &= P(Z|X)P(X) \\
-&= P(X) \prod P(z_{\{i\}}|x_{\{j\}}) 
+&= P(X) \prod P(z_{i}|x_{\{j\}}) 
 \end{align}
 $$
 
 $$
 \begin{align}
-- \log [P(X) \prod P(z_{\{i\}}|X_{\{j\}})] 
-&= \sum h^T(x_{\{j\}}; z_{\{i\}})h(x_{\{j\}}; z_{\{i\}}) \\
-&= \sum (h_0 + \frac{Dh}{dX})^T(h_0 + \frac{Dh}{dX})
+- \log [P(X) \prod P(z_{i}|X_{\{j\}})] 
+&= \sum h^T(x_{\{j\}}; z_{i})h(x_{\{j\}}; z_{i}) \\
+&\approx \sum (h_0 + J^h_x x)^T(h_0 + J^h_x x)
 \end{align}
 $$
 
