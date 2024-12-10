@@ -103,6 +103,7 @@ $$
 当其雅可比矩阵（其实是梯度的转置）为 零向量 时，函数取极小值：
 
 $$\mathbf{J}^g_{\Delta x}= 0$$
+
 $$
 2 \mathbf{h}^T\mathbf{J} + 2\mathbf{J}^T\mathbf{J}\Delta x = 0 \\
 $$
