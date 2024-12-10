@@ -89,9 +89,9 @@ $$
 $$
 
 令  
-$
+$$
 g(\Delta x) = 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x 
-$
+$$
 
 求雅可比矩阵
 
