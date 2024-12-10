@@ -87,17 +87,20 @@ $$
 =
 \min (\alpha_0 + 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x) 
 $$
-令 
+
+令  
 $
 g(\Delta x) = 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x 
 $
 
 求雅可比矩阵
+
 $$
 \mathbf{J}^g_{\Delta x}  = 2 \mathbf{h}^T\mathbf{J} + 2\mathbf{J}^T\mathbf{J}\Delta x
 $$
 
 当其雅可比矩阵（其实是梯度的转置）为 零向量 时，函数取极小值：
+
 $$\mathbf{J}^g_{\Delta x}= 0$$
 $$
 2 \mathbf{h}^T\mathbf{J} + 2\mathbf{J}^T\mathbf{J}\Delta x = 0 \\
@@ -110,6 +113,7 @@ $$
 $$
 
 最直接的求解方法为求逆：
+
 $$
 \Delta x = -(\mathbf{J}^T\mathbf{J})^{-1}\mathbf{h}^T\mathbf{J}
 $$
