@@ -20,7 +20,7 @@ P(X|Z) &\propto P(X|Z)P(Z) \\
 \end{align}
 $$
 
-利用负对数将乘积转化为加法，我们称之为 `损失函数`：
+利用负对数将乘积转化为加法，我们称之为 `损失函数`，每一个 $h$ 称之为残差函数，而残差函数一般已经在流形的切空间对应的欧式空间上了，可以使用最原始的加减符号：
 
 $$
 \begin{align}
@@ -63,7 +63,7 @@ J^h_x \\
 \vdots
 \end{bmatrix}
 \Delta x \\
-&= \bold{h} + \bold{J} \Delta x
+&= \mathbf{h} + \mathbf{J} \Delta x
 \end{align}
 $$
 
@@ -72,41 +72,50 @@ $$
 $$
 \begin{align}
 \sum_{all\ h} (h_0 + J^h_x \Delta x)^T(h_0 + J^h_x \Delta x) 
-& = (\bold{h} + \bold{J} \Delta x)^T(\bold{h} + \bold{J} \Delta x) \\
-&= \bold{h}^T \bold{h} + 2\bold{h}^T \bold{J} \Delta x + \Delta x^T \bold{J}^T \bold{J} \Delta x \\
-&= \alpha_0 + 2\bold{h}^T \bold{J} \Delta x + \Delta x^T \bold{J}^T \bold{J} \Delta x
+& = (\mathbf{h} + \mathbf{J} \Delta x)^T(\mathbf{h} + \mathbf{J} \Delta x) \\
+&= \mathbf{h}^T \mathbf{h} + 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x \\
+&= \alpha_0 + 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x
 \end{align}
 $$
 
-其中，$\bold{h}$ 是很多 $h_0$ 的堆叠，$\Delta x$ 是所有状态变量的增量的堆叠，$\bold{J}$ 则是很多 $J^h_x$ 的堆叠，$J^h_x$ 是各个子损失函数对所有状态变量的雅可比矩阵。
+其中，$\mathbf{h}$ 是很多 $h_0$ 的堆叠，$\Delta x$ 是所有状态变量的增量的堆叠，$\mathbf{J}$ 则是很多 $J^h_x$ 的堆叠，$J^h_x$ 是各个子损失函数对所有状态变量的雅可比矩阵。
 
 展开后，可以看到有一个常数项，这对整个函数值的变化没有贡献，因此：
 
 $$
-\min (2\bold{h}^T \bold{J} \Delta x + \Delta x^T \bold{J}^T \bold{J} \Delta x)
+\min (2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x)
 =
-\min (\alpha_0 + 2\bold{h}^T \bold{J} \Delta x + \Delta x^T \bold{J}^T \bold{J} \Delta x) 
+\min (\alpha_0 + 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x) 
 $$
 令 
 $
-g(\Delta x) = 2\bold{h}^T \bold{J} \Delta x + \Delta x^T \bold{J}^T \bold{J} \Delta x 
+g(\Delta x) = 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x 
 $
 
 求雅可比矩阵
 $$
-\bold{J}^g_{\Delta x}  = 2 \bold{h}^T\bold{J} + 2\bold{J}^T\bold{J}\Delta x
+\mathbf{J}^g_{\Delta x}  = 2 \mathbf{h}^T\mathbf{J} + 2\mathbf{J}^T\mathbf{J}\Delta x
 $$
 
 当其雅可比矩阵（其实是梯度的转置）为 零向量 时，函数取极小值：
-$$\bold{J}^g_{\Delta x}= 0$$
+$$\mathbf{J}^g_{\Delta x}= 0$$
 $$
-2 \bold{h}^T\bold{J} + 2\bold{J}^T\bold{J}\Delta x = 0 \\
+2 \mathbf{h}^T\mathbf{J} + 2\mathbf{J}^T\mathbf{J}\Delta x = 0 \\
 $$
 
 从而得到所谓的正规方程，求解该方程，便得到移动的方向和大小 $\Delta x$
 
 $$
-\bold{J}^T\bold{J}\Delta x = -\bold{h}^T\bold{J}
+\mathbf{J}^T\mathbf{J}\Delta x = -\mathbf{h}^T\mathbf{J}
 $$
 
+最直接的求解方法为求逆：
+$$
+\Delta x = -(\mathbf{J}^T\mathbf{J})^{-1}\mathbf{h}^T\mathbf{J}
+$$
+
+
+## 李群函数的雅可比矩阵
+
+从上一章可以看到，想要求解得到步长
 
