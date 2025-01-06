@@ -20,12 +20,12 @@ P(X|Z) &\propto P(X|Z)P(Z) \\
 \end{align}
 $$
 
-利用负对数将乘积转化为加法，我们称之为 `损失函数`，每一个 $h$ 称之为残差函数，而残差函数一般已经在流形的切空间对应的欧式空间上了，可以使用最原始的加减符号：
+利用负对数将乘积转化为加法，我们称之为 `损失函数`，每一个 $h$ 称之为残差函数，而残差函数的输入是流形，但输出一般已经在欧式空间上了，因此可以使用最原始的加减符号：
 
 $$
 \begin{align}
 - \log [P(X) \prod P(z_{i}|x_{\{j\}})] 
-&= \sum_{all\ h} h^T(x_{\{j\}}; z_{i})h(x_{\{j\}}; z_{i}) \\
+&= \sum_{all\ h} h^T(x_{\{j\}}; z_{i}) h(x_{\{j\}}; z_{i}) \\
 & \scriptsize{x_{j} 扩充成 x} \\
 &\approx \sum_{all\ h} (h_0 + J^h_x \Delta x)^T(h_0 + J^h_x \Delta x) \\
 & \scriptsize{把 h_0 + J^h_x \Delta x 堆叠成列向量，然后展开，符号不变} \\
@@ -94,7 +94,7 @@ $$
 g(\Delta x) = 2\mathbf{h}^T \mathbf{J} \Delta x + \Delta x^T \mathbf{J}^T \mathbf{J} \Delta x 
 $$
 
-求雅可比矩阵
+求 g 对 $\Delta x$ 雅可比矩阵
 
 $$
 \mathbf{J}^g_{\Delta x}  = 2 \mathbf{h}^T\mathbf{J} + 2(\Delta x)^T\mathbf{J}^T\mathbf{J}
@@ -120,8 +120,9 @@ $$
 \Delta x = -(\mathbf{J}^T\mathbf{J})^{-1}\mathbf{J}^T\mathbf{}h
 $$
 
+但求逆的计算量大，因此通常会选择分解的方法来求解该正规方程。
 
 ## 李群函数的雅可比矩阵
 
-从上一章可以看到，想要求解得到步长
+从上一章可以看到，想要求解得到步长，需要获取得到一个大的、细长的矩阵 $J$，这个矩阵由多个矩阵块堆 $J^{h_k}_x$ 叠起来，每个子块表示某个测量约束对应的 $h_k$ 对所有状态变量的雅可比矩阵，因此当约束远大于状态变量个数的时候，J 就会看起来十分地细长。
 
