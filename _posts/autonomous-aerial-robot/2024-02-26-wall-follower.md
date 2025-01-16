@@ -34,7 +34,7 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
     \ENDFOR
     \IF {Occupied\_pts.\CALL {Size}{} > certain\_threshold}
         \COMMENT{Wall existing}
-        \STATE $\vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
+        \STATE $\vec{p}, \vec{v}$ = \CALL{Plane-Fitting}{Occupied\_pts}
         \STATE next\_way\_point = $R_{body}^w \vec{p} +$ \CALL {Sign}{(body\_position - $\vec{p}$) $\cdot \vec{v}$} $\cdot d_w  \frac{\vec{v}}{||\vec{v}||}$
         \IF{\CALL {is-known-occupied}{next\_way\_point}}
         \STATE next\_way\_point = \CALL {Ray-casting}{body\_position, next\_way\_point}
