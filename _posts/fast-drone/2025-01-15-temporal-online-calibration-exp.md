@@ -26,7 +26,7 @@ AirSLAM 在公开数据集上的效果很不错，但在笔者自己录制的数
 
 最终的实验结果证明，自己的数据集中，相机的时间基准比 imu 的时间基准快 1.6 ms，影响较小，即使不进行在线时间偏移估计，也不会导致轨迹的大幅度漂移，因此导致 AirSLAM 在自己录制的数据集上漂移较大的并不是时间基准偏移，而是另有其因。
 
-### 问题建模
+### 如何将时间偏移加入到优化框架中
 
 对于多个传感器时间戳的质量，可以分成三类：
 - 既同步，又有相同时间基准
@@ -77,6 +77,7 @@ $$
 $$
 r_i(Z,X) = (z_i - V_i t_d ) - \pi(T_{cw}\ ^wp)
 $$
+
 其中，特征点的运动速度为 $V_i$。在 $t_d$ 时间内特征点被假设为匀速运动。
 
 这样我们便得到了最初版本的，包含时间偏移的残差表达式。但这还不是最终用在程序里的表达式。
@@ -94,14 +95,29 @@ $$
 
 ### 实验
 
-给同步的数据集人为增加时间偏移，作为真值。
+给同步的数据集人为增加时间偏移，作为真值。使用的数据集是 `MH_05_difficult.bag`。
 
-需要注意的是，在 rosbag 中，有两个和时间相关的量，一个是和 topic、msg 同级的 t，另一个是在消息内部的 msg.header.stamp。二者是不同的，t 表示的是在 rosbag 中消息被记录或者被发布的时刻，而 msg.header.stamp 才是传感器数据的时间戳。下面是将已作时间同步的数据集人为进行偏移一定时间的程序：
+对数据集中 imu 的时间戳偏移不同程度，并分别运行里程计。里程计漂移在本文定义为，里程计给出的终点位置与终点真值的距离。时间偏移估计值的初始值均设置为 0 ms。结果如下：
+
+|实际时间基准偏移 [s]|偏移估计值 [s]|里程计漂移(w) [m]|里程计漂移(w/o) [m]|
+|-|-|-|-|
+|0.030|0.035|0.095|0.382|
+|0.060|0.068|0.363|1.523|
+|0.100|0.108|0.614|2.867|
+
+下图展示了 100 ms 偏移情况下，时间偏移估计值是如何收敛到真实偏移附近的：
+
+![temporal calibration](/assets/2025-01-15-temporal-online-calibration-exp/temporal_calibration.png)
+
+
+需要注意的是，在 rosbag 中，有两个和时间相关的量，一个是和 topic、msg 同级的 t，另一个是在消息内部的 msg.header.stamp。二者是不同的，t 表示的是在 rosbag 中消息被记录或者被发布的时刻，而 msg.header.stamp 才是传感器数据的时间戳。
+
+下面是将已作时间同步的数据集人为进行偏移一定时间的程序：
 
 ```python
-#!/usr/bin/env python
-
-import rosbag
+#!/usr/bin/env python          
+                               
+import rosbag                  
 import rospy
 from std_msgs.msg import Header
 
@@ -113,27 +129,33 @@ def adjust_timestamp_in_rosbag(input_bag_file, output_bag_file, topic_name):
     with rosbag.Bag(input_bag_file, 'r') as in_bag, rosbag.Bag(output_bag_file, 'w') as out_bag:
         for topic, msg, t in in_bag.read_messages():
             # If it's the specified topic, modify the timestamp
-            if topic == topic_name:
+            if topic == topic_name:         
                 new_time = msg.header.stamp + rospy.Duration(time_offset)
                 # Update the timestamp in the message (if the message contains a Header)
                 if hasattr(msg, 'header') and hasattr(msg, 'header'):
-                    msg.header.stamp = new_time
+                    msg.header.stamp = new_time     
                 else:
                     rospy.logwarn(f"Message {topic} does not have a Header, skipping timestamp adjustment")
 
             # Write the modified message to the new bag file
-            out_bag.write(topic, msg, t)
+            out_bag.write(topic, msg, t)    
 
         rospy.loginfo(f"Timestamps have been offset by {time_offset} seconds. Output file: {output_bag_file}")
 
 if __name__ == '__main__':
     # Specify the input and output bag file paths, and the topic name to adjust
-    input_bag_file = 'MH_05_difficult.bag'  # Input ROS bag file
-    output_bag_file = 'output.bag'  # Output ROS bag file
+    input_bag_file = '../rosbags/MH_05_difficult.bag'  # Input ROS bag file
+    output_bag_file = '../rosbags/' + 'MH_05_difficult_offset' + str(int(time_offset*1000)) + "ms.bag" # Output ROS bag file
     topic_name = '/imu0'  # The topic name to adjust timestamps for
 
     # Call the function to adjust the timestamps
     adjust_timestamp_in_rosbag(input_bag_file, output_bag_file, topic_name)
 ```
+
+### 其他测试
+
+为了直观地观察 imu 和图像时间戳的分布情况，写了一个脚本将其绘制出来。
+
+
 
 
