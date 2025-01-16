@@ -156,6 +156,16 @@ if __name__ == '__main__':
 
 为了直观地观察 imu 和图像时间戳的分布情况，写了一个脚本将其绘制出来。
 
+MH_05_difficult.bag 的相机和 imu 同步做的很好：
 
+![MH_05_difficult_offset30ms](/assets/2025-01-15-temporal-online-calibration-exp/timestamp_of_topics_MH_05_difficult.png)
+
+对 MH_05_difficult.bag 中的 imu 时间戳增加 3 ms：
+
+![timestamp_of_topics_MH_05_difficult_offset3ms](/assets/2025-01-15-temporal-online-calibration-exp/timestamp_of_topics_MH_05_difficult_offset3ms.png)
+
+自己搭建的 fast-drone-xi35 相机和 imu 未作同步，时间偏移量倒是不大，约为 1.6 ms。
+
+![timestamp_of_topics_indoorhightmove](/assets/2025-01-15-temporal-online-calibration-exp/timestamp_of_topics_indoorhightmove.png)
 
 
