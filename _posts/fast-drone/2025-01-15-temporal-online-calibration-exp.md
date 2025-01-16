@@ -168,4 +168,59 @@ MH_05_difficult.bag 的相机和 imu 同步做的很好：
 
 ![timestamp_of_topics_indoorhightmove](/assets/2025-01-15-temporal-online-calibration-exp/timestamp_of_topics_indoorhightmove.png)
 
+python 脚本：
 
+```python
+#!/usr/bin/env python
+
+import rosbag
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from std_msgs.msg import Header
+
+def visualize_rosbag_timestamps(bag_file):
+    """
+    Visualize timestamps of all topics in a ROS bag file using msg.header.stamp.
+    """
+    # Dictionary to store timestamps for each topic
+    topic_timestamps = defaultdict(list)
+
+    # Read the bag file
+    with rosbag.Bag(bag_file, 'r') as bag:
+        for topic, msg, t in bag.read_messages():
+            # Check if the message has a header with stamp field
+            if hasattr(msg, 'header') and hasattr(msg.header, 'stamp'):
+                # Convert the header.stamp (ros::Time) to seconds
+                timestamp = msg.header.stamp.to_sec()
+                # Store the timestamp for the topic
+                topic_timestamps[topic].append(timestamp)
+            else:
+                # If no header.stamp, use the default timestamp (from rosbag)
+                topic_timestamps[topic].append(t.to_sec())
+
+    # Plot timestamps for each topic
+    plt.figure(figsize=(10, 6))
+    for topic, timestamps in topic_timestamps.items():
+        plt.plot(timestamps, [topic] * len(timestamps), 'o', label=topic)
+
+    # Configure the plot
+    plt.title("Timestamps of Messages in ROS Bag (Using header.stamp)")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("Topics")
+    plt.yticks(range(len(topic_timestamps)), topic_timestamps.keys())
+    plt.legend(loc='upper right', fontsize='small')
+    plt.grid(True)
+    plt.tight_layout()
+
+    # Show the plot
+    plt.show()
+
+
+if __name__ == '__main__':
+    # Specify the ROS bag file to analyze
+    bag_file = '../rosbags/MH_05_difficult_offset3ms.bag'  # Replace with your ROS bag file path
+
+    # Visualize timestamps
+    visualize_rosbag_timestamps(bag_file)
+
+```
