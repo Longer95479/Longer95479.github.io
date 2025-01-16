@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Realization of Online Temporal Calibration on AirSLAM" 
-date:   2024-06-15 21:24:00 +0800
+date:   2025-01-15 14:00:00 +0800
 tags: 
     - slam
     - calibration
@@ -40,7 +40,7 @@ AirSLAM 在公开数据集上的效果很不错，但在笔者自己录制的数
 - 接收到一帧新图像
 - 根据这帧图像，以及上一帧图像的时间戳，收集在这段时间内的 imu 数据
 
-如果存在时间基准的偏移，那么我们就会把图像相对于自身时间基准的时间戳，当成是相对于 imu 时间基准的时间戳，然后收集打包两个时间戳之间的 imu 数据
+如果存在时间基准的偏移，那么我们就会**把图像相对于自身时间基准的时间戳，当成是相对于 imu 时间基准的时间戳，然后收集打包两个时间戳之间的 imu 数据**
 
 根据下图可以看到: 
 
@@ -92,5 +92,48 @@ $$
 r_i(Z,X) = (z_i - V_i (t_d - t_d') ) - \pi(T_{cw}\ ^wp)
 $$
 
+### 实验
 
 给同步的数据集人为增加时间偏移，作为真值。
+
+需要注意的是，在 rosbag 中，有两个和时间相关的量，一个是和 topic、msg 同级的 t，另一个是在消息内部的 msg.header.stamp。二者是不同的，t 表示的是在 rosbag 中消息被记录或者被发布的时刻，而 msg.header.stamp 才是传感器数据的时间戳。下面是将已作时间同步的数据集人为进行偏移一定时间的程序：
+
+```python
+#!/usr/bin/env python
+
+import rosbag
+import rospy
+from std_msgs.msg import Header
+
+# Time offset (30ms)
+time_offset = 0.10  # 30ms = 0.03s
+
+def adjust_timestamp_in_rosbag(input_bag_file, output_bag_file, topic_name):
+    # Open the original bag file and the new bag file
+    with rosbag.Bag(input_bag_file, 'r') as in_bag, rosbag.Bag(output_bag_file, 'w') as out_bag:
+        for topic, msg, t in in_bag.read_messages():
+            # If it's the specified topic, modify the timestamp
+            if topic == topic_name:
+                new_time = msg.header.stamp + rospy.Duration(time_offset)
+                # Update the timestamp in the message (if the message contains a Header)
+                if hasattr(msg, 'header') and hasattr(msg, 'header'):
+                    msg.header.stamp = new_time
+                else:
+                    rospy.logwarn(f"Message {topic} does not have a Header, skipping timestamp adjustment")
+
+            # Write the modified message to the new bag file
+            out_bag.write(topic, msg, t)
+
+        rospy.loginfo(f"Timestamps have been offset by {time_offset} seconds. Output file: {output_bag_file}")
+
+if __name__ == '__main__':
+    # Specify the input and output bag file paths, and the topic name to adjust
+    input_bag_file = 'MH_05_difficult.bag'  # Input ROS bag file
+    output_bag_file = 'output.bag'  # Output ROS bag file
+    topic_name = '/imu0'  # The topic name to adjust timestamps for
+
+    # Call the function to adjust the timestamps
+    adjust_timestamp_in_rosbag(input_bag_file, output_bag_file, topic_name)
+```
+
+
