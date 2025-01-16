@@ -19,12 +19,12 @@ Pesudocode of finding next waypoint to follow the wall is shown as the flollwing
 
 \REQUIRE pts\_end $^{body}$ are initialzed
 \ENSURE some postconditions
-\INPUT pts\_end $^{body}$, $\vec{p} \in$ pts\_end $^{body}$, $T_{body}^w$
+\INPUT pts\_end $^{body}$, $\vec{p} \in$ pts\_end $^{world}$, $T_{body}^w$
 \OUTPUT next\_way\_point
 \FUNCTION{Find-next-waypoint-for-wall-following}{pts\_end $^{body}$}
     \IF{has\_reached\_waypoint}
     \FOR{$\mathbf{each}$ pt\_end$^{body}$ $\in$ pts\_end$^{body}$}
-        \STATE pt\_end = pt\_end$^{body}$ $\cdot R_{body}^w + t_{body}^w$
+        \STATE pt\_end = $R_{body}^w \cdot$ pt\_end$^{body}$ $ + t_{body}^w$
         \STATE raycaster.\CALL {Set-input}{body\_position/resolution, pt\_end/resolution}
         \WHILE {raycaster. \CALL {step}{ray\_pt}}
             \IF {\CALL {is-known-occupied}{ray\_pt}}
