@@ -5,7 +5,7 @@ date:   2024-03-16 21:05:00 +0800
 tags: 
     - motion planning
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 How to make a drone follow a wall while flying?

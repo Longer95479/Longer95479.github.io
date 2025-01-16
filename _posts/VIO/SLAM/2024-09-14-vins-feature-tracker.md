@@ -5,7 +5,7 @@ date:   2024-09-14 00:52:00 +0800
 tags: 
     - slam
 categories:
-    - fast-drone
+    - VINS-Fusion
 ---
 
 来自相机的图像被发布，缓存在 `img0_buf` 和 `img1_buf` 队列中，新图像放在 back，抽取 front 的图像进行特征追踪。如果是双目，不同步的会被按时间戳先后丢弃，只有双目图像帧的时间戳完全同步才会被使用。

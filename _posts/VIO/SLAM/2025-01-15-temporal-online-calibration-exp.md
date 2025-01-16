@@ -6,7 +6,7 @@ tags:
     - slam
     - calibration
 categories:
-    - coding 
+    - AirSLAM Improvement
 ---
 
 

@@ -4,7 +4,7 @@ title:  "XI35 装机全过程"
 date:   2024-07-15 11:40:00 +0800
 tags: quadcopter drone
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 本篇记录 XI35 机体的组装过程，以及飞控、ORIN的配置，最终实现 fast-drone-250 的过程。

@@ -5,7 +5,7 @@ date:   2024-09-16 23:37:00 +0800
 tags: 
     - slam
 categories:
-    - fast-drone
+    - VINS-Fusion
 ---
 
 feature manager 的主要数据结构为：

@@ -5,7 +5,7 @@ date:   2024-10-27 20:00:00 +0800
 tags: 
     - motion control
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 

@@ -3,10 +3,10 @@ layout: post
 title:  "Search Plan in Project XI35"
 date:   2024-11-07 16:00:00 +0800
 tags: 
-    - fast-drone
+    - autonomous aerial robot
     - plan
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 八架无人机，分为三组，需要在一个矩形拒止区域内搜索 0.5m*0.5m 大小的数字标识，数字对应于自身的组别。

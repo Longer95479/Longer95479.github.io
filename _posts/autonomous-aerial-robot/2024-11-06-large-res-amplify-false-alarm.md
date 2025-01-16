@@ -3,11 +3,11 @@ layout: post
 title:  "Large Resolution will Amplify False Alarm of Occupy Map"
 date:   2024-11-06 13:00:00 +0800
 tags: 
-    - fast-drone
+    - autonomous aerial robot
     - map
     - plan
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 当无人机的可活动区域变大后，若保持分辨率不变，则 ego planner 里预先开辟的地图将会占据很大的内存，因此需要增大分辨率，来抵消一部分地图扩大带来的内存消耗。然而，这会给规划端带来一些挑战。

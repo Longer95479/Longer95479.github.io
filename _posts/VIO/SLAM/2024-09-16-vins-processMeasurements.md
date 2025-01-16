@@ -5,7 +5,7 @@ date:   2024-09-16 23:37:00 +0800
 tags: 
     - slam
 categories:
-    - fast-drone
+    - VINS-Fusion
 ---
 
 ## void Estimator::processMeasurements()

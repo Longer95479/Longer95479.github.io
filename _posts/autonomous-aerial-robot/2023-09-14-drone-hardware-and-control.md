@@ -4,7 +4,7 @@ title:  "四轴硬件组成与控制思路"
 date:   2023-09-14 13:00:00 +0800
 tags: quadcopter drone
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 介绍四轴硬件组成及控制思路。

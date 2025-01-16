@@ -3,11 +3,11 @@ layout: post
 title:  "ego planner roslaunch"
 date:   2024-02-29 10:54:00 +0800
 tags: 
-    - fast-drone
+    - autonomous aerial robot
     - ROS
     - xml
 categories:
-  - fast-drone
+  - autonomous aerial robot
 ---
 
 以下是 `advanced_param.xml` 的简略版本：

@@ -5,7 +5,7 @@ date:   2024-11-02 13:00:00 +0800
 tags: 
     - script
 categories:
-    - fast-drone
+    - autonomous aerial robot
 ---
 
 利用自动化脚本，执行重复、确定的操作。
