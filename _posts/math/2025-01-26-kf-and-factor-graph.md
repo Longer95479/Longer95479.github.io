@@ -21,11 +21,21 @@ $$
 预测（prediction）：
 
 $$
+X_2^- = \argmin_{X_2} P(X_2)
+$$
+
+$$
 P(X_2) = \int P(X_2 | X_1) P(X_1) \bf{d} X_1
 $$
 
 更新（update）：
 
 $$
+X_2^* = \argmin_{X_2} P(X_2|Z_2)
+$$
+
+$$
 P(X_2 | Z_2) \propto P(X_2, Z_2) = P(Z_2 | X_2) P(X_2)
 $$
+
+
