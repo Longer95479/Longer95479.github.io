@@ -65,7 +65,71 @@ $$
 ### 预测
 
 $$
+\begin{align}
+& ||x_2 - (Fx_1 + Bu)||^2_Q + ||x_1 - \mu_1||^2_{\Sigma_1} \\
+&= 
+\begin{bmatrix}
+Q^{-1/2}(x_1 - Fx_1 - Bu) \\
+\Sigma^{-1/2} (x_1 -\mu)
+\end{bmatrix} ^T
 
+\begin{bmatrix}
+Q^{-1/2}(x_1 - Fx_1 - Bu) \\
+\Sigma^{-1/2} (x_1 -\mu)
+\end{bmatrix} \\
+
+&= 
+\left\|
+\begin{bmatrix}
+Q^{-1/2} & \bf{0} \\
+\bf{0} & \Sigma_1^{-1/2}
+\end{bmatrix}
+ (
+\begin{bmatrix}
+I & -F \\
+\bf{0} & I
+\end{bmatrix}
+
+\begin{bmatrix}
+x_2 \\
+x_1
+\end{bmatrix}
++
+\begin{bmatrix}
+-Bu \\
+- \mu_1
+\end{bmatrix}
+ )
+\right\|^2
+\\
+
+&=
+
+\left\|
+\begin{bmatrix}
+I & -F \\
+\bf{0} & I
+\end{bmatrix}
+
+\begin{bmatrix}
+x_2 \\
+x_1 
+\end{bmatrix}
++
+\begin{bmatrix}
+-Bu \\
+-\mu_1
+\end{bmatrix}
+\right\|
+^2
+_{
+\begin{bmatrix}
+Q & \bf{0} \\
+\bf{0} & \Sigma_1
+\end{bmatrix}
+}
+
+\end{align}
 $$
 
 ### 更新
