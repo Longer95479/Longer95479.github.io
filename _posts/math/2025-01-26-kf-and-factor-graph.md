@@ -64,6 +64,8 @@ $$
 
 ### 预测
 
+为了求极值对应的自变量，我们只需考虑指数部分：
+
 $$
 \begin{align}
 & ||x_2 - (Fx_1 + Bu)||^2_Q + ||x_1 - \mu_1||^2_{\Sigma_1} \\
@@ -127,10 +129,120 @@ _{
 Q & \bf{0} \\
 \bf{0} & \Sigma_1
 \end{bmatrix}
+} \\
+
+&=
+
+\left\|
+Ax + b
+\right\|_{\Sigma}
+\\
+&=
+
+\left\|
+x + A^{-1}b
+\right\| _ {(A^T \Sigma^{-1} A)^{-1}}
+
+\\
+&= 
+
+\left\|
+\begin{bmatrix}
+x_2 \\
+x_1
+\end{bmatrix}
+
++
+
+\begin{bmatrix}
+-Bu - F \mu_1 \\
+- \mu _1
+\end{bmatrix}
+
+\right\|
+_{
+\begin{bmatrix}
+Q+F\Sigma_1 F^T & -F \Sigma \\
+-\Sigma_1 F^T & \Sigma_1
+\end{bmatrix}
+
 }
 
 \end{align}
 $$
+
+$A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
+
+$$
+\begin{align}
+A^{-1}b &= 
+
+\begin{bmatrix}
+I & -F \\
+\bf 0 & I
+\end{bmatrix}
+^{-1}
+\begin{bmatrix}
+-Bu \\
+- \mu_1
+\end{bmatrix}
+
+\\
+&= 
+
+\begin{bmatrix}
+I & F \\
+\bf 0 & I
+\end{bmatrix}
+\begin{bmatrix}
+-Bu \\
+- \mu_1
+\end{bmatrix}
+
+\\
+&= 
+
+\begin{bmatrix}
+-Bu - F \mu_1 \\
+- \mu _1
+\end{bmatrix}
+
+\end{align}
+$$
+
+$$
+\begin{align}
+(A^T \Sigma^{-1} A)^{-1} &= A^{-1} \Sigma A^{-T} \\
+
+&= 
+
+\begin{bmatrix}
+I & -F \\
+\bf 0 & I 
+\end{bmatrix}
+
+\begin{bmatrix}
+Q & \bf 0 \\
+\bf 0 & \Sigma_1 
+\end{bmatrix}
+
+\begin{bmatrix}
+I & \bf 0 \\
+-F^T & I
+\end{bmatrix}
+\\
+
+&=
+
+\begin{bmatrix}
+Q+F\Sigma_1 F^T & -F \Sigma \\
+-\Sigma_1 F^T & \Sigma_1
+\end{bmatrix}
+
+\end{align}
+$$
+
+
 
 ### 更新
 
@@ -143,6 +255,8 @@ $$
 $$
 
 ## 有用的定理
+
+### 1
 
 $$
 \begin{align}
@@ -158,4 +272,30 @@ A = (A_1^TA_1 + A_2^TA_2)^{1/2} \\
 b = (A_1^TA_1 + A_2^TA_2)^{-T/2} (A_1^Tb_1 + A_2^Tb_2)
 $$
 
+### 2
 
+$$
+\begin{bmatrix}
+I & F \\
+\bf0 & I \\
+\end{bmatrix}
+^{-1}
+= 
+\begin{bmatrix}
+I & -F \\
+\bf0 & I \\
+\end{bmatrix}
+$$
+
+$$
+\begin{bmatrix}
+I & \bf0 \\
+F & I \\
+\end{bmatrix}
+^{-1}
+= 
+\begin{bmatrix}
+I & \bf0 \\
+-F & I \\
+\end{bmatrix}
+$$
