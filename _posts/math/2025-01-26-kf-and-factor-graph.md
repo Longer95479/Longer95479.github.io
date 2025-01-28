@@ -171,6 +171,13 @@ Q+F\Sigma_1 F^T & -F \Sigma \\
 \end{align}
 $$
 
+此时，可以很方便地把 $x_1$ 边缘化：
+
+$$
+X_2 N(Bu+F\mu_1, Q+F\Sigma_1F^T)
+$$
+
+
 $A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
 
 $$
