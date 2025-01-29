@@ -9,36 +9,36 @@ categories:
 ---
 
 $$
-P(X,Z) = P(Z|X)P(X)
+p(x,z) = p(z|x)p(x)
 $$
 
 先验（prior）：
 
 $$
-P(X_1)
+p(x_1)
 $$
 
 预测（prediction）：
 
 $$
-X_2^- = \argmin_{X_2} P(X_2)
+x_2^- = \argmin_{x_2} p(x_2)
 $$
 
 $$
 \begin{align}
-P(X_2) &= \int P(X_2 , X_1) \bf{d} X_1 \\
-&= \int P(X_2 | X_1) P(X_1) \bf{d} X_1 
+p(x_2) &= \int p(x_2 , x_1) \bf{d} x_1 \\
+&= \int p(x_2 | x_1) p(x_1) \bf{d} x_1 
 \end{align}
 $$
 
 更新（update）：
 
 $$
-X_2^* = \argmin_{X_2} P(X_2|Z_2)
+x_2^* = \argmin_{x_2} p(x_2|z_2)
 $$
 
 $$
-P(X_2 | Z_2) \propto P(X_2, Z_2) = P(Z_2 | X_2) P(X_2)
+p(x_2 | z_2) \propto p(x_2, z_2) = p(z_2 | x_2) p(x_2)
 $$
 
 接下来考虑具体的形式。
@@ -46,20 +46,20 @@ $$
 - 先验
 
 $$
-P(X_1) \propto \exp({-\frac12 ||x_1 - \mu_1||^2_{\Sigma_1}})
+p(x_1) \propto \exp({-\frac12 ||x_1 - \mu_1||^2_{\Sigma_1}})
 $$
 
 - 预测
 
 $$
-P(X_2 | X_1)P(X_1) \propto \exp ({-\frac12 ||x_2 - (Fx_1 + Bu)||^2_Q}) \cdot
+p(x_2 | x_1)p(x_1) \propto \exp ({-\frac12 ||x_2 - (Fx_1 + Bu)||^2_Q}) \cdot
 \exp (-\frac12 ||x_1 - \mu_1||^2_{\Sigma_1})
 $$
 
 - 更新
 
 $$
-P(Z_2 | X_2)P(X_2) \propto \exp (-\frac12 ||Hx_2 - z_2||^2_R) \cdot \int P(X_2, X_1) \bf{d} X_1
+p(z_2 | x_2)p(x_2) \propto \exp (-\frac12 ||Hx_2 - z_2||^2_R) \cdot \int p(x_2, x_1) \bf{d} x_1
 $$
 
 ### 预测
@@ -171,14 +171,14 @@ Q+F\Sigma_1 F^T & -F \Sigma \\
 \end{align}
 $$
 
-此时，可以很方便地把 $x_1$ 边缘化：
+此时，可以很方便地把 $x_1$ 边缘化，只需要把对应部分的均值和方差抽离出来即可：
 
 $$
-X_2 N(Bu+F\mu_1, Q+F\Sigma_1F^T)
+X_2 \sim N(Bu+F\mu_1, Q+F\Sigma_1F^T)
 $$
 
 
-$A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
+其中，$A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
 
 $$
 \begin{align}
