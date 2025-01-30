@@ -19,6 +19,7 @@ body {
   // background: $body-background url("https://www.bay12games.com/dwarves/imgs/bgstone.jpg") 0 0;
   background: $body-background url("/assets/dfmap-back.png") 0 0;
   // background: $body-background url("https://immortalqx.github.io/medias/featureimages/20.jpg") 0 0;
+  background-attachment: fixed;
   color: $body-foreground;
   font-size: 16px;
   line-height: 1.45;
