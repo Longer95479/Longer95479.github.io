@@ -258,12 +258,15 @@ A_1 = \Sigma_1^{-1/2},\  A_2 = \Sigma_2^{-1/2}H,\  b_1 = -\Sigma_1^{-1/2}\mu_1,\
 $$
 
 $$
-\downarrow \Sigma^{-1} = A^TA,\ \mu = -\Sigma^{-1/2}b 
+\downarrow \scriptsize{\Sigma^{-1} = A^TA,\ \mu = -\Sigma^{-1/2}b} 
 $$
 
 $$
-\Sigma = 
+\Sigma = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1},\  
+\mu = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1}(\Sigma_1^{-1} + H^T\Sigma_2^{-1}\mu_2)
 $$
+
+
 
 ## 有用的定理
 
