@@ -21,7 +21,7 @@ $$
 预测（prediction）：
 
 $$
-x_2^- = \argmin_{x_2} p(x_2)
+x_2^- = \underset{x_2}{\mathrm{arg\ min}}\  p(x_2)
 $$
 
 $$
@@ -34,7 +34,7 @@ $$
 更新（update）：
 
 $$
-x_2^* = \argmin_{x_2} p(x_2|z_2)
+x_2^* = \underset{x_2}{\mathrm{arg\ min}}\ p(x_2|z_2)
 $$
 
 $$
@@ -254,11 +254,15 @@ $$
 ### 更新
 
 $$
-A_1 = \Sigma_1^{-1/2}, A_2 = \Sigma_2^{-1/2}H, b_1 = -\Sigma_1^{-1/2}\mu_1, b_2 = -\Sigma^{-1/2}_2\mu_2
+A_1 = \Sigma_1^{-1/2},\  A_2 = \Sigma_2^{-1/2}H,\  b_1 = -\Sigma_1^{-1/2}\mu_1,\  b_2 = -\Sigma^{-1/2}_2\mu_2
 $$
 
 $$
-\Sigma = ()
+\downarrow \Sigma^{-1} = A^TA,\ \mu = -\Sigma^{-1/2}b 
+$$
+
+$$
+\Sigma = 
 $$
 
 ## 有用的定理
