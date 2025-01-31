@@ -33,6 +33,7 @@ body {
   height: 100%;
   background-image: url("/assets/dfmap-back.png");
   background-size: cover;
+  background-attachment: fixed;
   z-index: -1;
 }
 
