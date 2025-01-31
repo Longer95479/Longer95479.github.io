@@ -162,7 +162,7 @@ x_1
 \right\|
 _{
 \begin{bmatrix}
-Q+F\Sigma_1 F^T & -F \Sigma \\
+Q+F\Sigma_1 F^T & -F \Sigma_1 \\
 -\Sigma_1 F^T & \Sigma_1
 \end{bmatrix}
 
@@ -177,6 +177,13 @@ $$
 X_2 \sim N(Bu+F\mu_1, Q+F\Sigma_1F^T)
 $$
 
+$$
+\boxed{ \mu_1 \leftarrow Bu+F\mu_1 }
+$$
+
+$$
+\boxed{\Sigma_1 \leftarrow Q+F\Sigma_1F^T }
+$$
 
 其中，$A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
 
@@ -242,7 +249,7 @@ I & \bf 0 \\
 &=
 
 \begin{bmatrix}
-Q+F\Sigma_1 F^T & -F \Sigma \\
+Q+F\Sigma_1 F^T & -F \Sigma_1 \\
 -\Sigma_1 F^T & \Sigma_1
 \end{bmatrix}
 
@@ -254,18 +261,92 @@ $$
 ### 更新
 
 $$
-A_1 = \Sigma_1^{-1/2},\  A_2 = \Sigma_2^{-1/2}H,\  b_1 = -\Sigma_1^{-1/2}\mu_1,\  b_2 = -\Sigma^{-1/2}_2\mu_2
+\begin{align}
+& (x_2- \mu_1)^T \Sigma_1^{-1} (x_2 - \mu_1) + (Hx_2 - z)^T\Sigma_2^{-1}(Hz_2 - z) \\
+&=
+\left\| \Sigma^{-1/2}_1 x_2 - \Sigma_1^{-1/2}\mu_1 \right\|^2 + 
+\left\| \Sigma_2^{-1/2}Hx_2 - \Sigma_2^{-1/2}z \right\|^2 
+\\
+
+
+&\ \  \downarrow
+\scriptsize{
+A_1 = \Sigma_1^{-1/2},\  A_2 = \Sigma_2^{-1/2}H,\  b_1 = -\Sigma_1^{-1/2}\mu_1,\  b_2 = -\Sigma^{-1/2}_2 z
+} \\
+
+&= (A_1x+b_1)^T(A_1x+b_1) + (A_2x+b_2)^T(A_2x+b_2) \\
+
+&\ \ \downarrow
+\scriptsize {
+A = (A_1^TA_1 + A_2^TA_2)^{1/2},\ 
+b = (A_1^TA_1 + A_2^TA_2)^{-T/2} (A_1^Tb_1 + A_2^Tb_2)
+}
+\\
+
+&= 
+(Ax+b)^T(Ax+b) + \mathrm{const} \\
+&=
+(x+A^{-1}b)^TA^TA(x+A^{-1}b) + \mathrm{const} \\
+
+&\ \  \downarrow \scriptsize{\Sigma = (A^TA)^{-1},\ \mu = -\Sigma^{-1/2}b} \\ 
+
+&= 
+(x - \mu) \Sigma^{-1}(x - \mu) + \mathrm{const}
+\end{align}
 $$
 
-$$
-\downarrow \scriptsize{\Sigma^{-1} = A^TA,\ \mu = -\Sigma^{-1/2}b} 
-$$
+所以
 
 $$
 \Sigma = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1},\  
-\mu = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1}(\Sigma_1^{-1} + H^T\Sigma_2^{-1}\mu_2)
+\mu = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1}(\Sigma_1^{-1} + H^T\Sigma_2^{-1}z) 
 $$
 
+展开 $\Sigma$：
+
+$$
+\begin{align}
+\Sigma &= (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1} \\
+
+&\ \ \downarrow
+\scriptsize{
+  (A-BD^{-1}C)^{-1} = A^{-1} + A^{-1}B(D-CA^{-1}B)^{-1}CA^{-1}
+}\\
+
+&= 
+\Sigma_1 + \Sigma_1 H^T(-\Sigma_2^{-1} - H \Sigma_1 H^T)^{-1}H\Sigma_1 \\
+
+&= [I - \Sigma_1 H^T(\Sigma_2 + H \Sigma_1 H^T)^{-1}H] \Sigma_1 \\
+
+&\ \ \downarrow
+\scriptsize{
+  G = \Sigma_1 H^T(\Sigma_2 + H \Sigma_1 H^T)^{-1}
+} \\
+
+& \boxed{\Sigma = [I - GH]\Sigma_1}
+
+\end{align}
+$$
+
+展开 $\mu$ :
+
+$$
+\begin{align}
+\mu &= (I - GH)\Sigma_1(\Sigma_1^{-1}\mu_1 + H^T\Sigma_2^{-1}z) \\
+&= (I - GH)(\mu_1 + \Sigma_1 H^T \Sigma_2^{-1} z) \\
+&= (I-GH)\mu_1 + (I-GH) \Sigma_1 H^T \Sigma_2^{-1} z\\
+
+&\ \ \downarrow
+\scriptsize{
+   (I-GH) \Sigma_1 H^T \Sigma_2^{-1} = G
+}\\
+
+&= (I-GH)\mu_1 +  Gz\\
+
+& \boxed{\mu = \mu_1 + G(z - H\mu_1)}
+
+\end{align}
+$$
 
 
 ## 有用的定理
@@ -274,17 +355,29 @@ $$
 
 $$
 \begin{align}
-& \ \ \ \ \ (A_1X+b_1)^T(A_2X+b_2) \\
-&= X^T(A_1^TA_1 + A_2^TA_2)X + 2 (b_1^TA_1 + b_2 
- ^TA_2)X + (b^T_1b_1 + b_2^Tb_2) \\
-&= (AX+b)^T(AX+b) + const
+& \ \ \ \ \ (A_1x+b_1)^T(A_2x+b_2) \\
+&= x^T(A_1^TA_1 + A_2^TA_2)x + 2 (b_1^TA_1 + b_2 
+ ^TA_2)x + (b^T_1b_1 + b_2^Tb_2) \\
+ 
+&\ \ \ \ \scriptsize {
+  \downarrow
+A = (A_1^TA_1 + A_2^TA_2)^{1/2},\ 
+b = (A_1^TA_1 + A_2^TA_2)^{-T/2} (A_1^Tb_1 + A_2^Tb_2)
+}
+\\
+
+&= x^TA^TAx + 2b^TAx + \mathrm{const}\\
+&= (Ax+b)^T(Ax+b) + \mathrm{const} \\
+
+&\ \ \ \ \scriptsize {
+  \downarrow
+\Sigma = (A^TA)^{-1},\ \mu = -A^{-1}b
+} \\
+
+&= (x - \mu)^T \Sigma^{-1} (x-\mu) + \mathrm{const}
 \end{align}
 $$
 
-$$
-A = (A_1^TA_1 + A_2^TA_2)^{1/2} \\
-b = (A_1^TA_1 + A_2^TA_2)^{-T/2} (A_1^Tb_1 + A_2^Tb_2)
-$$
 
 ### 2
 
