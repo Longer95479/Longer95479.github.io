@@ -22,15 +22,15 @@ $$
 p(x_2, x_1, z) = p(z | x_2) p(x_2 | x_1) p(x_1)
 $$
 
-可以看到，联合概率密度函数被分解成了三个概率密度函数的乘积，而这正好对应了卡尔曼滤波里的三个概念或阶段：
+可以看到，联合概率密度函数被分解成了三个概率密度函数的乘积，而这正好对应了卡尔曼滤波里的三个阶段：先验、预测、更新。
 
-- 先验（prior）：
+- 先验（prior）：$x_1$ 的先验分布，据此可以求出 $x_1$ 的最优值及其协方差。
 
 $$
-p(x_1)
+x_1^* = \underset{x_1}{\mathrm{arg\ min}}\  p(x_1)
 $$
 
-- 预测（prediction）：
+- 预测（prediction）：从 $x_1$ 和 $x_2$ 的联合概率密度函数得到 $x_2$ 单独的概率密度函数，并求 $x_2$ 的最优值，绕过对 $x_1$ 的优化的同时又利用了 $x_1$ 的先验信息。
 
 $$
 x_2^- = \underset{x_2}{\mathrm{arg\ min}}\  p(x_2)
@@ -43,7 +43,7 @@ p(x_2) &= \int p(x_2 , x_1) \mathrm{d} x_1 \\
 \end{align}
 $$
 
-- 更新（update）：
+- 更新（update）：在利用了 $x_1$ 的先验信息基础上，利用对 $x_2$ 的直接测量信息，得到 $p(x_2|z_2)$ 的形式
 
 $$
 x_2^* = \underset{x_2}{\mathrm{arg\ min}}\ p(x_2|z_2)
@@ -53,7 +53,21 @@ $$
 p(x_2 | z_2) \propto p(x_2, z_2) = p(z_2 | x_2) p(x_2)
 $$
 
-接下来考虑具体的形式。
+线性系统的预测和测量模型如下：
+
+$$
+x_{k+1} = Fx_k + Bu_k + w
+$$
+
+$$
+z_k = Hx_k + v
+$$
+
+$$
+\ w \sim N(0, Q),\ \ v \sim N(0, R)
+$$
+
+接下来写出先验、预测、更新的概率密度函数的具体形式：
 
 - 先验
 
@@ -186,15 +200,15 @@ $$
 此时，可以很方便地把 $x_1$ 边缘化，只需要把对应部分的均值和方差抽离出来即可：
 
 $$
-X_2 \sim N(Bu+F\mu_1, Q+F\Sigma_1F^T)
+X_2 \sim N(F\mu_1 + Bu, F\Sigma_1F^T + Q)
 $$
 
 $$
-\boxed{ \mu_1 \leftarrow Bu+F\mu_1 }
+\boxed{ \mu_1 \leftarrow F\mu_1 + Bu }
 $$
 
 $$
-\boxed{\Sigma_1 \leftarrow Q+F\Sigma_1F^T }
+\boxed{\Sigma_1 \leftarrow F\Sigma_1F^T + Q}
 $$
 
 其中，$A^{-1}b$，$(A^T \Sigma^{-1} A)^{-1}$ 计算如下：
@@ -272,9 +286,17 @@ $$
 
 ### 更新
 
+令
+
+$$
+\Sigma_2 = R
+$$
+
+只考虑指数部分
+
 $$
 \begin{align}
-& (x_2- \mu_1)^T \Sigma_1^{-1} (x_2 - \mu_1) + (Hx_2 - z)^T\Sigma_2^{-1}(Hz_2 - z) \\
+& (x_2- \mu_1)^T \Sigma_1^{-1} (x_2 - \mu_1) + (Hx_2 - z_2)^T\Sigma_2^{-1}(Hx_2 - z) \\
 &=
 \left\| \Sigma^{-1/2}_1 x_2 - \Sigma_1^{-1/2}\mu_1 \right\|^2 + 
 \left\| \Sigma_2^{-1/2}Hx_2 - \Sigma_2^{-1/2}z \right\|^2 
@@ -311,7 +333,7 @@ $$
 
 $$
 \Sigma = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1},\  
-\mu = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1}(\Sigma_1^{-1} + H^T\Sigma_2^{-1}z) 
+\mu = (\Sigma_1^{-1} + H^T\Sigma_2^{-1}H)^{-1}(\Sigma_1^{-1} + H^T\Sigma_2^{-1}z_2) 
 $$
 
 展开 $\Sigma$：
@@ -344,24 +366,24 @@ $$
 
 $$
 \begin{align}
-\mu &= (I - GH)\Sigma_1(\Sigma_1^{-1}\mu_1 + H^T\Sigma_2^{-1}z) \\
-&= (I - GH)(\mu_1 + \Sigma_1 H^T \Sigma_2^{-1} z) \\
-&= (I-GH)\mu_1 + (I-GH) \Sigma_1 H^T \Sigma_2^{-1} z\\
+\mu &= (I - GH)\Sigma_1(\Sigma_1^{-1}\mu_1 + H^T\Sigma_2^{-1}z_2) \\
+&= (I - GH)(\mu_1 + \Sigma_1 H^T \Sigma_2^{-1} z_2) \\
+&= (I-GH)\mu_1 + (I-GH) \Sigma_1 H^T \Sigma_2^{-1} z_2\\
 
 &\ \ \downarrow
 \scriptsize{
    (I-GH) \Sigma_1 H^T \Sigma_2^{-1} = G
 }\\
 
-&= (I-GH)\mu_1 +  Gz\\
+&= (I-GH)\mu_1 +  Gz_2\\
 
-& \boxed{\mu = \mu_1 + G(z - H\mu_1)}
+& \boxed{\mu = \mu_1 + G(z_2 - H\mu_1)}
 
 \end{align}
 $$
 
 
-## 有用的定理
+## 附录
 
 ### 1
 
