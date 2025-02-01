@@ -8,17 +8,29 @@ categories:
   - math
 ---
 
+本文的内容是将因子图优化和卡尔曼滤波联系起来，其实，卡尔曼滤波等价于因子图优化在线性系统下的只优化最新状态。
+
+我们最根本的目标，是在给定测量值 $z$，找出使得联合概率密度函数 $p(x, z)$ 最大的 $x$。而 $p(x, z)$ 可以进行分解，以便我们写出具体的形式：
+
 $$
 p(x,z) = p(z|x)p(x)
 $$
 
-先验（prior）：
+假如我们考虑两个状态 $x_1, x_2$，以及一个测量 $z$（对 $x_2$ 的测量）,则联合概率密度函数可以写为：
+
+$$
+p(x_2, x_1, z) = p(z | x_2) p(x_2 | x_1) p(x_1)
+$$
+
+可以看到，联合概率密度函数被分解成了三个概率密度函数的乘积，而这正好对应了卡尔曼滤波里的三个概念或阶段：
+
+- 先验（prior）：
 
 $$
 p(x_1)
 $$
 
-预测（prediction）：
+- 预测（prediction）：
 
 $$
 x_2^- = \underset{x_2}{\mathrm{arg\ min}}\  p(x_2)
@@ -26,12 +38,12 @@ $$
 
 $$
 \begin{align}
-p(x_2) &= \int p(x_2 , x_1) \bf{d} x_1 \\
-&= \int p(x_2 | x_1) p(x_1) \bf{d} x_1 
+p(x_2) &= \int p(x_2 , x_1) \mathrm{d} x_1 \\
+&= \int p(x_2 | x_1) p(x_1) \mathrm{d} x_1 
 \end{align}
 $$
 
-更新（update）：
+- 更新（update）：
 
 $$
 x_2^* = \underset{x_2}{\mathrm{arg\ min}}\ p(x_2|z_2)
@@ -59,7 +71,7 @@ $$
 - 更新
 
 $$
-p(z_2 | x_2)p(x_2) \propto \exp (-\frac12 ||Hx_2 - z_2||^2_R) \cdot \int p(x_2, x_1) \bf{d} x_1
+p(z_2 | x_2)p(x_2) \propto \exp (-\frac12 ||Hx_2 - z_2||^2_R) \cdot \int p(x_2, x_1) \mathrm{d} x_1
 $$
 
 ### 预测
