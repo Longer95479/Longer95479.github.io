@@ -20,7 +20,9 @@ Alex    Res     GPT  GPT2 GPT3  chatGPT     GPT4
 $x_0$ 可以是图片像素强度向量，经过多层网络后，学习到特征 $x_L$ (Learned representation)，该特征相比于原始图像更利于图像分类。
 
 $$
-x_0 \rightarrow x_1 \rightarrow \dots \rightarrow x_L \\
+x_0 \rightarrow x_1 \rightarrow \dots \rightarrow x_L 
+$$
+$$
 L = \# layers
 $$
 
@@ -80,6 +82,8 @@ $$
 
 
 ## Transformer
+
+因为 tokens 已经作了位置编码，因此可以将输入视为一个集合，而不考虑顺序:
 
 $$
 \{x_1 \cdots x_n\} \in \mathbb{R}^d: \mathrm{tokens}
