@@ -451,6 +451,14 @@ $$
 
 ### 4
 
+如果
+
+$$
+G = \Sigma_1 H^T(\Sigma_2 + H \Sigma_1 H^T)^{-1}
+$$
+
+则
+
 $$
 (I-GH) \Sigma_1 H^T \Sigma_2^{-1} = G
 $$
