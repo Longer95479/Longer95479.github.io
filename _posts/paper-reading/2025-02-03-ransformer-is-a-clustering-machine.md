@@ -8,6 +8,13 @@ categories:
     - paper reading
 ---
 
+```
+2012    2015    2018 2019 2020  2022        2023
+Alex    Res     GPT  GPT2 GPT3  chatGPT     GPT4
+                BERT            Chinchilla  Llama2
+                                            Claude2
+```
+
 ## ResNets
 
 $x_0$ 可以是图片像素强度向量，经过多层网络后，学习到特征 $x_L$ (Learned representation)，该特征相比于原始图像更利于图像分类。
@@ -51,11 +58,29 @@ x_{k+1} &= x_k + \sigma(W_k x_k + b_k) \\
 \end{align}
 $$
 
-此时，我们得到一个关于 $x$ 的动态系统，因此可以用动态理论和控制理论进行分析。需要与神经网络中常提到的“参数的动态系统”作区分，参数的动态系统关心的是训练的过程中参数的演进（本文并不关注 *参数* 的动态系统）：
+此时，我们得到一个关于 $x$ 的动态系统，因此可以用动态理论和控制理论进行分析。需要与神经网络中常提到的“训练的动态系统”作区分，训练的动态系统关心的是训练的过程中参数的演进，且只考虑一层（本文并不关注 *参数* 的动态系统）：
 
 $$
-\dot \theta (t) = - \nabla_{\theta} \sum_{i=1}^n (Y_i - f_{\theta(t)}(X_i))^2,\ \theta \in \mathbb{R}^n
+\dot \theta (t) = - \nabla_{\theta} \sum_{i=1}^n (Y_i - f_{\theta(t)}(X_i))^2,\ \theta \in \mathbb{R}^N,\ N \rightarrow \infty
 $$
 
+
+NN 可以理解为一种流动映射（flow map, a NN is a compact representation of a funtion that can be represented as a flow map）：
+
+$$
+\mathrm{NN = Flow Map}
+$$
+
+$$
+f_{\theta}: x(0) \mapsto x(T); \mathbb{R}^d \to \mathbb{R}^d
+$$
+
+
+这似乎是在说，NN 不是直接参数化函数本身（有一个表格直接告诉你 f(x) 的值），而是参数化了某条曲线，它将会通过动力学告诉你如何从一个点到达另一个点。
+
+
+### 参考
+
+[【MIT Philippe Rigollett】数学视角下的Transformer](https://www.bilibili.com/video/BV16ifaYyE8Z/?spm_id_from=333.1007.tianma.1-2-2.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
 
 
