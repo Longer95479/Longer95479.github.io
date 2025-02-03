@@ -79,6 +79,19 @@ $$
 这似乎是在说，NN 不是直接参数化函数本身（有一个表格直接告诉你 f(x) 的值），而是参数化了某条曲线，它将会通过动力学告诉你如何从一个点到达另一个点。
 
 
+## Transformer
+
+$$
+\{x_1 \cdots x_n\} \in \mathbb{R}^d: \mathrm{tokens}
+$$
+
+$$
+\{x_1 \cdots x_n\} \iff \frac1n \sum_{i=1}^n \delta_{x_i}
+$$
+
+promp = input = probability measure on tokens
+
+
 ### 参考
 
 [【MIT Philippe Rigollett】数学视角下的Transformer](https://www.bilibili.com/video/BV16ifaYyE8Z/?spm_id_from=333.1007.tianma.1-2-2.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
