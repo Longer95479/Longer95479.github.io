@@ -83,7 +83,21 @@ $$
 
 ## Transformer
 
-因为 tokens 已经作了位置编码，因此可以将输入视为一个集合，而不考虑顺序:
+Prompt: 
+
+$$
+\begin{align}
+
+& \mathrm{\boxed{The}\  \boxed{quick}\ \boxed{bro}\boxed{wn}\ \boxed{fox}\ \boxed{jumps}\ \boxed{over}\ \boxed{the}\ \boxed{lazy}\ \boxed{dog}} \\
+
+& \downarrow \hspace{6.5em} \mathrm{position + random map} \hspace{6.5em} \downarrow \\
+
+& x_1 \hspace{10.5em} \cdots \hspace{11em} x_n
+
+\end{align}
+$$
+
+因为 tokens 已经作了位置编码，因此可以将输入视为一个集合，而不考虑顺序（e.g. $n=512,\ d=200$）:
 
 $$
 \{x_1 \cdots x_n\} \in \mathbb{R}^d: \mathrm{tokens}
