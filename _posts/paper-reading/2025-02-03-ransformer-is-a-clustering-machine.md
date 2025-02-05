@@ -172,7 +172,7 @@ $$
 \partial_t \mu(t) + \mathrm{div} (\mu(t)X_t[\mu(t)]) = 0
 $$
 
-Self-attention dynamics = Spacial choice of $X_t[\mu(t)](\cdot)$
+Self-attention dynamics = Spacial choice of $X_t[ \mu(t) ](\cdot)$
 
 
 ### 参考
