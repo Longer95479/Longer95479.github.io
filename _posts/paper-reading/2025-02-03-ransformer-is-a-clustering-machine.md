@@ -22,6 +22,7 @@ $x_0$ 可以是图片像素强度向量，经过多层网络后，学习到特�
 $$
 x_0 \rightarrow x_1 \rightarrow \dots \rightarrow x_L 
 $$
+
 $$
 L = \# layers
 $$
@@ -118,7 +119,44 @@ $$
 \{x_1 \cdots x_n\} \iff \frac1n \sum_{i=1}^n \delta_{x_i}
 $$
 
-promp = input = probability measure on tokens
+promp = input = probability measure on tokens （likehood of token being next）
+
+output = probability measure on tokens （empirical dist. of tokens in prompt）
+
+输入给 transformer 的是关于 tokens 的概率测量。而输出则是给定这个句子（经验分布）后下一个 token 的似然概率分布。
+
+虽然输入和输出中的 probability 含义不同，但在数学上看是相同的，或者说是属于同一个集合内的，因此可以套用 ResNet 中 Map flow 的概念。
+
+$$
+\mathrm{Transformer = Flow map}
+$$
+
+$$
+f_{\theta}: \mu(0) \mapsto \mu(T); \mathcal{P}(\mathbb{R}^d) \to \mathcal{P}(\mathbb{R}^d)
+$$
+
+其中，$\mathcal{P}(\mathbb{R}^d)$ 是指 $\mathbb{R}^d$ 上的概率分布的空间/集合。
+
+
+此时，我们可以给出 $\mu(0)$：
+
+$$
+\mu(0) = \frac1n \sum_{i=1}^n \delta_{x_i}
+$$
+
+那么动力学方程应该是什么呢？我们该如何移动给出的概率分布呢？
+
+$$
+\partial_t \mu(t) = ?
+$$
+
+我们可以通过移动点的位置来改变概率分布。而对于 Transformer，它实际上实现的是一个在平均场下的相互作用粒子系统（Mean-Field interacting particle system）:
+
+$$
+\dot x_i(t) = X_t (\mu(t))(x_i(t)),\ i = 1,\cdots, n
+$$
+
+
 
 
 ### 参考
