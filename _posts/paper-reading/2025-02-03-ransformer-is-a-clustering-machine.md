@@ -156,7 +156,23 @@ $$
 \dot x_i(t) = X_t (\mu(t))(x_i(t)),\ i = 1,\cdots, n
 $$
 
+在此，粒子是 token，它的速度由向量场 $X_t$决定，而向量场受粒子的位置 $x_i(t)$ 以及当前时刻所有粒子/tokens 的分布（以一种整体的方式）。
 
+Mean-Field interacting particle siystem => Continuity equation
+
+$$
+\dot x_i(t) = X_t (\mu(t))(x_i(t))
+$$
+
+$$
+\Downarrow
+$$
+
+$$
+\partial_t \mu(t) + \mathrm{div} (\mu(t)X_t[\mu(t)]) = 0
+$$
+
+Self-attention dynamics = Spacial choice of $X_t[\mu(t)](\cdot)$
 
 
 ### 参考
