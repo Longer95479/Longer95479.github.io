@@ -153,7 +153,7 @@ $$
 我们可以通过移动点的位置来改变概率分布。而对于 Transformer，它实际上实现的是一个在平均场下的相互作用粒子系统（Mean-Field interacting particle system）:
 
 $$
-\dot x_i(t) = X_t (\mu(t))(x_i(t)),\ i = 1,\cdots, n
+\dot x_i(t) = X_t [ \mu(t) ](x_i(t)),\ i = 1,\cdots, n
 $$
 
 在此，粒子是 token，它的速度由向量场 $X_t$决定，而向量场受粒子的位置 $x_i(t)$ 以及当前时刻所有粒子/tokens 的分布（以一种整体的方式）。
@@ -161,7 +161,7 @@ $$
 Mean-Field interacting particle siystem => Continuity equation
 
 $$
-\dot x_i(t) = X_t (\mu(t))(x_i(t))
+\dot x_i(t) = X_t [ \mu(t) ](x_i(t))
 $$
 
 $$
