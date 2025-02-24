@@ -26,6 +26,9 @@ $$
 \dot{p} = v
 $$
 
+其中，$R$ 是将一个向量从 局部（local） 坐标系下的表示变换到 全局（global） 坐标系下的表示。$\omega$ 是 local 坐标系下的机体运动角速度。
+
+
 转换成积分形式
 
 $$
@@ -40,6 +43,31 @@ $$
 R_{i+1} = R_i \oplus \omega \Delta t \\
 v_{i+1} = v_i + a \Delta t \\
 p_{i+1} = p_i + v_i \Delta t + \frac12 a \Delta t^2
+$$
+
+考虑 IMU 的最原始的测量模型：
+
+$$
+a_m = R^T(a-g) + b_a + n_a \\
+\omega_m = \omega + b_g + n_g
+$$
+
+其中， $a_m$ 是局部坐标系下的加速度计测量值，$\omega_m$ 是。$a$ 是全局坐标系下的加速度真值，$g$ 是全局坐标系下的重力加速度，$b_a$ 是加速度计测量时的偏置，$n_a$ 是加速度计测量时的高斯白噪声。$\omega$ 是局部坐标系下的角速度真实值，$b_g$ 是陀螺仪的偏置，$n_g$ 是陀螺仪测量时的高斯白噪声。
+
+把 原始测量模型 代入到 状态演进方程 上：
+
+$$
+R_{i+1} = R_i \oplus (\omega_m - b_g - n_g) \Delta t \\
+v_{i+1} = v_i + R_i (a_m - b_a - n_a) \Delta t + g \Delta t \\
+p_{i+1} = p_i +v_i \Delta t + \frac12 R_i(a_m - b_a - n_a) \Delta t^2 + \frac12 g \Delta t^2
+$$
+
+考虑 $i$ 时刻 和 $j$ 时刻之间的演进，并将这段时间分割成多个小时间块 $\Delta t_k, k = i, i+1, \cdots, j$，可以得到：
+
+$$
+R_j = R_i \prod_{k = i}^{j-1} \mathrm{Exp}(\omega_{m_k} - b_g - n_g) \Delta t_k \\
+v_j = v_i + \sum_{k=i}^{j-1} R_k(a_{m_k} - b_a - n_a) \Delta t_k + g \sum_{k=i}^{j-1} \Delta t_k \\
+p_j = p_i + \sum_{k=i}^{j-1} v_k \Delta t_k + \frac12 \sum_{k=i}^{j-1} R_k(a_m - b_a -n_a) \Delta t 
 $$
 
 
