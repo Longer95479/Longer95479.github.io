@@ -15,6 +15,7 @@ categories:
 
 > Motion planning: the use of computational methods to generate a robot's motion to achieve a specified task.
 
+
 运动规划处于自主机器人系统组件中的中心位置。
 
 它的输入可以分成三类：
@@ -28,6 +29,10 @@ categories:
 
 - 任务要求（task specification）：一般包含一个或多个损失函数，衡量了候选运动的质量、候选运动满足约束的质量
 
+
+如果不考虑机器人的动力学，那么运动规划问题就变成了路径规划问题：
+
+> Kinematic motion planning (aka Path planning): the use of computational methods generate a continuous path between two robot configurations while respecting joint limits and avoiding obstacles.
 
 ## 运动规划的挑战
 
@@ -49,3 +54,8 @@ categories:
     - cell decomposition
         - trapezoidal decomposition
         - approximate cell decomposition
+
+
+## 参考
+
+[Section III. Motion  - Kris Hauser - University of Illinois at Urbana-Champaign](https://motion.cs.illinois.edu/RoboticSystems/)
