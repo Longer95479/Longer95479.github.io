@@ -24,7 +24,7 @@ AirSLAM 在公开数据集上的效果很不错，但在笔者自己录制的数
 本篇主要验证是否是未进行时间偏移估计导致的 AirSLAM 效果较差。笔者在 airslam 上增加了时间偏移估计，思路参考 vins-fusion，github 上 fork 的仓库内对应的提交为 
 [Commit b16d3ea: add time composition between camera and imu data.](https://github.com/sair-lab/AirSLAM/commit/b16d3eac07ceb580c26b62f7f392e20f4d80b24d)。
 
-最终的实验结果证明，自己的数据集中，相机的时间基准比 imu 的时间基准快 1.6 ms，影响较小，即使不进行在线时间偏移估计，也不会导致轨迹的大幅度漂移，因此导致 AirSLAM 在自己录制的数据集上漂移较大的并不是时间基准偏移，而是另有其因。
+最终的实验结果证明，自己的数据集中，相机的时间基准比 imu 的时间基准快 1.6 ms，影响较小，即使不进行在线时间偏移估计，也不会导致轨迹的大幅度漂移，因此导致 AirSLAM 在自己录制的数据集上漂移较大的并不是时间基准偏移，而是另有其因（相机与 imu 之间的外参不够准确，且无在线校准）。
 
 ### 如何将时间偏移加入到优化框架中
 
