@@ -56,11 +56,40 @@ $$
 定义这些状态变量后，结合测量值，可构建联合的残差函数：
 
 $$
-r(\mathcal{X}, z) = \left\| e_p - H_p \mathcal{X} \right\| + 
-\left\| e_{\mathcal{B}} \right\|
+\mathbf{r}(\mathrm{z}, \mathcal{X}) = \left\| \mathbf{e}_p - \mathbf{H}_p \mathcal{X} \right\|^2 + 
+\sum_{k \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_k^{k+1}, \mathcal{X}) \right\|_{\mathbf{P}_k^{k+1}}^2 + 
+\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}
 $$
 
-在本文中，我们关注相机相对于 imu 的位置和姿态。
+其中，$\left\| \mathbf{e}_p - \mathbf{H}_p \mathcal{X} \right\|^2$ 是先验因子，
+$\sum_{k \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_k^{k+1}, \mathcal{X}) \right\|_{\mathbf{P}_k^{k+1}}^2$ 是 IMU propagation 因子，
+$\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}$ 是视觉重投影因子。$\mathcal{B}$ 是滑动窗口内的关键帧的 index 集合，$\mathcal{C}$ 是滑动窗口内路标 index 与 观测到该路标的关键帧 index 对 $(l,j)$ 的集合。
+
+我们的目标是：
+
+$$
+\mathcal{X}^* = \mathrm{argmin}_{\mathcal{X}}\  \mathbf{r}(\mathrm{z}, \mathcal{X})
+$$
+
+VINS-Fusion 的残差构造满足上述描述，而 AirSLAM 则需对视觉重投影因子稍作修改。因为在 VINS 中，路标点被滑动窗口内的至少两帧观测到，才会被加入滑窗中；而在 AirSLAM 中，一个路标点同样需要被两帧不同关键帧观测，但只要求至少有一帧在滑窗中即可，其余的观测帧可不位于滑窗内，此时我们可以把视觉因子修改为：
+
+$$
+\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}
+$$
+
+其中，$\mathcal{X}_{old}$ 是滑窗外的关键帧，作为参数而不是被优化变量，出现在因子当中。此时 下标 $j$ 不再局限于滑窗内的关键帧下标了，也可能是滑窗外不被优化的关键帧下标。
+
+
+#### 具体形式
+
+在本文中，我们关注相机相对于 imu 的位置和姿态，需要把 $\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j} $ 具体化才能作进一步的分析。
+
+$$
+\mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) = 
+\mathrm{z}_l^j - \pi \left(R_j^{wT} (L_l - p_j^w) \right)
+$$
+
+
 
 ### 实施
 
