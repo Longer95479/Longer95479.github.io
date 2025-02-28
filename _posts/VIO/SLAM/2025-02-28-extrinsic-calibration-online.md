@@ -133,7 +133,7 @@ AirSLAM 与 ORB-SLAM 类似，使用 `G2O` 库作为后端优化的框架。因�
 - `src/g2o_optimization/vertex_extrinsic.cc`
 - `include/g2o_optimization/vertex_extrinsic.h`
 
-提交在上个提交，但在本次提交中使用到的：
+提交在上个 commit，但在本次 commit 中使用到的（用到了新定义的 g2o 多元边的功能）：
 - `src/g2o_optimization/edge_project_point_td.cc`
 - `include/g2o_optimization/edge_project_point_td.h`
 
