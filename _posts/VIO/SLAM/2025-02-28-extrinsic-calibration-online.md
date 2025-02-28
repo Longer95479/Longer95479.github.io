@@ -26,7 +26,9 @@ AirSLAM 在公开数据集上的效果很不错，但在笔者自己录制的数
 
 验证的方法是，为 AirSLAM 增加外参在线校准，对比开启该功能与关闭该功能的定位精度，如果提升明显，则说明确实是相机与 imu 之间的外参不准确导致的较大漂移。
 
-### 原理
+## 原理
+
+### 状态的定义
 
 假设机器人配置多个相机和一个 IMU。
 
@@ -52,6 +54,8 @@ $x_{c_k}$ 是在线校准的状态，包括第 k 个相机相对于 imu 的位�
 $$
 \mathrm{x}_{c_k} = [p_{c_k}^w, R_{c_k}^w, t_{d_k}]
 $$
+
+### 构建残差函数
 
 定义这些状态变量后，结合测量值，可构建联合的残差函数：
 
@@ -97,7 +101,7 @@ $$
 其中，$\mathcal{X}_{old}$ 是滑窗外的关键帧，作为参数而不是被优化变量，出现在因子当中。此时 下标 $j$ 不再局限于滑窗内的关键帧下标了，也可能是滑窗外不被优化的关键帧下标。
 
 
-#### 具体形式
+### 一些因子的具体形式
 
 在本文中，我们关注相机相对于 imu 的位置和姿态，需要把 $\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j} $ 具体化才能作进一步的分析。该残差具体可以写为：
 
@@ -108,11 +112,11 @@ $$
 
 其中，$\pi (\cdot)$ 是相机的投影函数。
 
-### 实施
+## 实施
 
 对 AirSLAM 增加了外参在线校准，提交在
 [Commit 0dc8f6d: add online calibration of extrinsic between camera and imu.](https://github.com/sair-lab/AirSLAM/commit/0dc8f6d6d62eae5804fa85b85d2c8233e97cbce9)。
 
 
 
-### 效果
+## 效果
