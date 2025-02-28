@@ -117,6 +117,33 @@ $$
 对 AirSLAM 增加了外参在线校准，提交在
 [Commit 0dc8f6d: add online calibration of extrinsic between camera and imu.](https://github.com/sair-lab/AirSLAM/commit/0dc8f6d6d62eae5804fa85b85d2c8233e97cbce9)。
 
+AirSLAM 与 ORB-SLAM 类似，使用 `G2O` 库作为后端优化的框架。因此，为了增加所述功能，我们需要增加顶点和边，并修改一些现有的边：
+
+- 增加的顶点是 `外参` 状态变量
+- 增加的边是 `外参先验`
+- 修改的边是 `视觉重投影`，从二元边变成了多元边
+
+
+
+### 增加的核心文件及内容
+
+增加的文件为：
+- `src/g2o_optimization/edge_extrinsic_prior.cc`
+- `include/g2o_optimization/edge_extrinsic_prior.h` 
+- `src/g2o_optimization/vertex_extrinsic.cc`
+- `include/g2o_optimization/vertex_extrinsic.h`
+
+提交在上个提交，但在本次提交中使用到的：
+- `src/g2o_optimization/edge_project_point_td.cc`
+- `include/g2o_optimization/edge_project_point_td.h`
+
+### 修改的核心文件及内容
 
 
 ## 效果
+
+使用的数据集为
+
+对比结果：
+
+
