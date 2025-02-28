@@ -57,13 +57,30 @@ $$
 
 $$
 \mathbf{r}(\mathrm{z}, \mathcal{X}) = \left\| \mathbf{e}_p - \mathbf{H}_p \mathcal{X} \right\|^2 + 
-\sum_{k \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_k^{k+1}, \mathcal{X}) \right\|_{\mathbf{P}_k^{k+1}}^2 + 
-\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}
+
+\sum_{i \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_i^{i+1}, \mathcal{X}) \right\|_{\mathbf{P}_i^{i+1}}^2 + 
+
+\sum_{(l,j) \in \mathcal{O}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j} +
+
+\sum_{k \in \mathcal{C}} \left\| \mathbf{e}_{\mathrm{ext}}(z_{c_k}, \mathrm{x}_{c_k}) \right\|^2_{\mathbf{P}_{c_k}}
 $$
 
-其中，$\left\| \mathbf{e}_p - \mathbf{H}_p \mathcal{X} \right\|^2$ 是先验因子，
-$\sum_{k \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_k^{k+1}, \mathcal{X}) \right\|_{\mathbf{P}_k^{k+1}}^2$ 是 IMU propagation 因子，
-$\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}$ 是视觉重投影因子。$\mathcal{B}$ 是滑动窗口内的关键帧的 index 集合，$\mathcal{C}$ 是滑动窗口内路标 index 与 观测到该路标的关键帧 index 对 $(l,j)$ 的集合。
+其中：
+- $\left\| \mathbf{e}_p - \mathbf{H}_p \mathcal{X} \right\|^2$ 是先验因子
+
+- $\sum_{i \in \mathcal{B}} \left\| \mathbf{e}_{\mathcal{B}}(\mathrm{z}_i^{i+1}, \mathcal{X}) \right\|_{\mathbf{P}_i^{i+1}}^2$ 是 IMU propagation 因子
+
+- $\sum_{(l,j) \in \mathcal{O}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j}$ 是视觉重投影因子
+
+- 本篇中最重要的因子则是 `外参先验因子`：$\sum_{k \in \mathcal{C}} \left\| \mathbf{e}_{\mathrm{ext}}(z_{c_k}, \mathrm{x}_{c_k}) \right\|^2_{\mathbf{P}_{c_k}}$
+
+涉及到的集合：
+
+- $\mathcal{B}$ 是滑动窗口内的关键帧的 index 集合
+
+- $\mathcal{O}$ 是滑动窗口内路标 index 与 观测到该路标的关键帧 index 对 $(l,j)$ 的集合
+
+- $\mathcal{C}$ 是所有相机的编号的集合
 
 我们的目标是：
 
@@ -82,15 +99,20 @@ $$
 
 #### 具体形式
 
-在本文中，我们关注相机相对于 imu 的位置和姿态，需要把 $\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j} $ 具体化才能作进一步的分析。
+在本文中，我们关注相机相对于 imu 的位置和姿态，需要把 $\sum_{(l,j) \in \mathcal{C}} \left\| \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) \right\|^2_{\mathbf{P}_l^j} $ 具体化才能作进一步的分析。该残差具体可以写为：
 
 $$
 \mathbf{e}_{\mathcal{C}}(\mathrm{z}_l^j, \mathcal{X}_{old}, \mathcal{X}) = 
 \mathrm{z}_l^j - \pi \left(R_j^{wT} (L_l - p_j^w) \right)
 $$
 
-
+其中，$\pi (\cdot)$ 是相机的投影函数。
 
 ### 实施
+
+对 AirSLAM 增加了外参在线校准，提交在
+[Commit 0dc8f6d: add online calibration of extrinsic between camera and imu.](https://github.com/sair-lab/AirSLAM/commit/0dc8f6d6d62eae5804fa85b85d2c8233e97cbce9)。
+
+
 
 ### 效果
