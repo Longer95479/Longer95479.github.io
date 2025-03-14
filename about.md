@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 
-我是毛坨。
+你好，这里是 Longer95479。
 
 - 一些经验，一些智慧，一些动机
     - 简化
