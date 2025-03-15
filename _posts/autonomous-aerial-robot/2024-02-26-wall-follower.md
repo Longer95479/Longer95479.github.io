@@ -8,7 +8,7 @@ categories:
     - autonomous aerial robot
 ---
 
-github: [github.com/Longer95479/Fast-Drone-XI35](https://github.com/Longer95479/Fast-Drone-XI35)
+> github: [github.com/Longer95479/Fast-Drone-XI35](https://github.com/Longer95479/Fast-Drone-XI35)
 
 How to make a drone follow a wall while flying?
 
