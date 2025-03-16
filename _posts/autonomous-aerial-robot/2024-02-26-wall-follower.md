@@ -10,6 +10,11 @@ categories:
 
 > github: [github.com/Longer95479/Fast-Drone-XI35](https://github.com/Longer95479/Fast-Drone-XI35)
 
+Result:
+
+<img src="assets/2024-02-26-wall-follower/跟墙飞行成功2长距离6点-2025-01-17-00-16-39_output.gif" width = 50% height = 50% div align=left />
+<img src="assets/2024-02-26-wall-follower/走廊跟墙第三视角3.gif" width = 50% height = 50% div align=center />
+
 How to make a drone follow a wall while flying?
 
 Pesudocode of finding next waypoint to follow the wall is shown as the flollwing.
