@@ -12,12 +12,12 @@ categories:
 
 整体框图如下：
 
-![整体框图]()
+![整体框图](/assets/2025-04-28-DD-extraction-update-optim/system_overview.png)
 
 
 ## 前置内容
 
-2D 线的表示、3D 线的表示以及之间的转换（投影：3D->2D；三角化：2D->3D）见 [todo]()
+2D 线的表示、3D 线的表示以及之间的转换（投影：3D->2D；三角化：2D->3D）见 [TODO]()
 
 
 ### 对环境结构的假设
@@ -157,6 +157,17 @@ $\theta_{r_n}$，这样就可以得到一个或多个重叠区间 $[\theta_{l_n}
 
 ## 实验评估
 
+
+![](/assets/2025-04-28-DD-extraction-update-optim/rmse.png)
+
+
+![](/assets/2025-04-28-DD-extraction-update-optim/DDs_constrain_optim_vs_no_DDs.png)
+
+![](/assets/2025-04-28-DD-extraction-update-optim/DDs_constrain_optim_vs_only_DDs_filter.png)
+
+![](/assets/2025-04-28-DD-extraction-update-optim/noDDs_vs_DDs_constrain_optim.png)
+
+
 介绍指标
 
 结果
@@ -166,4 +177,4 @@ $\theta_{r_n}$，这样就可以得到一个或多个重叠区间 $[\theta_{l_n}
 
 ## 参考
 
-![Hong Kong World: Leveraging Structural Regularity for Line-Based SLAM](https://ieeexplore.ieee.org/document/10124374)
+[Hong Kong World: Leveraging Structural Regularity for Line-Based SLAM](https://ieeexplore.ieee.org/document/10124374)
