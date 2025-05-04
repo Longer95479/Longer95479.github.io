@@ -12,7 +12,8 @@ layout: default
       <!-- </li> -->
       <hr>
       <article>
-        {{ post.content }}
+        <p>{{ post.content | strip_html | truncatewords:20 }}</p>
+        <!-- {{ post.content }} -->
       </article>
       <br><br>
 </ul>
