@@ -16,12 +16,12 @@ Back to the Basics
 ## 1 prefer range-for 
 
 why do this: 
-```
+```c++
 for ( auto i = begin(c); i != end(c); i++ ) { ... use(*i); ...}
 ```
 
 when you can do this: 
-```
+```c++
 for (auto& e: c) { ... use(e); ... }
 ```
 ## 2 Use smart pointers effectively, but still ** use lots of raw * and & **, they're great!
@@ -54,7 +54,7 @@ void caller()
 }
 ```
 
-NB: Non-Owing */& Are Still Great.
+NB: Non-Owing `*/&` Are Still Great.
 
 Why: 被调用者在调用者的生命周期内，不需要做所有权转移（you don't need ownership transfer down to call stack unless you're going to take something out of the call stack）
 
@@ -83,6 +83,7 @@ void g( widget* w )  // if optional
   if(w) use(*w);
 }
 ``` 
+
 How to use those functions:
 ```c++
 auto upw = make_unique<widget>();
@@ -97,7 +98,7 @@ g( spw.get() );
 Antipatterns Hurt Pain Pain
 
 Antipattern #1: Parameters (Note: Any refcounted pointer type.)
-```
+```c++
 void f( refcnt_ptr<widget>& w )
 {
   use(*w);
@@ -113,10 +114,10 @@ void f( refcnt_ptr<widget> w )
 后者带来性能上的恶化：每次进出函数都会递增和递减，而这些操作是原子操作，需要同步，因此开销并不小。
 
 在这二种进行选择是一种 过早悲观：因为在都很复杂的操作中选择了更快，或者说在更快和更复杂中进行选择。
-因此不如直接使用 raw */&
+因此不如直接使用 raw `*/&`
 
 Antipattern #2: Loops (Note: Any refcounted pointer type.)
-```
+```c++
 refcnt_ptr<widget> w = ...;
 for (auto& e: baz) {
   auto w2 = w; // ?!?!?!?!
@@ -126,7 +127,7 @@ for (auto& e: baz) {
 在循环中复制智能指针，缺点仍是带来大的开销
 
 example:
-In late 2013, Facebook RocksDB changed from pass-by-value shared_ptr to pass */&. QPS improveed 4x (100K to 400K) in one benchmark. 
+In late 2013, Facebook RocksDB changed from pass-by-value shared_ptr to pass `*/&`. QPS improveed 4x (100K to 400K) in one benchmark. 
 [http://tinyurl.com/gotw91-example](http://tinyurl.com/gotw91-example)
 
 什么时候才 copy/assigns smart pointer?
@@ -135,17 +136,17 @@ In late 2013, Facebook RocksDB changed from pass-by-value shared_ptr to pass */&
 
 - Don’t pass a smart pointer as a function parameter unless you want to use or manipulate the smart pointer itself, such as to share or transfer ownership.
 
-- Prefer passing objects by value, *, or &, not by smart pointer.
+- Prefer passing objects by value, `*`, or `&`, not by smart pointer.
 
 - Express a “sink” function using a by-value unique_ptr parameter.
 
 - Use a non-const unique_ptr& parameter only to modify the unique_ptr.
 
-- Don’t use a const unique_ptr& as a parameter; use widget* instead.
+- Don’t use a const unique_ptr& as a parameter; use `widget*` instead.
 
 - Express that a function will store and share ownership of a heap object using a by-value shared_ptr parameter.
 
-- Use a non-const shared_ptr& parameter only to modify the shared_ptr. Use a const shared_ptr& as a parameter only if you’re not sure whether or not you’ll take a copy and share ownership; otherwise use widget* instead (or if not nullable, a widget&).
+- Use a non-const shared_ptr& parameter only to modify the shared_ptr. Use a const shared_ptr& as a parameter only if you’re not sure whether or not you’ll take a copy and share ownership; otherwise use `widget*` instead (or if not nullable, a widget&).
 
 
 ```c++
@@ -163,7 +164,7 @@ void may_share( const shared_ptr<widget>& ) // "might" retain refcount
 					// conditionally keep a copy
 ```
 
-- [ ] 疑惑：返回类型是 unique_ptr<widget> ，可以 return widget* 类型吗
+- [ ] 疑惑：返回类型是 unique_ptr<widget> ，可以 return `widget*` 类型吗
 
 Not quite done: One guiline missing, and it applies to any RC pointer type, in almost any language / library
 
@@ -218,7 +219,7 @@ no alloc -> noexcept
 
 an example/question to show when use rvalue optim:
 
-```
+```c++
 class employee {
   std::string name_;
 public:
