@@ -8,10 +8,22 @@ categories:
   - programming
 ---
 
+在现代 C++ 中应该使用的一些默认写法。
 
-Back to the Basics
+tl;dr:
+- loops: `for( auto& e: c ) { ... use(e); ... }`
+- pointers & references: 在参数传递中默认使用原始的 `*/&`
+- smart pointers：只在涉及所有权转换的语义时，才使用智能指针赋值或传参
+- variable declaaration：使用 `auto var = init;` 或 `auto var = type{init}`
+- parameter passing：
+    - 使用 `f(const X&)` 做必须的入参，`f(const X*)` 做非必须的入参，参数容量很小的时候使用按值传递 `f(X)`
+    - `f(X&)` 做入出参
+    - `X f()` 做输出，复制很昂贵时使用 `X* f()`, `f(X*)` 或 `f(X&)` 做出参
 
-- Tour to C++
+ 
+[CppCon 2014: Herb Sutter "Back to the Basics! Essentials of Modern C++ Style"](https://www.bilibili.com/video/BV1iG411V79h/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
+详细笔记如下。
 
 ## 1 prefer range-for 
 
@@ -43,6 +55,7 @@ void caller()
   delete w;
 }
 ```
+
 - Modern C++:
 ```c++
 unique_ptr<widget> factory();
@@ -71,6 +84,7 @@ void g( widget* w )  // if optional
   if(w) use(*w);
 }
 ``` 
+
 - Modern C++ "Still Classic":
 ```c++
 void f( widget& w )  // if required
@@ -252,7 +266,7 @@ void set_name( std::string name ) noexcept {
 
 for vector & large string
 | | construction | assignment / operator= |
-|-|-|-|
+|---|---|---|
 | default | $$ |x|
 | move | $$ | $ |
 | copy | $$$ | $$$ |
@@ -295,33 +309,13 @@ if (success) do_somthing_with( iter );
 ```
 
 ## Summery
-loops
-pointers & references
-smart pointers
-variable declaaration
-parameter passing
-
----
-
-`explicit` 关键字用于一个参数的函数，一般用于 构造函数，禁止隐式转换的发生
+- loops
+- pointers & references
+- smart pointers
+- variable declaaration
+- parameter passing
 
 
-boost::bind 可以在运行时动态创建 可调用对象
-
-如果函数不在类内，则 
-```
-int add(int a, int b) { return a + b; }
-auto add2 = boost::bind(add, 2, _1);
-add2(3); // 5
-```
-否则：
-```
-one_class(){
-  ...
-  _one_thread = std::thread(std::bind(&one_class::method, this));
-  ...
-}
-```
-
+- Tour to C++
 
 
