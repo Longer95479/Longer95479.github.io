@@ -140,28 +140,30 @@ while (B isn't empty):
   1. 对 初始条件 为真：m = -inf, B = A, max( {{ -inf, max(A) }} ) = max(A)
   2. 对本状态为真，则对下一状态也为真：
 
+  3. 当终止时，B = {{}}，max( m, max({{}}) ) = m = max(A)，所以不变量配合终止条件，可以推导出正确性，即 程序中止时 m = max(A)
+
+条件1 和 条件3 是平凡的，关键在于 条件2 的证明。
+
 ```
-max( {{ m1, max(B1) }} ) = max(A)
+max( \{\{ m1, max(B1) \}\} ) = max(A)
 
 B2 = B1 without i
 
 if i <= m1, then m2 = m1 
--> max( {{ m2, max(B2) }} ) = max( {{ m1, max(B1 without i) }} )
-if i is max(B1):  = max( {{ m1, i }} ) = m1 = max( {{ m1, B1 }} )
-if i isn't max(B1): = max( {{ m1, max(B1) }} )
+-> max( \{\{ m2, max(B2) \}\} ) = max( \{\{ m1, max(B1 without i) \}\} )
+if i is max(B1):  = max( \{\{ m1, i \}\} ) = m1 = max( \{\{ m1, B1 \}\} )
+if i isn't max(B1): = max( \{\{ m1, max(B1) \}\} )
 
 if i > m1, m2 = i
--> max( {{ m2, max(B2) }} ) = max( {{ i, max(B1 without i) }} ) 
-if i is max(B1): = i = max( {{ m1, max(B1)}} )
-if i isn't max(B1): = max(B1) = max( {{ m1, max(B1) }} )
+-> max( \{\{ m2, max(B2) \}\} ) = max( \{\{ i, max(B1 without i) \}\} ) 
+if i is max(B1): = i = max( \{\{ m1, max(B1)\}\} )
+if i isn't max(B1): = max(B1) = max( \{\{ m1, max(B1) \}\} )
 
 so
-max( {{ m2, max(B2)}} ) = max( {{ m1, max(B1)}} ) = max(A)
+max( \{\{ m2, max(B2)\}\} ) = max( \{\{ m1, max(B1)\}\} ) = max(A)
 ```
 
-  3. 当终止时，B = {{}}，max( m, max({{}}) ) = m = max(A)，所以不变量配合终止条件，可以推导出正确性，即 程序中止时 m = max(A)
 
-条件1 和 条件3 是平凡的，关键在于 条件2 的证明。
 
 我们应该学习如何证明这个条件是正确的
 
