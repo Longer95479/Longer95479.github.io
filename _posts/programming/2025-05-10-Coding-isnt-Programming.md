@@ -11,27 +11,26 @@ categories:
 [Coding isn't Programming(Leslie Lamport)](https://www.bilibili.com/video/BV1HJRyYgE4j/?spm_id_from=333.1387.favlist.content.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
 
 算法不应该被用特定的编程语言来表示，
-应该关注想法，而不是使用哪种语言
+应该关注想法，而不是使用哪种语言。
+这是一种简化，因为具体的编程语言需要考虑 *高效的执行* 和 *大型程序的组织*
 
-- 因为具体的编程语言需要考虑 高效的执行 和 大型程序
+考虑一种比较难的场景，编写并发（concurrancy）的算法和程序。并发算法和程序都很难写，但算法更简单。
 
+所以，我们需要抽象（abstraction），合理的抽象可以帮助我们把注意力放在真正重要的地方上，减少思考的负担，
+但这是在有思考的前提下。引用 Lamport 的话：
 
-并发（concurrancy）算法和程序都很难写，但算法更简单
+> 1. thinking before you code
+> 2. thinking at a higher level than code
 
-抽象（abstraction）
-
-- thinking before you code
-- thinking at a higher level than code
-
-For most programs, you should write two things:
-- What the program does.
-- How the program does it.
+> For most programs, you should write two things:
+> 1. What the program does.
+> 2. How the program does it.
 
 算法适用性更广，在此处我们将这个更高层次的思考但比较局限的思考称之为 抽象（abstraction）
 
 > 我们应当花时间去思考如何简化 What，这将节省后续编码的时间。
 
-example:
+以 *求数组最大值* 为例:
 
 描述1：从一个数组中找出最大值
 
@@ -61,8 +60,7 @@ while (B isn't empty):
 什么是执行？常见的回答：执行是一系列步骤（step），步骤是一部分代码的执行。
 通常更好的回答：
 
-> 执行是一系列状态序列，步骤 相邻的状态转换对，描述了某一部分代码的执行
-
+> 执行是一系列状态序列，步骤是相邻的状态转换对，描述了某一部分代码的执行
 
 > 状态是一系列的量，其下一步的值只由当前值决定，其他量视为输入
 
@@ -95,16 +93,16 @@ while (B isn't empty):
 [B = {{2, 3, 2}}, m = -inf]
   | step 1
   v
-[B = {{3, 2}},    m = 2]
+[B = {{3, 2}}, m = 2]
   | step 2
   v
-[B = {{2}},       m = 3]
+[B = {{2}}, m = 3]
   | step 3
   v
-[B = {{}},        m = 3]
+[B = {{}}, m = 3]
   | step 4
   v
-[B = {{}},        m = 3]
+[B = {{}}, m = 3]
  stop
 ```
 
