@@ -27,6 +27,7 @@ categories:
 最后贴出单文件的源码：
 
 ```c++
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -500,4 +501,5 @@ int main(void)
 
     return 0;
 }
+
 ```
