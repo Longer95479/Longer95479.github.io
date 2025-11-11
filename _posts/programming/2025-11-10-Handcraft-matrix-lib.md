@@ -16,7 +16,7 @@ categories:
 
 本文将记录笔者用 C++ 实现一个简单的矩阵运算库（类似于 Eigen 库）的过程。
 
-代码仓库：[handcraft-MVS](github.com/Longer95479/handcraft-MVS)。实现的功能有：
+代码仓库：[handcraft-MVS](https://github.com/Longer95479/handcraft-MVS)。实现的功能有：
 
 - 矩阵多种方式的构造（初始化）与析构
 
