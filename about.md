@@ -16,7 +16,8 @@ title: About
 ## Useful links
 
 - [RoboArxiv](https://qiaozhijian.github.io/RoboArxiv/)
-- [https://sxij.xyz/](https://sxij.xyz/posts/line_feature_in_slam/)
+- [sxij.xyz/](https://sxij.xyz/posts/line_feature_in_slam/)
+- [进阶费曼学习法：Claude code 写书](https://zhuanlan.zhihu.com/p/1932021734954997646)
 
 
 
