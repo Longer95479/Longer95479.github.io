@@ -16,7 +16,9 @@ categories:
 
 本文将记录笔者用 C++ 实现一个简单的矩阵运算库（类似于 Eigen 库）的过程。
 
-代码仓库：[handcraft-MVS](https://github.com/Longer95479/handcraft-MVS)。实现的功能有：
+代码仓库：[handcraft-MVS](https://github.com/Longer95479/handcraft-MVS)。
+
+实现的功能有：
 
 - 矩阵多种方式的构造（初始化）与析构
 
@@ -53,44 +55,44 @@ categories:
 
 - QR 分解中，通过模板函数的递归实现有限次数的循环
 
-```c++
-void func() 
-{
-    for (int i = 0; i < N; i++) {
+  ```c++
+  void func() 
+  {
+      for (int i = 0; i < N; i++) {
+        do_something(i);
+      }
+  }
+  ```
+
+  ```c++
+  template<int i>
+  void func()
+  {
       do_something(i);
-    }
-}
-```
-
-```c++
-template<int i>
-void func()
-{
-    do_something(i);
-
-    if constexpr (i == N)
-        return;
-    else
-        func<i + 1>();
-
-}
-```
+  
+      if constexpr (i == N)
+          return;
+      else
+          func<i + 1>();
+  
+  }
+  ```
 
 - 迭代使用 QR 分解来实现 SVD 分解
 
-```c++
-U = I, V = I
-for (int i = 0; i < N; i++) {
-
-  A = Ui R
-  RT = Vi CiT
-
-  A <- Ci
-  U <- U * Ui
-  V <= V * Vi
-}
-return {U, C, V}
-```
+  ```c++
+  U = I, V = I
+  for (int i = 0; i < N; i++) {
+  
+    A = Ui R
+    RT = Vi CiT
+  
+    A <- Ci
+    U <- U * Ui
+    V <= V * Vi
+  }
+  return {U, C, V}
+  ```
 
 - QR 分解和回代实现方程组的求解
 
@@ -102,20 +104,20 @@ return {U, C, V}
   - 对函数参数 A：编译器“知道这是一个对象”，能延后解析。即 `如果是依赖表达式（dependent expression），编译器可以延后解析，在实例化阶段再确认。`
   - 对局部变量 H_tmp：编译器“只知道它是依赖类型”，但此时必须立刻解析语法树。一旦出现 <，语法二义性必须立即消除 → 你必须写 template
 
-```c++
-template<typename T, int rows, int cols>
-class Matrix {
-public:
-    template<int i>
-    std::pair<Matrix<T, rows, rows>, Matrix<T, rows, cols>>
-    calQR(const Matrix<T, rows, rows>& H, const Matrix<T, rows, cols>& A)
-    {
-        Matrix<T, rows, rows> H_tmp;   // 局部变量
-        H_tmp.template block<rows - i, rows - i>(i, i);
-        A.block<rows - i, 1>(i, i);
-    }
-};
-```
+  ```c++
+  template<typename T, int rows, int cols>
+  class Matrix {
+  public:
+      template<int i>
+      std::pair<Matrix<T, rows, rows>, Matrix<T, rows, cols>>
+      calQR(const Matrix<T, rows, rows>& H, const Matrix<T, rows, cols>& A)
+      {
+          Matrix<T, rows, rows> H_tmp;   // 局部变量
+          H_tmp.template block<rows - i, rows - i>(i, i);
+          A.block<rows - i, 1>(i, i);
+      }
+  };
+  ```
 
 
 TODO:
