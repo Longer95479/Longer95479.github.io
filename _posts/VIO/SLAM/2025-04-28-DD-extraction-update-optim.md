@@ -328,3 +328,15 @@ $$
 $$
 \tilde{\varepsilon} = \frac{\varepsilon}{a_k}
 $$
+
+如果不对 $b_k = 0$ 进行特殊讨论，则因为
+
+$$
+\arctan (-\infty) = - \frac{\pi}{2}
+$$
+
+$$
+\arctan (\infty) = \frac{\pi}{2}
+$$
+
+$b_k \rightarrow 0$ 时，区间将不再稳定位于 0 附近，而是取决于 $\frac{a_k}{b_k}$ 的正负呈现 $\pm \frac{\pi}{2}$ 的偏移，不稳定。
