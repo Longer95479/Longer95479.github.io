@@ -189,4 +189,105 @@ $\theta_{r_n}$，这样就可以得到一个或多个重叠区间 $[\theta_{l_n}
 
 ## 具体推导
 
+$$
+|\mathbf{h}_n(\theta_n)^T\mathbf{n}_k| < \varepsilon
+$$
+
+
+$$
+\mathbf{R_{<v_m,\theta_n>}} = \mathbf{I} \cos \theta_n + \mathbf{v_m} \mathbf{v_m}^T (1 - \sin\theta_n) + [\mathbf{v_m}] \sin \theta_n
+$$
+
+代入罗戈里格斯公式，$\mathbf{h_n}$ 可以被两个在水平面上相互正交的基向量 $\mathbf{n_r}$ 和 $[\mathbf{v_m}]\mathbf{n_r}$ 表示。
+
+$$
+\begin{align}
+\mathbf{h}_n(\theta_n) &= \mathbf{R}_{<\mathbf{v}_m, \theta_n>} \mathbf{n}_r \\
+&= \mathbf{n_r} \cos \theta_n + [\mathbf{v_m}] \mathbf{n_n} \sin \theta_n
+\end{align}
+$$
+
+求内积：
+
+$$
+\begin{align}
+\mathbf{h}_n(\theta_n)^T\mathbf{n}_k &= \mathbf{n_k}^T \mathbf{n_r} \cos \theta_n + \mathbf{n_k}^T [\mathbf{v_m}] \mathbf{n_r} \sin \theta_n
+\\
+&= a_k \cos \theta_n + b_k \sin \theta_n
+\end{align}
+$$
+
+接下来分析一下这个式子的性质。可以看到，$a_k$ 和 $b_k$ 是 $\mathbf{n}_k$ 在前面提到的两个水平正交基上的内积，而 $\mathbf{n_k}$ 的竖直分量投影后为 0，所以只需考虑 $\mathbf{n_k}$ 的水平面分量与这两个正交基的内积即可。从该角度出发，可以得到，位于同一竖直平面上的 $\mathbf{n_k}$ 与这两个正交基的内积 $a_k$ 和 $b_k$ ，两系数的比值相同，即：
+
+$$
+\frac{a_{k_i}}{b_{k_i}} = \frac{a_{k_j}}{b_{k_j}} 
+$$
+
+又因为 $\mathbf{n_k}$ 在水平面的分量最大为其本身，模长为1，所以
+
+$$
+0 \leq a_k^2 + b_k^2 \leq 1
+$$
+
+$$
+f_k(\theta_n) = |a_k \cos \theta_n + b_k \sin \theta_n| < \varepsilon
+$$
+
+
+$$
+f_k(\theta_n) = \left\{
+    \begin{align}
+    & |a_k \cos \theta_n + b_k \sin \theta_n|, & b_k > 0 \\
+    & |-a_k \cos \theta_n - b_k \sin \theta_n|, & b_k < 0 \\
+    & |a_k \sin \theta_n |, & b_k = 0
+    \end{align}
+\right.
+$$
+
+$$
+|a_k \cos \theta_n + b_k \sin \theta_n| = 
+\left| 
+    \sqrt{a_k^2+b_k^2} \sin 
+    \left(
+        \theta_n + \arctan \left( \frac{a_k}{b_k} \right)
+    \right) 
+\right|
+$$
+
+$$
+|-a_k \cos \theta_n - b_k \sin \theta_n| = 
+\left| 
+    \sqrt{a_k^2+b_k^2} \sin 
+    \left(
+        \theta_n + \arctan \left( \frac{-a_k}{-b_k} \right)
+    \right) 
+\right|
+$$
+
+所以
+
+$$
+f_k(\theta_n) = \left\{
+    \begin{align}
+    &\left| 
+        \sqrt{a_k^2+b_k^2} \sin 
+        \left(
+            \theta_n + \arctan \left( \frac{a_k}{b_k} \right)
+        \right) 
+    \right|, & b_k \neq 0 \\
+    & |a_k \sin \theta_n |, & b_k = 0
+    \end{align}
+\right.
+$$
+
+令
+
+$$
+x= \theta_n + \arctan(a_k/ b_k)
+$$
+
+$$
+| \sin x | < \frac{\varepsilon}{\sqrt{a_k^2 + b_k^2}}
+$$
+
 
