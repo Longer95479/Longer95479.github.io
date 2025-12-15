@@ -120,6 +120,10 @@ $$
 \theta \in [-\arctan(\frac{a}{b})-\arcsin(\tilde{\varepsilon}),-\arctan(\frac{a}{b})+\arcsin(\tilde{\varepsilon})]
 $$
 
+$$
+\tilde{\varepsilon}= \frac{\varepsilon}{\sqrt{a_k^2 + b_k^2}}
+$$
+
 对于余下的每个法向量，我们都可计算这么一个区间，接下来需要考虑如何求出所有的重叠区间。
 使用的方法可以称之为 `投票法`。我们把所有区间放在数轴上，数轴向右为正，然后从左向右遍历每个端点，
 如果遇到某个区间的左端点，则计数器加一，表示有一个区间加入了，如果遇到某个区间右端点，则计数器减一，
@@ -287,7 +291,23 @@ x= \theta_n + \arctan(a_k/ b_k)
 $$
 
 $$
-| \sin x | < \frac{\varepsilon}{\sqrt{a_k^2 + b_k^2}}
+| \sin x | < \frac{\varepsilon}{\sqrt{a_k^2 + b_k^2}} = \tilde{\varepsilon}
 $$
+
+其中，$\tilde{\varepsilon}$ 应当在 0 和 1 之间。
+
+$$
+ -\tilde{\varepsilon} < \sin x < \tilde{\varepsilon}
+$$
+
+$$
+ - \arcsin \tilde{\varepsilon} + k\pi < x < \arcsin \tilde{\varepsilon} + k \pi
+$$
+
+$$
+ - \arcsin \tilde{\varepsilon} - \arctan(a_k / b_k) + k\pi < \theta_n < \arcsin \tilde{\varepsilon} - \arctan(a_k / b_k) + k \pi
+$$
+
+位于同一竖直平面内的法向量，$a_k/b_k$ 相等，所以区间偏移量一样，只是区间大小有所区别，越竖直，区间宽度越大，混淆性越大。
 
 
