@@ -234,6 +234,8 @@ $$
 \frac{a_{k_i}}{b_{k_i}} = \frac{a_{k_j}}{b_{k_j}} 
 $$
 
+何时 $b_k = 0$？若 $\mathbf{n_k}$ 位于 $\mathbf{v_m}$ 和 $\mathbf{n_r}$ 组成的平面中，则 $b_k = 0$。
+
 又因为 $\mathbf{n_k}$ 在水平面的分量最大为其本身，模长为1，所以
 
 $$
@@ -291,7 +293,7 @@ f_k(\theta_n) = \left\{
 \right.
 $$
 
-令
+考虑 $b_k \neq 0$，令
 
 $$
 x= \theta_n + \arctan(a_k/ b_k)
@@ -317,4 +319,12 @@ $$
 
 位于同一竖直平面内的法向量，$a_k/b_k$ 相等，所以区间偏移量一样，只是区间大小有所区别，越竖直，区间宽度越大，混淆性越大。
 
+如果 $b_k = 0$，则
 
+$$
+ - \arcsin \tilde{\varepsilon} + k\pi < \theta_n < \arcsin \tilde{\varepsilon} + k \pi
+$$
+
+$$
+\tilde{\varepsilon} = \frac{\varepsilon}{a_k}
+$$
