@@ -104,7 +104,7 @@ $$
 \mathbf{h}_n(\theta_n)^T\mathbf{n}_k = 0
 $$
 
-3. 放松一下上式的要求，不要求完全垂直，然后展开合并同类项（具体推导 TODO）
+3. 放松一下上式的要求，不要求完全垂直，然后展开合并同类项（[具体推导](#具体推导)）
 
 $$
 |\mathbf{h}_n(\theta_n)^T\mathbf{n}_k| < \varepsilon
@@ -114,7 +114,7 @@ $$
 f_k(\theta) = |a_k \cdot \cos \theta_n + b_k \cdot \sin \theta_n| \leq \varepsilon
 $$
 
-4. 求上面的不等式，得到 $\theta$ 的合法区间
+4. 求上面的不等式，得到 $\theta$ 的合法区间（[具体推导](#具体推导)）
 
 $$
 \theta \in [-\arctan(\frac{a}{b})-\arcsin(\tilde{\varepsilon}),-\arctan(\frac{a}{b})+\arcsin(\tilde{\varepsilon})]
@@ -131,7 +131,9 @@ $$
 $\theta_{r_n}$，这样就可以得到一个或多个重叠区间 $[\theta_{l_n},\ \theta_{r_n}]$。重叠区间内的任意值都可以
 认为是合理的朝向。
 
-![投票法求重叠区间]()
+位于同一竖直平面内的法向量，$a_k/b_k$ 相等，所以区间偏移量一样，只是区间大小有所区别，越竖直，区间宽度越大，混淆性越大。
+
+![投票法求重叠区间](/assets/2025-04-28-DD-extraction-update-optim/overlap_toymodel.png)
 
 
 笔者对该算法做了一些改进：
@@ -172,6 +174,11 @@ $\theta_{r_n}$，这样就可以得到一个或多个重叠区间 $[\theta_{l_n}
 
 ![](/assets/2025-04-28-DD-extraction-update-optim/rmse.png)
 
+![](/assets/2025-04-28-DD-extraction-update-optim/line_detection_1064.jpg)
+
+![](/assets/2025-04-28-DD-extraction-update-optim/regularity_encoder_1064.jpg)
+
+![](/assets/2025-04-28-DD-extraction-update-optim/overlap_frame1064.png)
 
 ![](/assets/2025-04-28-DD-extraction-update-optim/DDs_constrain_optim_vs_no_DDs.png)
 
