@@ -42,17 +42,48 @@ TODO：
 
 最朴素的思考则是从光源出发，思考光线的传播。考虑只有单次漫反射这一最简单的情况，当光源发出的光线第一次打到物体时，如前文所述，会向各个方向反射，而这么多法反射的光线中，只有穿过成像平面的光线是对渲染有意义的，其余的反射光线我们则不关心。
 
-因此，利用光路的可逆性，我们反过来思考，从相机光心出发射出一条光线，判断是否会打到物体表面的一个点上，若能打到，再从这个点上发出一条光线，打到光源上
+因此，利用光路的可逆性，我们反过来思考:
+
+- 从相机光心出发射出一条光线，判断是否会打到物体表面的一个点上
+- 若能打到，再从这个点上发出一条光线，判断是否会打到光源上
+- 若能打到，则可以计算出该视角下该点的像素值
+
+伪代码如下：
 
 ```c++
-vec3 trace(vec3 ray_ori, vec3 ray_dir, Objs_t Objs, int depth) {
+// retval: surface_color
+vec3 trace(const vec3& ray_ori, 
+           const vec3& ray_dir, 
+           const vector<ObjSharedPtr>& objs, 
+           int depth) 
+{
+    obj_ptr = nullptr;
+    getClosestHitPt(ray_ori, ray_dir, objs, &obj_ptr, &t);
 
+    if (obj_ptr == nullptr ) return vec(0.1, 0.1, 0.1); 
+
+    pt_hit = ray_ori + ray_dir * t;
+    norm_hit = obj_ptr->calNormHit(pt_hit);
+
+    for (light: lights) {
+        shadow_ray_dir = norm(light->center_ - pt_hit);
+        is_shadow = checkIntersect(pt_hit+norm_hit*eps, shadow_ray,dir);
+
+        if (is_shadow) continue;
+
+        ratio = max(0.0, norm_hit.transpose() * shadow_ray_dir);
+        surface_color += ratio * light->emission_color_;
+    }
+
+    surface_color += obj_ptr->emission_color_;
+
+    return surface_color;
 }
 ```
 
 ## 折射与反射的实现
 
-菲涅尔公式与递归实现为两个核心。
+**菲涅尔公式** 与 **递归实现** 为两个核心。
 
 
 ## 着色器（shader）的实现
