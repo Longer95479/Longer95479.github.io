@@ -83,7 +83,47 @@ vec3 trace(const vec3& ray_ori,
 
 ## 折射与反射的实现
 
-**菲涅尔公式** 与 **递归实现** 为两个核心。
+**菲涅尔方程组** 与 **递归实现** 为两个核心。
+
+### 菲涅尔方程组
+
+菲涅尔方程组描述了光线在两种介质分界处反射和折射的现象。给定入射角 $\theta_i$，能够利用该方程组计算出反射角 $\theta_r$、折射角 $\theta_t$、反射率（反射能量占比） $K_r = R_{eff}$ 、折射率 $K_t = i - K_r$。
+
+$$
+\theta_r = \theta_i
+$$
+
+$$
+n_1 \sin \theta_i = n_2 \sin \theta_t
+$$
+
+$$
+r_s = \left |
+\frac{n_1 \cos \theta_i - n_2 \cos \theta_t}{n_1 \cos \theta_i + n_2 \cos \theta_t}
+\right |
+$$
+
+$$
+r_p = \left |
+\frac{n_2 \cos \theta_i - n_1 \cos \theta_t}{n_2 \cos \theta_i + n_1 \cos \theta_t}
+\right |
+$$
+
+$$
+R_{eff} = \frac{R_s + R_p}{2} = \frac{r_s^2 + r_p^2}{2}
+$$
+
+$$
+K_r = \min (1, R_{eff})
+$$
+
+$$
+K_t = 1 - K_r
+$$
+
+### 递归实现
+
+
 
 
 ## 着色器（shader）的实现
