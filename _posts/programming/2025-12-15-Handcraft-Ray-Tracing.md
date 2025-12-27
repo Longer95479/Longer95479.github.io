@@ -141,18 +141,73 @@ $$
 
 - 对于从反射方向入射的光，其反射分量会进入相机
 - 对于从折射方向入射的光，其折射分量会进入相机
+- 而 $K_{rt}L_r$ 和 $K_{tr}L_t$ 分量则会射向其他方向，继续折射或反射，最终可能其部分分量会进入相机，仿佛是一个特定方向的光源，但这部分其实是非忽略了，这就是该算法的近似部分。这会导致水晶球的影子是全黑的，而不是光线穿过一部分。
 
 $$
-\boxed{K_{rr} L_{r}} + K_{rt} L_{r} \leftarrow L_r
-$$
-
-$$
-K_{tr} L_{t} + \boxed{K_{tt} L_{t}} \leftarrow L_t
+\underline{K_{rr} L_{r}} + K_{rt} L_{r} \leftarrow L_r
 $$
 
 $$
-L_i \leftarrow K_{rr} L_{r} + K_{tt} L_{t}
+K_{tr} L_{t} + \underline{K_{tt} L_{t}} \leftarrow L_t
 $$
+
+$$
+\boxed{L_i \leftarrow K_{rr} L_{r} + K_{tt} L_{t}}
+$$
+
+对于从反射方向入射的光，其入射角等于原来的反射角，由 *反射角等于入射角* 可得。所以
+
+$$
+\theta_{ri} = \theta_i \rightarrow \theta_{rt} = \theta_t \rightarrow \boxed{K_{rr} = K_r}
+$$
+
+对于从折射方向入射的光，其入射角为原来的折射角，其折射角为原来的入射角，因为 
+
+$$
+\left.
+\begin{align}
+n_1 \sin \theta_{tt} &= n_2 \sin \theta_{ti} \\
+\theta_{ti} &= \theta_t
+\end{align}
+\right \}
+\Rightarrow
+\theta_{tt} = \theta_i
+$$
+
+以防忘记，再次给出 $r_s$ 和 $r_p$ 的表达式，我们只需对变量进行替换即可 $\theta_i \leftarrow \theta_{ti} = \theta_t$，$\theta_t \leftarrow \theta_{tt} = \theta_i$ 
+
+$$
+r_s = \left |
+\frac{n_1 \cos \theta_i - n_2 \cos \theta_t}{n_1 \cos \theta_i + n_2 \cos \theta_t}
+\right |
+,
+r_p = \left |
+\frac{n_2 \cos \theta_i - n_1 \cos \theta_t}{n_2 \cos \theta_i + n_1 \cos \theta_t}
+\right |
+$$
+
+可以发现 $r_{ts} = r_p$，$r_{tp} = r_s$，所以新的反射率不变，新的折射率 $K_{tt}$ 也不变，即
+
+$$
+\left.
+\begin{align}
+R_{t_{eff}} &= R_{eff} \\
+K_r &= R_{eff} \\
+K_t &= 1 - K_r
+\end{align}
+\right \}
+\Rightarrow
+\boxed{K_{tt} = K_{t}}
+$$
+
+所以
+
+$$
+\boxed{L_i \leftarrow K_{r} L_{r} + K_{t} L_{t}}
+$$
+
+仿佛光是从相机出发，然后反射和折射，虽然实际情况是外部的光线经过折射和反射进入相机。
+
 
 ## 球体的相交检测
 
