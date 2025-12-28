@@ -12,9 +12,8 @@ categories:
 
 本文将介绍如何手搓光线追踪。先上效果图：
 
-<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing-120p.gif" width = 34% height = 34% div align=left />
-
-<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing_blue-120p.gif" width = 34% height = 34% div align=center />
+![](/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing-120p.gif)
+![](/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing_blue-120p.gif)
 
 代码仓库：[handcraft-MVS](https://github.com/Longer95479/handcraft-MVS)。
 
@@ -214,11 +213,13 @@ $$
 
 为每个像素的 RGB 通道分配一个值，这便是着色器所作的事。
 
+动机来源：[Graphics API is irrelevant | Tsoding](https://www.bilibili.com/video/BV1sXC5BxE3L/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+
 ## 参考
 
-[3D Computer Graphics Primer: Ray-Tracing as an Example](https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work.html)
-
-An Improved Illumination Model for Shaded Display. Turner Whitted, 1980
+- [3D Computer Graphics Primer: Ray-Tracing as an Example](https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work.html)
+- An Improved Illumination Model for Shaded Display. Turner Whitted, 1980
+- [详解NeRF中的NDC ray space](https://zhuanlan.zhihu.com/p/628675070)
 
 ## 附录
 
@@ -233,12 +234,19 @@ $$
 \mathbf{|s|e = H_w s = H_n (-s)}
 $$
 
-<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/reflection.png" width = 34% height = 34% div align=center />
+![](/assets/2025-12-15-Handcraft-Ray-Tracing/reflection.png)
 
 ### NDC 坐标系
 
-[详解NeRF中的NDC ray space](https://zhuanlan.zhihu.com/p/628675070)
+简单来说，就是把视锥内的空间，变换到正方体空间中。
 
+详见：[详解NeRF中的NDC ray space](https://zhuanlan.zhihu.com/p/628675070)
+
+![](/assets/2025-12-15-Handcraft-Ray-Tracing/NDC_coordinate.png)
+
+![](/assets/2025-12-15-Handcraft-Ray-Tracing/screen_NDC_raster_coordinate.png)
 
 
 ### 射线生成
+
+
