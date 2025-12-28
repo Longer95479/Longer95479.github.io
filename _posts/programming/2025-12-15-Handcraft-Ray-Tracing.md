@@ -12,10 +12,9 @@ categories:
 
 本文将介绍如何手搓光线追踪。先上效果图：
 
-![](/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing-120p.gif)
+<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing-120p.gif" width = 34% height = 34% div align=left />
 
-![](/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing_blue-120p.gif)
-
+<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/my_raytracing_blue-120p.gif" width = 34% height = 34% div align=center />
 
 代码仓库：[handcraft-MVS](https://github.com/Longer95479/handcraft-MVS)。
 
@@ -215,10 +214,31 @@ $$
 
 为每个像素的 RGB 通道分配一个值，这便是着色器所作的事。
 
+## 参考
+
+[3D Computer Graphics Primer: Ray-Tracing as an Example](https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-ray-tracing/how-does-it-work.html)
+
+An Improved Illumination Model for Shaded Display. Turner Whitted, 1980
+
 ## 附录
 
 ### 反射变换的矩阵表示
 
+$$
+\mathbf{H_w = I - 2ww^T}, 
+\mathbf{H_n = I - 2nn^T}
+$$
+
+$$
+\mathbf{|s|e = H_w s = H_n (-s)}
+$$
+
+<img src="/assets/2025-12-15-Handcraft-Ray-Tracing/reflection.png" width = 34% height = 34% div align=center />
+
 ### NDC 坐标系
+
+[详解NeRF中的NDC ray space](https://zhuanlan.zhihu.com/p/628675070)
+
+
 
 ### 射线生成
