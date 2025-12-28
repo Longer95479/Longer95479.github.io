@@ -213,7 +213,7 @@ $$
 
 为每个像素的 RGB 通道分配一个值，这便是着色器所作的事。
 
-动机来源：[Graphics API is irrelevant | Tsoding](https://www.bilibili.com/video/BV1sXC5BxE3L/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
+动机来源：[Graphics API is irrelevant - Tsoding](https://www.bilibili.com/video/BV1sXC5BxE3L/?spm_id_from=333.337.search-card.all.click&vd_source=e371652571b1539bbd501fb7adb6cfc4)
 
 ## 参考
 
