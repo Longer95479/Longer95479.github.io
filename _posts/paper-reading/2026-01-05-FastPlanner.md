@@ -40,7 +40,41 @@ $$
 $$
 
 $$
+\mathbf{
+A = 
+\begin{bmatrix}
+\mathbf{0} & \mathbf{I_3} & \mathbf{0} & \cdots & \mathbf{0} \\
+\mathbf{0} & \mathbf{0} & \mathbf{I_3} & \cdots & \mathbf{0} \\
+\vdots & \vdots & \vdots & \cdots & \vdots \\
+\mathbf{0} & \cdots & \cdots & \mathbf{0} & \mathbf{I_3} \\
+\mathbf{0} & \cdots & \cdots & \mathbf{0} & \mathbf{0}
+\end{bmatrix}
+,
+B = 
+\begin{bmatrix}
+\mathbf{0} \\
+\mathbf{0} \\
+\vdots \\
+\mathbf{0} \\
+\mathbf{I_3} \\
+\end{bmatrix}
+}
+$$
+
+$$
 \mathbf{ x } (t) = e^{\mathbf{A}t} \mathbf{x}(t) 
 + \int_0^t e^{\mathbf{A}(t-\tau)} \mathbf{Bu}(t-\tau) \mathrm{d}t
 $$
+
+## 附录
+
+### 汉密尔顿方程（Hamilton Equation）
+
+> ref: [高级宏观与动态优化：汉密尔顿方程（Hamilton Equation）-知乎](https://zhuanlan.zhihu.com/p/436150206)
+
+### 庞特里亚金最小值原理解最优控制问题
+
+> ref: [庞特里亚金最小值原理解最优控制问题-知乎](https://zhuanlan.zhihu.com/p/483647239)
+
+
 
