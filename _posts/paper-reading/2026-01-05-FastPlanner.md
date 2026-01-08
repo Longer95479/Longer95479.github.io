@@ -72,6 +72,23 @@ $$
 
 > ref: [高级宏观与动态优化：汉密尔顿方程（Hamilton Equation）-知乎](https://zhuanlan.zhihu.com/p/436150206)
 
+$$
+\begin{align}
+&\max \int_{t_0}^{t_1} f(t, x(t), u(t)) \mathrm{d}t \\
+&\mathrm{subject\ to}\ x'(t) = g(t, x(t), u(t)), \\
+&t_0 \leq t \leq t_1, x(t_0) = x_0 \ \mathrm{fixed}, x(t_1) \ \mathrm{free} 
+\end{align}
+$$
+
+求解思路是对最优控制量 $u^*(t)$ 施加扰动，$u(t) = u^*(t) + ah(t)$，再使用上分部积分的技巧。
+
+$$
+\int_{t_0}^{t_1} f(t, x(t), u(t)) \mathrm{d}t = \\
+\int_{t_0}^{t_1} f(t, x(t), u(t)) + \lambda(t) x'(t) - \lambda(t) g(t, x(t), u(t)) \mathrm{d}t
+$$
+
+
+
 ### 庞特里亚金最小值原理解最优控制问题
 
 > ref: [庞特里亚金最小值原理解最优控制问题-知乎](https://zhuanlan.zhihu.com/p/483647239)
