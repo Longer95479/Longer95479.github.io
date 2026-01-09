@@ -291,6 +291,23 @@ p_\mu(t) \\
 ,\ \mu \in \{x,y,z\}
 $$
 
+$$
+\dot{x}_\mu(t) = A x + B u
+$$
+
+$$
+A = 
+\begin{bmatrix}
+0 & 1 \\
+0 & 0
+\end{bmatrix}
+,\ B = 
+\begin{bmatrix}
+0 \\
+1
+\end{bmatrix}
+$$
+
 优化问题可以描述为
 
 $$
@@ -318,9 +335,63 @@ v(t) \\
 ,\ u(t) = p^{(2)}(t) = a(t)
 $$
 
+写出哈密顿函数：
+
 $$
-H(t,x,u) = \frac{1}{T}u^2 + \lambda^T \dot{x}
+\begin{align}
+H(t,x,u, \lambda) &= \frac{1}{T}u^2 + \lambda^T \dot{x} \\
+&= \frac1T a^2 + \lambda_1 v + \lambda_2 a
+\end{align}
 $$
 
+满足以下条件
 
+$$
+D_u H = \frac2T a + \lambda_2 = 0
+$$
+
+$$
+-D_xH = 
+\begin{bmatrix}
+0 \\
+-\lambda_1
+\end{bmatrix}
+=
+\begin{bmatrix}
+\dot{\lambda}_1 \\
+\dot{\lambda}_2
+\end{bmatrix}
+$$
+
+$$
+D_{\lambda} H = 
+\begin{bmatrix}
+v \\
+a
+\end{bmatrix}
+=
+\begin{bmatrix}
+v \\
+a
+\end{bmatrix}
+$$
+
+得到：
+
+$$
+\lambda(t) = 
+\frac1T
+\begin{bmatrix}
+-\alpha \\
+\alpha t + \beta
+\end{bmatrix}
+$$
+
+$$
+\begin{align}
+a &= -\frac{1}{2} (\alpha t + \beta) \\
+v &= -\frac12 (\frac12\alpha t^2 + \beta t + v_0) \\
+p &= -\frac12 (\frac16\alpha t^3 + \frac12 \beta t^2 + v_0t + p_0)
+\end{align}
+$$
 
