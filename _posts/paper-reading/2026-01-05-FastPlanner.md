@@ -199,7 +199,7 @@ x^{*'}(t) = g(t, x^*(t), u^*(t))
 }
 $$
 
-换一种表达方式，定义哈密顿函数：
+换一种表达方式，定义哈密顿函数，求最优控制量：
 
 $$
 \boxed{
@@ -220,6 +220,8 @@ H_{uu}(t, x^*, u^*, \lambda) &\leq 0 \ or \ H_{uu}(t, x^*, u^*, \lambda) \geq 0 
 \end{align}
 }
 $$
+
+这里作了一点符号滥用：*行向量的转置等于某个列向量*，简写为 *行向量等于列向量*。
 
 求解思路：利用 $D_u H = 0$ 将 $u$ 用 $x$ 和 $\lambda$ 表示，代入到 $-D_x H = \lambda'$ 和 $D_\lambda H = x'$ 中得到两个关于 $x$ 和 $\lambda$ 的微分方程，再加上两个边界条件 $x(t_0) = x_0$ 和 $\lambda(t_1) = 0$，可以先求解出 $\lambda(t)$, 再求解出 $u(t), x'(t), x(t)$
 
@@ -259,10 +261,66 @@ x(t) &= t - \frac{1}{4(1-t)} + \frac{5}{4}
 \end{align}
 $$
 
+#### 问题变体
+
+$$
+\begin{align}
+&\max \int_{t_0}^{t_1} f(t, x(t), u(t)) \ \mathrm{d}t + \phi(x_1) \\
+&\mathrm{subject\ to}\ x'(t) = g(t, x, u),\ x(t_0) = x_0, t_0, t_1\ \mathrm{fixed},\ x(t_1) = x_1\ \mathrm{free}.
+\end{align}
+$$
+
+哈密顿方程的条件不变，但
+
+$$
+\lambda(t_1) = 0 \rightarrow \lambda(t_1) = \phi'(x_1)
+$$
 
 ### 庞特里亚金最小值原理解最优控制问题
 
 > ref: [庞特里亚金最小值原理解最优控制问题-知乎](https://zhuanlan.zhihu.com/p/483647239)
+
+将位置和速度作为状态变量。
+
+$$
+x_\mu(t) = 
+\begin{bmatrix}
+p_\mu(t) \\
+    \dot{p}_\mu(t)
+\end{bmatrix}
+,\ \mu \in \{x,y,z\}
+$$
+
+优化问题可以描述为
+
+$$
+\begin{align}
+&\min \frac{1}{T} \int_{0}^{T} p_\mu^{(2)}(t) \ \mathrm{d}t \\
+&\mathrm{subject\ to}\ x_\mu(0) = x_c,\ x_\mu(T) = x_g
+\end{align}
+$$
+
+解：
+
+重写变量
+
+$$
+x_\mu(t) = 
+\begin{bmatrix}
+p_\mu(t) \\
+    \dot{p}_\mu(t)
+\end{bmatrix}
+=
+\begin{bmatrix}
+p(t) \\
+v(t) \\
+\end{bmatrix}
+,\ u(t) = p^{(2)}(t) = a(t)
+$$
+
+$$
+H(t,x,u) = \frac{1}{T}u^2 + \lambda^T \dot{x}
+$$
 
 
 
