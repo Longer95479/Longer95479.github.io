@@ -313,13 +313,13 @@ $$
 $$
 \begin{align}
 &\min \frac{1}{T} \int_{0}^{T} p_\mu^{(2)}(t) \ \mathrm{d}t \\
-&\mathrm{subject\ to}\ x_\mu(0) = x_c,\ x_\mu(T) = x_g
+&\mathrm{subject\ to}\ x_\mu(0) = x_{\mu0},\ x_\mu(T) = x_{\mu 1}
 \end{align}
 $$
 
 解：
 
-重写变量
+重写变量，省略 $\mu$
 
 $$
 x_\mu(t) = 
@@ -379,19 +379,91 @@ $$
 得到：
 
 $$
-\lambda(t) = 
-\frac1T
 \begin{bmatrix}
--\alpha \\
-\alpha t + \beta
+0 \\
+-\lambda_1
+\end{bmatrix}
+=
+\begin{bmatrix}
+\dot{\lambda}_1 \\
+\dot{\lambda}_2
+\end{bmatrix}
+
+\Rightarrow
+
+\lambda(t) = 
+\frac2T
+\begin{bmatrix}
+\alpha \\
+- \alpha t - \beta
 \end{bmatrix}
 $$
 
 $$
 \begin{align}
-a &= -\frac{1}{2} (\alpha t + \beta) \\
-v &= -\frac12 (\frac12\alpha t^2 + \beta t + v_0) \\
-p &= -\frac12 (\frac16\alpha t^3 + \frac12 \beta t^2 + v_0t + p_0)
+ \frac2T a + \lambda_2 = 0 &\Rightarrow a = \alpha t + \beta \\
+v = \dot{a} &\Rightarrow \boxed{ v = \frac12\alpha t^2 + \beta t + v_0} \\
+p = \dot{v} &\Rightarrow \boxed{ p = \frac16\alpha t^3 + \frac12 \beta t^2 + v_0t + p_0}
 \end{align}
+$$
+
+令
+
+$$
+\boxed{
+\begin{align}
+\Delta p &= p_1 - p_0 - v_0 T \\
+\Delta v &= v_1 - v_0
+\end{align}
+}
+$$
+
+则方程组可以写成，即起点终点值约束
+
+$$
+\begin{bmatrix}
+\Delta p\\
+\Delta v\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+\frac{1}{6}T^3 & \frac{1}{2}T^2 \\
+\frac{1}{2}T^2 & T
+\end{bmatrix}
+\begin{bmatrix}
+\alpha \\
+\beta
+\end{bmatrix}
+
+\Rightarrow
+
+
+\boxed{
+\begin{bmatrix}
+\alpha \\
+\beta
+\end{bmatrix}
+=
+\frac{1}{T^3}
+\begin{bmatrix}
+-12 & 6T \\
+6T & -2T^2
+\end{bmatrix}
+\begin{bmatrix}
+\Delta p\\
+\Delta v\\
+\end{bmatrix}
+}
+$$
+
+代入损失函数
+
+$$
+J(T) = \frac1T \int_0^T a^2 \ \mathrm{d}t 
+= \frac13 \alpha^2T^3 + \alpha \beta T^2 + \beta^2 T
+$$
+
+$$
+D_T J = 0\ 可求出最优\ T
 $$
 
