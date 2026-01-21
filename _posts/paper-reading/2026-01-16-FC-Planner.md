@@ -10,6 +10,8 @@ categories:
     - motion planning
 ---
 
+## 1 Skeleton-based Space Decomposition
+
 ### Skeleton Extraction
 
 该方法参考自 [Tagliasacchi et al. 2009](https://dl.acm.org/doi/epdf/10.1145/1531326.1531377)
@@ -71,6 +73,56 @@ branch 终止于 joint 或 leaf。
 
 ### Space Allocation 
 
-论文中的方式是根据计算出来的 ROSA points，确定出一个个平面，判断那些点云属于这个平面（根据点到平面的距离来衡量），然后点云就被归属到 ROSA points 对应的分支（branch）里，组成一个子空间（subspace）。
+论文中的方式是根据计算出来的 ROSA points，或者按原文的描述是对边进行离散化，得到一堆有向点，确定出一个个平面，判断那些点云属于这个平面（根据点到平面的距离来衡量），然后点云就被归属到 ROSA points 对应的分支（branch）里，组成一个子空间（subspace）。
 
 这是一个可以改进的点，该计算过程其实可以被省略，因为在计算 ROSA point 的时候，点云和 ROSA point 的对应关系就已产生了。
+
+## 2 Skeleton-guided Viewpoint Generation
+
+### Internal Space and Viewpoint Sampling Ray
+
+从骨架中的 ROSA 点 或 对边离散化得到的有向点 为起点，射向分配到该平面上的点，该方向作为 ray casting 的方向，对体素进行遍历。为了加速，也可以从边界另一端双向进行光线投射。该过程将栅格分成三类，靠近有向点的标记为内部，有点云的栅格标记为占据，继续向外的标记为空状态。
+
+### Iterative Updates of Viewpoint Pose
+
+从占据栅格出发，射出的射线称为 *视角采样射线（viewpoint sampling ray）* $r_{vs}$，起点和方向定义为
+$$
+\mathbf{sr} = [x_{sr}, y_{sr}, z_{sr}],
+\mathbf{dr} = [nx_{dr}, ny_{dr}, nz_{dr}]
+$$ 
+
+定义视野为 5-DOF，表示为
+
+$$
+\mathbf{vp} = [\mathbf{p}, \theta, \phi, id]
+$$
+
+$\mathbf{p}$ 是视野或相机等传感器的位置，$\theta,\phi$ 是 pitch 和 yaw 的角度。
+
+$$
+\mathbf{p} = \mathbf{sr} + D \mathbf{dr}
+$$
+
+$$
+\theta = \arcsin (-nz_{dr}/\left\| \mathbf{dr}  \right\|)
+$$
+
+$$
+\phi = \arctan (-ny_{dr}/-nx_{dr})
+$$
+
+简单来说，视角位于物体表面的 $D$ 距离处，朝向是射线的反向，也就是看向物体表面。
+
+这些视角称作初始视角，其集合表示为 $\mathcal{VP}_{ini}$。
+
+1. 通过双向光线投射 BiRC 确定被视野 $\mathcal{VP}_{ini}$ 覆盖到的栅格，如果一个栅格被多个视角覆盖到，则被配对到保留覆盖数更多的视角。最后如果一个视角没有被分配给任何一个体素，从集合中移除其余视角
+2. 合并视角，文中称之为 *gravitation-like model*，会从 $\mathcal{VP}$ 中构建 kd 树 $T_{ini}$，从覆盖数最多的视角开始，直到覆盖数最小的视角，查找给定半径内的覆盖数小于当前视角的活跃视角，更新被查询视角位置后，将活跃视角休眠
+3. 重复步骤 1 BiRC 判断未被覆盖到的体素，并生成视角集合 $\mathcal{VP}_{unc}$ 以提高覆盖率
+4. 对 $\mathcal{VP}_{unc}$ 执行以上步骤，可多次迭代
+
+最后活跃的视角的 id 会分配给对应的子空间，因此按子空间可以对最后活跃视角集合进行划分。
+
+$$
+\mathcal{V} = \{ \mathcal{VP}_1,\cdots, \mathcal{VP}_N \}
+$$
+
