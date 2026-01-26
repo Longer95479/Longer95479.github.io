@@ -43,7 +43,6 @@ $$
 
 3. 计算 $\mathbf{v}_p$，通过最小化该向量与邻域内的法向量角度方差
 
-
 $$
 \mathbf{v}_p^{i+1} = \mathop{\mathrm{argmin}}\limits_{\mathbf{v}_p \in \mathbb{R}^3,\left\| \mathbf{v}_p  \right\|_2 = 1} 
 \mathrm{var}\left\{ \left< \mathbf{v}_p^i, \mathbf{n}(p_k) \right> \ : \ p_k \in \mathcal{N}_p^{(i)} \right\}
@@ -124,5 +123,17 @@ $$
 
 $$
 \mathcal{V} = \{ \mathcal{VP}_1,\cdots, \mathcal{VP}_N \}
+$$
+
+其中，步骤 2 中涉及到的查询半径定义为
+
+$$
+r_q = d_v \tan(\min(f_h,f_w)/2)
+$$
+
+合并的公式如下，其含义为在给定的半径里，要把覆盖数低于当前查询视角的视角休眠，并且让当前视角尽量往覆盖数最多的要被休眠的视角位置移动，用以尽可能地补偿视角休眠带来的覆盖丢失。
+
+$$
+\bar{\mathbf{p}}_q = \mathbf{p}_q + \sum_{\mathbf{vp}_a \in \mathcal{VP}_a} \frac{c_a}{c_q} (\mathbf{p_a} - \mathbf{p_q}),\ \mathrm{s.t.}\ c_a < c_q
 $$
 
