@@ -182,6 +182,14 @@ $$
 
 ![4motor_thr](/assets/2026-01-26-select-motor/4motor_thr.png)
 
+电流电压在悬停时均变小，如下图。
+
+![power_data](/assets/2026-01-26-select-motor/power_data.png)
+
+温度变化如下图，变化幅度约 10 度。
+
+![temp_data](/assets/2026-01-26-select-motor/temp_data.png)
+
 ## 其他
 
 一帧DSHOT600由16个比特位构成，其中前11位是油门信号，第12位是telemetry请求标志（tlm需要电调硬件支持），后四位是CRC校验位。速度600kbits/s，一帧信号的长度为26.7us。
