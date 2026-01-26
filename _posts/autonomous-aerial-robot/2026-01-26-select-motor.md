@@ -69,7 +69,7 @@ T = C_T \rho (\frac{n}{60})^2 D^4
 $$
 
 $$
-N = 60 \sqrt{\frac{T}{D^4 C_T \rho}}
+n = 60 \sqrt{\frac{T}{D^4 C_T \rho}}
 $$
 
 $C_T$ 是螺旋桨拉力系数，一般取 0.1 到 0.2。
@@ -155,3 +155,4 @@ gdc: 314.1592653589793, tau: 0.8882643960980423, gh: 0.16290058033161212
 autonomous navigation](https://innowings.engg.hku.hk/pulsar/)
 - [《多旋翼飞行器设计与控制》PPT合集](https://rfly.buaa.edu.cn/course/ch/LessonAllV2.pdf)
 - [螺旋桨基础理论](https://dcwan.sjtu.edu.cn/PlugIns/ckfinder/userfiles/files/%E8%88%B9%E8%88%B6%E6%8E%A8%E8%BF%9B%E7%AC%AC3%E7%AB%A0.pdf)
+- [无人机动力系统设计之桨叶推力计算](https://blog.csdn.net/lida2003/article/details/142047660)
