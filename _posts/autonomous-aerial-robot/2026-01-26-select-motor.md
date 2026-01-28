@@ -201,3 +201,4 @@ autonomous navigation](https://innowings.engg.hku.hk/pulsar/)
 - [《多旋翼飞行器设计与控制》PPT合集](https://rfly.buaa.edu.cn/course/ch/LessonAllV2.pdf)
 - [螺旋桨基础理论](https://dcwan.sjtu.edu.cn/PlugIns/ckfinder/userfiles/files/%E8%88%B9%E8%88%B6%E6%8E%A8%E8%BF%9B%E7%AC%AC3%E7%AB%A0.pdf)
 - [无人机动力系统设计之桨叶推力计算](https://blog.csdn.net/lida2003/article/details/142047660)
+
