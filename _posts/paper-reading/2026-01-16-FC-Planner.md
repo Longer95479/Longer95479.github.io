@@ -137,3 +137,32 @@ $$
 \bar{\mathbf{p}}_q = \mathbf{p}_q + \sum_{\mathbf{vp}_a \in \mathcal{VP}_a} \frac{c_a}{c_q} (\mathbf{p_a} - \mathbf{p_q}),\ \mathrm{s.t.}\ c_a < c_q
 $$
 
+> 该小节的问题可以抽象为集合覆盖问题，可由此寻找更优的算法。
+
+## LKH 算法
+
+> ref: [An Effective Implementation of the Lin-Kernighan Traveling Salesman Heuristic](http://webhotel4.ruc.dk/~keld/research/LKH/LKH-2.0/DOC/LKH_REPORT.pdf)
+
+旅行商问题（TSP，Traveling Salesman Problem）是一个著名的组合优化问题，易于描述但难以求解。
+
+给定邻接矩阵（或代价矩阵）$\mathbf{C} = (c_{ij})$，其中 $c_{ij}$ 表示从点 $i$ 转移到点 $j$ 的代价，找到一个对正整数 $1$ 到 $N$ 的置换或排列方式（permutation）$(i_1,i_2,\cdots,i_N)$
+
+$$
+\min (c_{i_1i_2} + c_{i_2i_3} + \cdots + c_{i_{N-1}i_{N}} + C_{i_{N}i_1})
+$$
+
+目前最好的求解算法为 *LKH 算法*，是一种启发式算法。
+
+> $i$ 表示在算法的中间过程中的 i-opt （P12注释）
+
+选择 $t_1$，如果 2-opt 可以找到更短的路径，则 $T = T'$，重新选择 $t_1$
+
+对于第一和第二层，执行深度优先搜索并且会回溯。
+
+本质是找 $X$ 和 $Y$ 这两个集合，然后通过一些规则进行限制搜索范围，以使复杂度可接受。最后将 $X$ 中的边删除，链接 $Y$ 中的边，形成一个更短的新途径。
+
+规则：
+- 对 $x_i$ 的不平凡约束有：跟 $t_1$ 链接后能闭合
+- 对 $y_i$ 的不平凡约束有：增益前缀和 $G_i$ 大于 0、有下一个 $x_{i+1}$
+- 相互约束：两个集合没有交集
+
