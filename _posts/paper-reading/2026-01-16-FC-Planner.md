@@ -26,27 +26,15 @@ $$
 
 求解方法：
 
-1. 确定锚点以及最佳切割平面
-2. 确定对应的邻域 $\mathcal{N}_p$，依赖于定义的距离，参考自 [Lehtinen et al. 2008](https://dl.acm.org/doi/epdf/10.1145/1360612.1360636)。
+1. 采样一个锚点 $p \in \mathcal{P}_D$ 
+2. 确定对应的邻域 $\mathcal{N}_p$，邻域的确定依赖于距离如何定义，参考自 [Lehtinen et al. 2008](https://dl.acm.org/doi/epdf/10.1145/1360612.1360636)。
 
 $$
 \mathrm{dist}({r_p}_i,{r_p}_j) = \left\| 
 {\mathbf{x}_p}_i - {\mathbf{x}_p}_j + F_{squash} 
 \left< {\mathbf{x}_p}_i -  {\mathbf{x}_p}_j, {\mathbf{v}_p}_j \right>
 {\mathbf{v}_p}_j 
-\right\|
-$$
-
-> 这个距离定义可以让 ${r_p}_j$ 周围的等值面（iso-surface）是一个椭球，且该椭球跟 ${\mathbf{v}_p}_j$ 对齐的轴会比其他两个轴短 $1/(1 + F_{squash})$。这意味着当 ${\mathbf{x}_p}_i$ 偏离于和 ${\mathbf{x}_p}_j$ 相切的平面时，距离会增长得更快。我们使用 $F_{squash} = 2$，这是一种马氏距离。
-
-> ![iso-surface](../../assets/2026-01-16-FC-Planner/iso-surface.png)
-
-3. 计算 $\mathbf{v}_p$，通过最小化该向量与邻域内的法向量角度方差
-
-$$
-\mathbf{v}_p^{i+1} = \mathop{\mathrm{argmin}}\limits_{\mathbf{v}_p \in \mathbb{R}^3,\left\| \mathbf{v}_p  \right\|_2 = 1} 
-\mathrm{var}\left\{ \left< \mathbf{v}_p^i, \mathbf{n}(p_k) \right> \ : \ p_k \in \mathcal{N}_p^{(i)} \right\}
-$$
+\right\|$$
 
 $$
 \mathbf{v}_p^{i+1} = \mathop{\mathrm{argmin}}\limits_{\mathbf{v}_p \in \mathbb{R}^3,\left\| \mathbf{v}_p  \right\|_2 = 1} 
@@ -70,11 +58,13 @@ branch 终止于 joint 或 leaf。
 1. DFS 深度优先从每个 joint 出发，得到一个个 branch 
 2. 对第一步得到的 branch 作进一步的细分，为的是让单个 branch 的几何足够简单
 
+对应于论文中的 Algorithm 1。
+
 ### Space Allocation 
 
 论文中的方式是根据计算出来的 ROSA points，或者按原文的描述是对边进行离散化，得到一堆有向点，确定出一个个平面，判断那些点云属于这个平面（根据点到平面的距离来衡量），然后点云就被归属到 ROSA points 对应的分支（branch）里，组成一个子空间（subspace）。
 
-这是一个可以改进的点，该计算过程其实可以被省略，因为在计算 ROSA point 的时候，点云和 ROSA point 的对应关系就已产生了。
+> 这是一个可以改进的点，该计算过程其实可以被省略，因为在计算 ROSA point 的时候，下采样点云和 ROSA point 的对应关系就已产生了，原点云可以以下采样点云的分割为依据作 knn 分类。
 
 ## 2 Skeleton-guided Viewpoint Generation
 
@@ -115,7 +105,7 @@ $$
 这些视角称作初始视角，其集合表示为 $\mathcal{VP}_{ini}$。
 
 1. 通过双向光线投射 BiRC 确定被视野 $\mathcal{VP}_{ini}$ 覆盖到的栅格，如果一个栅格被多个视角覆盖到，则被配对到保留覆盖数更多的视角。最后如果一个视角没有被分配给任何一个体素，从集合中移除其余视角
-2. 合并视角，文中称之为 *gravitation-like model*，会从 $\mathcal{VP}$ 中构建 kd 树 $T_{ini}$，从覆盖数最多的视角开始，直到覆盖数最小的视角，查找给定半径内的覆盖数小于当前视角的活跃视角，更新被查询视角位置后，将活跃视角休眠
+2. 合并视角，文中称之为 *gravitation-like model*，会从 $\mathcal{VP}_{ini}$ 中构建 kd 树 $T_{ini}$，从覆盖数最多的视角开始，直到覆盖数最小的视角，查找给定半径内的覆盖数小于当前视角的活跃视角，基于引力模型更新被查询视角位置后，将活跃视角休眠
 3. 重复步骤 1 BiRC 判断未被覆盖到的体素，并生成视角集合 $\mathcal{VP}_{unc}$ 以提高覆盖率
 4. 对 $\mathcal{VP}_{unc}$ 执行以上步骤，可多次迭代
 
@@ -138,6 +128,10 @@ $$
 $$
 
 > 该小节的问题可以抽象为集合覆盖问题，可由此寻找更优的算法。
+> - 预处理剪枝部分，把体素分配给独特视野最大的视角，而不是覆盖最大的视角
+> - 先选择 “边际效益最大” 的视角，而不是原始覆盖数最大的视角。边际效益如何定义，可以考虑什么样的视角更利于重建或检测。
+>   - [ ] k 近邻视角来近似计算某个视角的独立覆盖数
+> - 采样选最优，这是原方法，可以进一步拓展为 基于优化的 refinement，类似 cartographer
 
 ## LKH 算法
 
