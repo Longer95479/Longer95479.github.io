@@ -34,7 +34,19 @@ $$
 {\mathbf{x}_p}_i - {\mathbf{x}_p}_j + F_{squash} 
 \left< {\mathbf{x}_p}_i -  {\mathbf{x}_p}_j, {\mathbf{v}_p}_j \right>
 {\mathbf{v}_p}_j 
-\right\|$$
+\right\|
+$$
+
+> 这个距离定义可以让 ${r_p}_j$ 周围的等值面（iso-surface）是一个椭球，且该椭球跟 ${\mathbf{v}_p}_j$ 对齐的轴会比其他两个轴短 $1/(1 + F_{squash})$。这意味着当 ${\mathbf{x}_p}_i$ 偏离于和 ${\mathbf{x}_p}_j$ 相切的平面时，距离会增长得更快。我们使用 $F_{squash} = 2$，这是一种马氏距离。
+
+> ![iso-surface](../../assets/2026-01-16-FC-Planner/iso-surface.png)
+
+3. 计算 *最优平面*（经过 $p$） 的法向量 $\mathbf{v}_p$，通过最小化该向量与邻域内的法向量角度方差
+
+$$
+\mathbf{v}_p^{i+1} = \mathop{\mathrm{argmin}}\limits_{\mathbf{v}_p \in \mathbb{R}^3,\left\| \mathbf{v}_p  \right\|_2 = 1} 
+\mathrm{var}\left\{ \left< \mathbf{v}_p^i, \mathbf{n}(p_k) \right> \ : \ p_k \in \mathcal{N}_p^{(i)} \right\}
+$$
 
 $$
 \mathbf{v}_p^{i+1} = \mathop{\mathrm{argmin}}\limits_{\mathbf{v}_p \in \mathbb{R}^3,\left\| \mathbf{v}_p  \right\|_2 = 1} 
@@ -130,7 +142,7 @@ $$
 > 该小节的问题可以抽象为集合覆盖问题，可由此寻找更优的算法。
 > - 预处理剪枝部分，把体素分配给独特视野最大的视角，而不是覆盖最大的视角
 > - 先选择 “边际效益最大” 的视角，而不是原始覆盖数最大的视角。边际效益如何定义，可以考虑什么样的视角更利于重建或检测。
->   - [ ] k 近邻视角来近似计算某个视角的独立覆盖数
+>   - k 近邻视角来近似计算某个视角的独立覆盖数
 > - 采样选最优，这是原方法，可以进一步拓展为 基于优化的 refinement，类似 cartographer
 
 ## LKH 算法
