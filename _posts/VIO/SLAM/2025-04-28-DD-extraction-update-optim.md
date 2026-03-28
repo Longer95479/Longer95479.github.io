@@ -252,7 +252,7 @@ f_k(\theta_n) = \left\{
     \begin{align}
     & |a_k \cos \theta_n + b_k \sin \theta_n|, & b_k > 0 \\
     & |-a_k \cos \theta_n - b_k \sin \theta_n|, & b_k < 0 \\
-    & |a_k \sin \theta_n |, & b_k = 0
+    & |a_k \cos \theta_n |, & b_k = 0
     \end{align}
 \right.
 $$
@@ -288,7 +288,7 @@ f_k(\theta_n) = \left\{
             \theta_n + \arctan \left( \frac{a_k}{b_k} \right)
         \right) 
     \right|, & b_k \neq 0 \\
-    & |a_k \sin \theta_n |, & b_k = 0
+    & |a_k \cos \theta_n |, & b_k = 0
     \end{align}
 \right.
 $$
@@ -296,7 +296,7 @@ $$
 考虑 $b_k \neq 0$，令
 
 $$
-x= \theta_n + \arctan(a_k/ b_k)
+x= \theta_n + \arctan(\frac{a_k}{b_k})
 $$
 
 $$
