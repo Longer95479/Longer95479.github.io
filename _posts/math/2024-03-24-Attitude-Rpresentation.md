@@ -14,7 +14,7 @@ $$
 \begin{align}
 &
 \begin{pmatrix}
-\vec{e}^B_x & \vec{e}^B_x & \vec{e}^B_x
+\vec{e}^B_x & \vec{e}^B_y & \vec{e}^B_z
 \end{pmatrix}
 \begin{pmatrix}
 c_1\\
@@ -27,7 +27,7 @@ c_3
 \vec{e}^I_x & \vec{e}^I_x & \vec{e}^I_x
 \end{pmatrix}
 \begin{pmatrix}
-_I\vec{e}^B_x & _I\vec{e}^B_x & _I\vec{e}^B_x
+_I\vec{e}^B_x & _I\vec{e}^B_y & _I\vec{e}^B_z
 \end{pmatrix}_{3 \times 3}
 \begin{pmatrix}
 c_1\\
